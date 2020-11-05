@@ -31,7 +31,7 @@ VALUES
 
 module "iam_assumable_role_aws-load-balancer-controller" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v3.0"
+  version                       = "~> 3.0"
   create_role                   = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${local.aws-load-balancer-controller["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
