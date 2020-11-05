@@ -1,5 +1,5 @@
 locals {
-  aws_node_termination_handler = merge(
+  aws-node-termination-handler = merge(
     local.helm_defaults,
     {
       name                   = "aws-node-termination-handler"
@@ -7,74 +7,72 @@ locals {
       chart                  = "aws-node-termination-handler"
       repository             = "https://aws.github.io/eks-charts"
       enabled                = false
-      chart_version          = "0.9.5"
-      version                = "v1.7.0"
+      chart_version          = "0.12.0"
+      version                = "v1.10.0"
       default_network_policy = true
     },
-    var.aws_node_termination_handler
+    var.aws-node-termination-handler
   )
 
-  values_aws_node_termination_handler = <<VALUES
+  values_aws-node-termination-handler = <<VALUES
 image:
-  tag: ${local.aws_node_termination_handler["version"]}
+  tag: ${local.aws-node-termination-handler["version"]}
 priorityClassName: ${local.priority_class_ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 deleteLocalData: true
-nodeSelector:
- node.kubernetes.io/lifecycle: spot
 VALUES
 
 }
 
-resource "kubernetes_namespace" "aws_node_termination_handler" {
-  count = local.aws_node_termination_handler["enabled"] ? 1 : 0
+resource "kubernetes_namespace" "aws-node-termination-handler" {
+  count = local.aws-node-termination-handler["enabled"] ? 1 : 0
 
   metadata {
     labels = {
-      name = local.aws_node_termination_handler["namespace"]
+      name = local.aws-node-termination-handler["namespace"]
     }
 
-    name = local.aws_node_termination_handler["namespace"]
+    name = local.aws-node-termination-handler["namespace"]
   }
 }
 
-resource "helm_release" "aws_node_termination_handler" {
-  count                 = local.aws_node_termination_handler["enabled"] ? 1 : 0
-  repository            = local.aws_node_termination_handler["repository"]
-  name                  = local.aws_node_termination_handler["name"]
-  chart                 = local.aws_node_termination_handler["chart"]
-  version               = local.aws_node_termination_handler["chart_version"]
-  timeout               = local.aws_node_termination_handler["timeout"]
-  force_update          = local.aws_node_termination_handler["force_update"]
-  recreate_pods         = local.aws_node_termination_handler["recreate_pods"]
-  wait                  = local.aws_node_termination_handler["wait"]
-  atomic                = local.aws_node_termination_handler["atomic"]
-  cleanup_on_fail       = local.aws_node_termination_handler["cleanup_on_fail"]
-  dependency_update     = local.aws_node_termination_handler["dependency_update"]
-  disable_crd_hooks     = local.aws_node_termination_handler["disable_crd_hooks"]
-  disable_webhooks      = local.aws_node_termination_handler["disable_webhooks"]
-  render_subchart_notes = local.aws_node_termination_handler["render_subchart_notes"]
-  replace               = local.aws_node_termination_handler["replace"]
-  reset_values          = local.aws_node_termination_handler["reset_values"]
-  reuse_values          = local.aws_node_termination_handler["reuse_values"]
-  skip_crds             = local.aws_node_termination_handler["skip_crds"]
-  verify                = local.aws_node_termination_handler["verify"]
+resource "helm_release" "aws-node-termination-handler" {
+  count                 = local.aws-node-termination-handler["enabled"] ? 1 : 0
+  repository            = local.aws-node-termination-handler["repository"]
+  name                  = local.aws-node-termination-handler["name"]
+  chart                 = local.aws-node-termination-handler["chart"]
+  version               = local.aws-node-termination-handler["chart_version"]
+  timeout               = local.aws-node-termination-handler["timeout"]
+  force_update          = local.aws-node-termination-handler["force_update"]
+  recreate_pods         = local.aws-node-termination-handler["recreate_pods"]
+  wait                  = local.aws-node-termination-handler["wait"]
+  atomic                = local.aws-node-termination-handler["atomic"]
+  cleanup_on_fail       = local.aws-node-termination-handler["cleanup_on_fail"]
+  dependency_update     = local.aws-node-termination-handler["dependency_update"]
+  disable_crd_hooks     = local.aws-node-termination-handler["disable_crd_hooks"]
+  disable_webhooks      = local.aws-node-termination-handler["disable_webhooks"]
+  render_subchart_notes = local.aws-node-termination-handler["render_subchart_notes"]
+  replace               = local.aws-node-termination-handler["replace"]
+  reset_values          = local.aws-node-termination-handler["reset_values"]
+  reuse_values          = local.aws-node-termination-handler["reuse_values"]
+  skip_crds             = local.aws-node-termination-handler["skip_crds"]
+  verify                = local.aws-node-termination-handler["verify"]
   values = [
-    local.values_aws_node_termination_handler,
-    local.aws_node_termination_handler["extra_values"]
+    local.values_aws-node-termination-handler,
+    local.aws-node-termination-handler["extra_values"]
   ]
-  namespace = local.aws_node_termination_handler["namespace"]
+  namespace = local.aws-node-termination-handler["namespace"]
 
   depends_on = [
     helm_release.prometheus_operator
   ]
 }
 
-resource "kubernetes_network_policy" "aws_node_termination_handler_default_deny" {
-  count = local.aws_node_termination_handler["enabled"] && local.aws_node_termination_handler["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "aws-node-termination-handler_default_deny" {
+  count = local.aws-node-termination-handler["enabled"] && local.aws-node-termination-handler["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws_node_termination_handler.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws_node_termination_handler.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -84,12 +82,12 @@ resource "kubernetes_network_policy" "aws_node_termination_handler_default_deny"
   }
 }
 
-resource "kubernetes_network_policy" "aws_node_termination_handler_allow_namespace" {
-  count = local.aws_node_termination_handler["enabled"] && local.aws_node_termination_handler["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "aws-node-termination-handler_allow_namespace" {
+  count = local.aws-node-termination-handler["enabled"] && local.aws-node-termination-handler["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws_node_termination_handler.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws_node_termination_handler.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -100,7 +98,7 @@ resource "kubernetes_network_policy" "aws_node_termination_handler_allow_namespa
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.aws_node_termination_handler.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
           }
         }
       }
