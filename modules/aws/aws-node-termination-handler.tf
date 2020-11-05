@@ -17,7 +17,7 @@ locals {
   values_aws-node-termination-handler = <<VALUES
 image:
   tag: ${local.aws-node-termination-handler["version"]}
-priorityClassName: ${local.priority_class_ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
+priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 deleteLocalData: true
 VALUES
 
@@ -61,10 +61,6 @@ resource "helm_release" "aws-node-termination-handler" {
     local.aws-node-termination-handler["extra_values"]
   ]
   namespace = local.aws-node-termination-handler["namespace"]
-
-  depends_on = [
-    helm_release.prometheus_operator
-  ]
 }
 
 resource "kubernetes_network_policy" "aws-node-termination-handler_default_deny" {

@@ -1,6 +1,6 @@
 locals {
 
-  cert_manager = merge(
+  cert-manager = merge(
     local.helm_defaults,
     {
       name                           = "cert-manager"
@@ -8,61 +8,59 @@ locals {
       chart                          = "cert-manager"
       repository                     = "https://charts.jetstack.io"
       service_account_name           = "cert-manager"
-      create_iam_resources_kiam      = false
       create_iam_resources_irsa      = true
       enabled                        = false
-      chart_version                  = "v1.0.0"
-      version                        = "v1.0.0"
+      chart_version                  = "v1.0.4"
+      version                        = "v1.0.4"
       iam_policy_override            = ""
       default_network_policy         = true
       acme_email                     = "contact@acme.com"
       enable_default_cluster_issuers = false
       allowed_cidr                   = "0.0.0.0/0"
     },
-    var.cert_manager
+    var.cert-manager
   )
 
-  values_cert_manager = <<VALUES
+  values_cert-manager = <<VALUES
 image:
-  tag: ${local.cert_manager["version"]}
+  tag: ${local.cert-manager["version"]}
 global:
   podSecurityPolicy:
     enabled: true
     useAppArmor: false
-  priorityClassName: ${local.priority_class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-podAnnotations:
-  iam.amazonaws.com/role: "${local.cert_manager["enabled"] && local.cert_manager["create_iam_resources_kiam"] ? aws_iam_role.eks-cert-manager-kiam[0].arn : ""}"
+  priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 serviceAccount:
+  name: ${local.cert-manager["service_account_name"]}
   annotations:
-    eks.amazonaws.com/role-arn: "${local.cert_manager["enabled"] && local.cert_manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert_manager.this_iam_role_arn : ""}"
+    eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.this_iam_role_arn : ""}"
 prometheus:
   servicemonitor:
-    enabled: ${local.prometheus_operator["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"]}
 securityContext:
-  enabled: true
   fsGroup: 1001
 installCRDs: true
 VALUES
 
 }
 
-module "iam_assumable_role_cert_manager" {
+module "iam_assumable_role_cert-manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.0"
-  create_role                   = local.cert_manager["enabled"] && local.cert_manager["create_iam_resources_irsa"]
-  role_name                     = "tf-eks-${var.cluster-name}-cert-manager-irsa"
+  version                       = "~> 3.0"
+  create_role                   = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"]
+  role_name                     = "tf-${var.cluster-name}-${local.cert-manager["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.cert_manager["enabled"] && local.cert_manager["create_iam_resources_irsa"] ? [aws_iam_policy.eks-cert-manager[0].arn] : []
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.cert_manager["namespace"]}:${local.cert_manager["service_account_name"]}"]
+  role_policy_arns              = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? [aws_iam_policy.cert-manager[0].arn] : []
+  number_of_role_policy_arns    = 1
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.cert-manager["namespace"]}:${local.cert-manager["service_account_name"]}"]
 }
 
-resource "aws_iam_policy" "eks-cert-manager" {
-  count  = local.cert_manager["enabled"] && (local.cert_manager["create_iam_resources_kiam"] || local.cert_manager["create_iam_resources_irsa"]) ? 1 : 0
-  name   = "tf-eks-${var.cluster-name}-cert-manager"
-  policy = local.cert_manager["iam_policy_override"] == "" ? data.aws_iam_policy_document.cert_manager.json : local.cert_manager["iam_policy_override"]
+resource "aws_iam_policy" "cert-manager" {
+  count  = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? 1 : 0
+  name   = "tf-${var.cluster-name}-${local.cert-manager["name"]}"
+  policy = local.cert-manager["iam_policy_override"] == "" ? data.aws_iam_policy_document.cert-manager.json : local.cert-manager["iam_policy_override"]
 }
 
-data "aws_iam_policy_document" "cert_manager" {
+data "aws_iam_policy_document" "cert-manager" {
   statement {
     effect = "Allow"
 
@@ -97,112 +95,74 @@ data "aws_iam_policy_document" "cert_manager" {
   }
 }
 
-
-resource "aws_iam_role" "eks-cert-manager-kiam" {
-  name  = "tf-eks-${var.cluster-name}-cert-manager-kiam"
-  count = local.cert_manager["enabled"] && local.cert_manager["create_iam_resources_kiam"] ? 1 : 0
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    },
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "${aws_iam_role.eks-kiam-server-role[count.index].arn}"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-
-}
-
-resource "aws_iam_role_policy_attachment" "eks-cert-manager-kiam" {
-  count      = local.cert_manager["enabled"] && local.cert_manager["create_iam_resources_kiam"] ? 1 : 0
-  role       = aws_iam_role.eks-cert-manager-kiam[count.index].name
-  policy_arn = aws_iam_policy.eks-cert-manager[count.index].arn
-}
-
-resource "kubernetes_namespace" "cert_manager" {
-  count = local.cert_manager["enabled"] ? 1 : 0
+resource "kubernetes_namespace" "cert-manager" {
+  count = local.cert-manager["enabled"] ? 1 : 0
 
   metadata {
     annotations = {
-      "iam.amazonaws.com/permitted"           = "${local.cert_manager["create_iam_resources_kiam"] ? aws_iam_role.eks-cert-manager-kiam[0].arn : "^$"}"
       "certmanager.k8s.io/disable-validation" = "true"
     }
 
     labels = {
-      name = local.cert_manager["namespace"]
+      name = local.cert-manager["namespace"]
     }
 
-    name = local.cert_manager["namespace"]
+    name = local.cert-manager["namespace"]
   }
 }
 
-resource "helm_release" "cert_manager" {
-  count                 = local.cert_manager["enabled"] ? 1 : 0
-  repository            = local.cert_manager["repository"]
-  name                  = local.cert_manager["name"]
-  chart                 = local.cert_manager["chart"]
-  version               = local.cert_manager["chart_version"]
-  timeout               = local.cert_manager["timeout"]
-  force_update          = local.cert_manager["force_update"]
-  recreate_pods         = local.cert_manager["recreate_pods"]
-  wait                  = local.cert_manager["wait"]
-  atomic                = local.cert_manager["atomic"]
-  cleanup_on_fail       = local.cert_manager["cleanup_on_fail"]
-  dependency_update     = local.cert_manager["dependency_update"]
-  disable_crd_hooks     = local.cert_manager["disable_crd_hooks"]
-  disable_webhooks      = local.cert_manager["disable_webhooks"]
-  render_subchart_notes = local.cert_manager["render_subchart_notes"]
-  replace               = local.cert_manager["replace"]
-  reset_values          = local.cert_manager["reset_values"]
-  reuse_values          = local.cert_manager["reuse_values"]
-  skip_crds             = local.cert_manager["skip_crds"]
-  verify                = local.cert_manager["verify"]
+resource "helm_release" "cert-manager" {
+  count                 = local.cert-manager["enabled"] ? 1 : 0
+  repository            = local.cert-manager["repository"]
+  name                  = local.cert-manager["name"]
+  chart                 = local.cert-manager["chart"]
+  version               = local.cert-manager["chart_version"]
+  timeout               = local.cert-manager["timeout"]
+  force_update          = local.cert-manager["force_update"]
+  recreate_pods         = local.cert-manager["recreate_pods"]
+  wait                  = local.cert-manager["wait"]
+  atomic                = local.cert-manager["atomic"]
+  cleanup_on_fail       = local.cert-manager["cleanup_on_fail"]
+  dependency_update     = local.cert-manager["dependency_update"]
+  disable_crd_hooks     = local.cert-manager["disable_crd_hooks"]
+  disable_webhooks      = local.cert-manager["disable_webhooks"]
+  render_subchart_notes = local.cert-manager["render_subchart_notes"]
+  replace               = local.cert-manager["replace"]
+  reset_values          = local.cert-manager["reset_values"]
+  reuse_values          = local.cert-manager["reuse_values"]
+  skip_crds             = local.cert-manager["skip_crds"]
+  verify                = local.cert-manager["verify"]
   values = [
-    local.values_cert_manager,
-    local.cert_manager["extra_values"]
+    local.values_cert-manager,
+    local.cert-manager["extra_values"]
   ]
-  namespace = kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kiam,
-    helm_release.prometheus_operator
+    helm_release.kube-prometheus-stack
   ]
 }
 
-data "kubectl_path_documents" "cert_manager_cluster_issuers" {
+data "kubectl_path_documents" "cert-manager_cluster_issuers" {
   pattern = "./templates/cert-manager-cluster-issuers.yaml"
   vars = {
-    acme_email = local.cert_manager["acme_email"]
+    acme_email = local.cert-manager["acme_email"]
     aws_region = data.aws_region.current.name
   }
 }
 
-resource "kubectl_manifest" "cert_manager_cluster_issuers" {
-  count      = (local.cert_manager["enabled"] ? 1 : 0) * (local.cert_manager["enable_default_cluster_issuers"] ? 1 : 0) * length(data.kubectl_path_documents.cert_manager_cluster_issuers.documents)
-  yaml_body  = element(data.kubectl_path_documents.cert_manager_cluster_issuers.documents, count.index)
-  depends_on = [helm_release.cert_manager]
+resource "kubectl_manifest" "cert-manager_cluster_issuers" {
+  count      = (local.cert-manager["enabled"] ? 1 : 0) * (local.cert-manager["enable_default_cluster_issuers"] ? 1 : 0) * length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents)
+  yaml_body  = element(data.kubectl_path_documents.cert-manager_cluster_issuers.documents, count.index)
+  depends_on = [helm_release.cert-manager]
 }
 
-resource "kubernetes_network_policy" "cert_manager_default_deny" {
-  count = local.cert_manager["enabled"] && local.cert_manager["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "cert-manager_default_deny" {
+  count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -212,12 +172,12 @@ resource "kubernetes_network_policy" "cert_manager_default_deny" {
   }
 }
 
-resource "kubernetes_network_policy" "cert_manager_allow_namespace" {
-  count = local.cert_manager["enabled"] && local.cert_manager["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "cert-manager_allow_namespace" {
+  count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -228,7 +188,7 @@ resource "kubernetes_network_policy" "cert_manager_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
           }
         }
       }
@@ -238,12 +198,12 @@ resource "kubernetes_network_policy" "cert_manager_allow_namespace" {
   }
 }
 
-resource "kubernetes_network_policy" "cert_manager_allow_monitoring" {
-  count = local.cert_manager["enabled"] && local.cert_manager["default_network_policy"] && local.prometheus_operator["enabled"] ? 1 : 0
+resource "kubernetes_network_policy" "cert-manager_allow_monitoring" {
+  count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -259,7 +219,7 @@ resource "kubernetes_network_policy" "cert_manager_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.prometheus_operator.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
           }
         }
       }
@@ -269,12 +229,12 @@ resource "kubernetes_network_policy" "cert_manager_allow_monitoring" {
   }
 }
 
-resource "kubernetes_network_policy" "cert_manager_allow_control_plane" {
-  count = local.cert_manager["enabled"] && local.cert_manager["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "cert-manager_allow_control_plane" {
+  count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.cert_manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -293,7 +253,7 @@ resource "kubernetes_network_policy" "cert_manager_allow_control_plane" {
       }
 
       dynamic "from" {
-        for_each = local.cert_manager["allowed_cidrs"]
+        for_each = local.cert-manager["allowed_cidrs"]
         content {
           ip_block {
             cidr = from.value
@@ -305,4 +265,3 @@ resource "kubernetes_network_policy" "cert_manager_allow_control_plane" {
     policy_types = ["Ingress"]
   }
 }
-

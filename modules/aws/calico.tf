@@ -8,8 +8,8 @@ locals {
       chart                  = "aws-calico"
       repository             = "https://aws.github.io/eks-charts"
       enabled                = false
-      chart_version          = "0.3.1"
-      version                = "v3.13.4"
+      chart_version          = "0.3.4"
+      version                = "v3.15.1"
       default_network_policy = true
       create_ns              = false
 
@@ -18,6 +18,8 @@ locals {
   )
 
   values_calico = <<VALUES
+calico:
+  tag: ${local.calico["version"]}
 VALUES
 
 }

@@ -23,5 +23,4 @@ locals {
     local.helm_defaults_defaults,
     var.helm_defaults
   )
-
 }

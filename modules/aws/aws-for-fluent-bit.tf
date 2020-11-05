@@ -8,7 +8,6 @@ locals {
       chart                            = "aws-for-fluent-bit"
       repository                       = "https://aws.github.io/eks-charts"
       service_account_name             = "aws-for-fluent-bit"
-      create_iam_resources_kiam        = false
       create_iam_resources_irsa        = true
       enabled                          = false
       chart_version                    = "0.1.5"
@@ -30,7 +29,7 @@ elasticsearch:
 cloudWatch:
   enabled: true
   region: "${data.aws_region.current.name}"
-  logGroupName: "${local.aws-for-fluent-bit["enabled"] ? aws_cloudwatch_log_group.eks-aws-fluent-bit-log-group[0].name : ""}"
+  logGroupName: "${local.aws-for-fluent-bit["enabled"] ? aws_cloudwatch_log_group.aws-for-fluent-bit[0].name : ""}"
   autoCreateGroup: false
 image:
   tag: ${local.aws-for-fluent-bit["version"]}
@@ -40,7 +39,7 @@ serviceAccount:
     eks.amazonaws.com/role-arn: "${local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-for-fluent-bit.this_iam_role_arn : ""}"
 tolerations:
 - operator: Exists
-priorityClassName: "${local.priority_class_ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}"
+priorityClassName: "${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}"
 VALUES
 }
 
@@ -50,13 +49,14 @@ module "iam_assumable_role_aws-for-fluent-bit" {
   create_role                   = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${local.aws-for-fluent-bit["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? [aws_iam_policy.eks-aws-fluent-bit[0].arn] : []
+  role_policy_arns              = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? [aws_iam_policy.aws-for-fluent-bit[0].arn] : []
+  number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.aws-for-fluent-bit["namespace"]}:${local.aws-for-fluent-bit["service_account_name"]}"]
 }
 
-resource "aws_iam_policy" "eks-aws-fluent-bit" {
-  count  = local.aws-for-fluent-bit["enabled"] && (local.aws-for-fluent-bit["create_iam_resources_kiam"] || local.aws-for-fluent-bit["create_iam_resources_irsa"]) ? 1 : 0
-  name   = "tf-eks-${var.cluster-name}-aws-fluent-bit"
+resource "aws_iam_policy" "aws-for-fluent-bit" {
+  count  = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? 1 : 0
+  name   = "tf-${var.cluster-name}-${local.aws-for-fluent-bit["name"]}"
   policy = local.aws-for-fluent-bit["iam_policy_override"] == "" ? data.aws_iam_policy_document.aws-for-fluent-bit.json : local.aws-for-fluent-bit["iam_policy_override"]
 }
 
@@ -76,45 +76,10 @@ data "aws_iam_policy_document" "aws-for-fluent-bit" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "eks-aws-fluent-bit-log-group" {
+resource "aws_cloudwatch_log_group" "aws-for-fluent-bit" {
   count             = local.aws-for-fluent-bit["enabled"] ? 1 : 0
   name              = "/aws/eks/${var.cluster-name}/containers"
   retention_in_days = local.aws-for-fluent-bit["containers_log_retention_in_days"]
-}
-
-resource "aws_iam_role" "eks-aws-fluent-bit-kiam" {
-  name  = "tf-eks-${var.cluster-name}-aws-fluent-bit-kiam"
-  count = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_kiam"] ? 1 : 0
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    },
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "${aws_iam_role.eks-kiam-server-role[count.index].arn}"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-
-}
-
-resource "aws_iam_role_policy_attachment" "eks-aws-fluent-bit-kiam" {
-  count      = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_kiam"] ? 1 : 0
-  role       = aws_iam_role.eks-aws-fluent-bit-kiam[count.index].name
-  policy_arn = aws_iam_policy.eks-aws-fluent-bit[count.index].arn
 }
 
 resource "kubernetes_namespace" "aws-for-fluent-bit" {
@@ -155,10 +120,6 @@ resource "helm_release" "aws-for-fluent-bit" {
     local.aws-for-fluent-bit["extra_values"]
   ]
   namespace = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
-
-  depends_on = [
-    helm_release.kiam
-  ]
 }
 
 resource "kubernetes_network_policy" "aws-for-fluent-bit_default_deny" {

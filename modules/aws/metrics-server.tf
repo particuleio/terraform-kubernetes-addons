@@ -1,79 +1,79 @@
 locals {
-  metrics_server = merge(
+  metrics-server = merge(
     local.helm_defaults,
     {
       name                   = "metrics-server"
       namespace              = "metrics-server"
       chart                  = "metrics-server"
-      repository             = "https://kubernetes-charts.storage.googleapis.com/"
+      repository             = "https://charts.helm.sh/stable"
       enabled                = false
-      chart_version          = "2.11.1"
+      chart_version          = "2.11.3"
       version                = "v0.3.6"
       default_network_policy = true
       allowed_cidrs          = ["0.0.0.0/0"]
     },
-    var.metrics_server
+    var.metrics-server
   )
 
-  values_metrics_server = <<VALUES
+  values_metrics-server = <<VALUES
 image:
-  tag: ${local.metrics_server["version"]}
+  tag: ${local.metrics-server["version"]}
 args:
   - --logtostderr
   - --kubelet-preferred-address-types=InternalIP,ExternalIP
 rbac:
   pspEnabled: true
-priorityClassName: ${local.priority_class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 VALUES
 
 }
 
-resource "kubernetes_namespace" "metrics_server" {
-  count = local.metrics_server["enabled"] ? 1 : 0
+resource "kubernetes_namespace" "metrics-server" {
+  count = local.metrics-server["enabled"] ? 1 : 0
 
   metadata {
     labels = {
-      name = local.metrics_server["namespace"]
+      name = local.metrics-server["namespace"]
     }
 
-    name = local.metrics_server["namespace"]
+    name = local.metrics-server["namespace"]
   }
 }
 
-resource "helm_release" "metrics_server" {
-  count                 = local.metrics_server["enabled"] ? 1 : 0
-  repository            = local.metrics_server["repository"]
-  name                  = local.metrics_server["name"]
-  chart                 = local.metrics_server["chart"]
-  version               = local.metrics_server["chart_version"]
-  timeout               = local.metrics_server["timeout"]
-  force_update          = local.metrics_server["force_update"]
-  recreate_pods         = local.metrics_server["recreate_pods"]
-  wait                  = local.metrics_server["wait"]
-  atomic                = local.metrics_server["atomic"]
-  cleanup_on_fail       = local.metrics_server["cleanup_on_fail"]
-  dependency_update     = local.metrics_server["dependency_update"]
-  disable_crd_hooks     = local.metrics_server["disable_crd_hooks"]
-  disable_webhooks      = local.metrics_server["disable_webhooks"]
-  render_subchart_notes = local.metrics_server["render_subchart_notes"]
-  replace               = local.metrics_server["replace"]
-  reset_values          = local.metrics_server["reset_values"]
-  reuse_values          = local.metrics_server["reuse_values"]
-  skip_crds             = local.metrics_server["skip_crds"]
-  verify                = local.metrics_server["verify"]
+resource "helm_release" "metrics-server" {
+  count                 = local.metrics-server["enabled"] ? 1 : 0
+  repository            = local.metrics-server["repository"]
+  name                  = local.metrics-server["name"]
+  chart                 = local.metrics-server["chart"]
+  version               = local.metrics-server["chart_version"]
+  timeout               = local.metrics-server["timeout"]
+  force_update          = local.metrics-server["force_update"]
+  recreate_pods         = local.metrics-server["recreate_pods"]
+  wait                  = local.metrics-server["wait"]
+  atomic                = local.metrics-server["atomic"]
+  cleanup_on_fail       = local.metrics-server["cleanup_on_fail"]
+  dependency_update     = local.metrics-server["dependency_update"]
+  disable_crd_hooks     = local.metrics-server["disable_crd_hooks"]
+  disable_webhooks      = local.metrics-server["disable_webhooks"]
+  render_subchart_notes = local.metrics-server["render_subchart_notes"]
+  replace               = local.metrics-server["replace"]
+  reset_values          = local.metrics-server["reset_values"]
+  reuse_values          = local.metrics-server["reuse_values"]
+  skip_crds             = local.metrics-server["skip_crds"]
+  verify                = local.metrics-server["verify"]
   values = [
-    local.values_metrics_server,
-    local.metrics_server["extra_values"]
+    local.values_metrics-server,
+    local.metrics-server["extra_values"]
   ]
-  namespace = kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
 }
 
-resource "kubernetes_network_policy" "metrics_server_default_deny" {
-  count = local.metrics_server["enabled"] && local.metrics_server["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "metrics-server_default_deny" {
+  count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -83,12 +83,12 @@ resource "kubernetes_network_policy" "metrics_server_default_deny" {
   }
 }
 
-resource "kubernetes_network_policy" "metrics_server_allow_namespace" {
-  count = local.metrics_server["enabled"] && local.metrics_server["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "metrics-server_allow_namespace" {
+  count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -99,7 +99,7 @@ resource "kubernetes_network_policy" "metrics_server_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
           }
         }
       }
@@ -109,12 +109,12 @@ resource "kubernetes_network_policy" "metrics_server_allow_namespace" {
   }
 }
 
-resource "kubernetes_network_policy" "metrics_server_allow_control_plane" {
-  count = local.metrics_server["enabled"] && local.metrics_server["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "metrics-server_allow_control_plane" {
+  count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.metrics_server.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -133,7 +133,7 @@ resource "kubernetes_network_policy" "metrics_server_allow_control_plane" {
       }
 
       dynamic "from" {
-        for_each = local.metrics_server["allowed_cidrs"]
+        for_each = local.metrics-server["allowed_cidrs"]
         content {
           ip_block {
             cidr = from.value

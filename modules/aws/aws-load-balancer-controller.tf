@@ -35,11 +35,12 @@ module "iam_assumable_role_aws-load-balancer-controller" {
   create_role                   = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${local.aws-load-balancer-controller["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? [aws_iam_policy.eks-alb-ingress[0].arn] : []
+  role_policy_arns              = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? [aws_iam_policy.aws-load-balancer-controller[0].arn] : []
+  number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.aws-load-balancer-controller["namespace"]}:${local.aws-load-balancer-controller["service_account_name"]}"]
 }
 
-resource "aws_iam_policy" "eks-alb-ingress" {
+resource "aws_iam_policy" "aws-load-balancer-controller" {
   count  = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.aws-load-balancer-controller["name"]}"
   policy = local.aws-load-balancer-controller["iam_policy_override"] == "" ? file("${path.module}/iam/aws-load-balancer-controller.json") : local.aws-load-balancer-controller["iam_policy_override"]
@@ -83,10 +84,6 @@ resource "helm_release" "aws-load-balancer-controller" {
     local.aws-load-balancer-controller["extra_values"]
   ]
   namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
-
-  depends_on = [
-    helm_release.prometheus_operator
-  ]
 }
 
 resource "kubernetes_network_policy" "aws-load-balancer-controller_default_deny" {
