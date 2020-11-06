@@ -22,6 +22,12 @@ variable "external-dns" {
   default     = {}
 }
 
+variable "flux" {
+  description = "Customize Flux chart, see `flux.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "helm_defaults" {
   description = "Customize default Helm behavior"
   type        = any

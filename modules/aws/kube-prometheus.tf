@@ -216,7 +216,6 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
   }
 }
 
-
 output "grafana_password" {
   value     = random_string.grafana_password.*.result
   sensitive = true

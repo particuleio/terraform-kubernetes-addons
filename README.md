@@ -5,4 +5,10 @@
 
 ## Submodules
 
+Submodules are used for specific cloud provider configuration such as IAM role for
+AWS. For a Kubernetes vanilla cluster, generic addons should be used.
+
+Any contribution supporting a new cloud provider is welcomed.
+
 * [AWS](./modules/aws)
+* [Scaleway](./modules/scaleway)
