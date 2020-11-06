@@ -1,14 +1,15 @@
-name: 'Terraform'
+name: 'terraform:aws'
 
 on:
   push:
     branches:
-    - master
+    - main
+    path: modules/aws/*
   pull_request:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'terraform:aws'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -26,11 +27,11 @@ jobs:
     - name: Terraform Validate
       run: terraform validate
 
-    - name: Semantic Release
-      uses: cycjimmy/semantic-release-action@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      if: github.ref == 'refs/heads/master'
+#    - name: Semantic Release
+#      uses: cycjimmy/semantic-release-action@v2
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      if: github.ref == 'refs/heads/master'
 
     - name: 'slack:success'
       if: success()
