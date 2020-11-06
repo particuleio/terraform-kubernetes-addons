@@ -4,8 +4,8 @@ on:
   push:
     branches:
     - main
-    path: modules/aws/*
-  pull_request:
+    paths:
+    - 'modules/aws/**'
 
 jobs:
   terraform:
@@ -29,6 +29,8 @@ jobs:
     - name: Terraform Validate
       run: terraform validate
       working-directory: modules/aws
+      env:
+        AWS_REGION: eu-west-3
 
 #    - name: Semantic Release
 #      uses: cycjimmy/semantic-release-action@v2
