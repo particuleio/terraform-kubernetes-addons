@@ -152,9 +152,12 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
 }
 
 resource "kubectl_manifest" "cert-manager_cluster_issuers" {
-  count      = (local.cert-manager["enabled"] ? 1 : 0) * (local.cert-manager["enable_default_cluster_issuers"] ? 1 : 0) * length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents)
-  yaml_body  = element(data.kubectl_path_documents.cert-manager_cluster_issuers.documents, count.index)
-  depends_on = [helm_release.cert-manager]
+  count     = (local.cert-manager["enabled"] ? 1 : 0) * (local.cert-manager["enable_default_cluster_issuers"] ? 1 : 0) * length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents)
+  yaml_body = element(data.kubectl_path_documents.cert-manager_cluster_issuers.documents, count.index)
+  depends_on = [
+    helm_release.cert-manager,
+    kubernetes_namespace.cert-manager
+  ]
 }
 
 resource "kubernetes_network_policy" "cert-manager_default_deny" {
