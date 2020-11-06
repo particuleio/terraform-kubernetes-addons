@@ -1,60 +1,65 @@
 locals {
 
-  external-dns = merge(
+  external-dns = { for k, v in var.external-dns : k => merge(
     local.helm_defaults,
     {
-      name                      = "external-dns"
-      namespace                 = "external-dns"
+      name                      = k
+      namespace                 = k
       chart                     = "external-dns"
       repository                = "https://charts.bitnami.com/bitnami"
       service_account_name      = "external-dns"
       create_iam_resources_irsa = true
-      enabled                   = false
       chart_version             = "3.6.0"
       version                   = "0.7.4-debian-10-r29"
       iam_policy_override       = ""
       default_network_policy    = true
     },
-    var.external-dns
-  )
+    v,
+  ) }
 
-  values_external-dns = <<VALUES
-image:
-  tag: ${local.external-dns["version"]}
-provider: aws
-aws:
-  region: ${data.aws_region.current.name}
-txtPrefix: "ext-dns-"
-rbac:
- create: true
- pspEnabled: true
-serviceAccount:
-  name: ${local.external-dns["service_account_name"]}
-  annotations:
-    eks.amazonaws.com/role-arn: "${local.external-dns["enabled"] && local.external-dns["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns.this_iam_role_arn : ""}"
-metrics:
-  enabled: ${local.kube-prometheus-stack["enabled"]}
-  serviceMonitor:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
-priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-VALUES
+  values_external-dns = { for k, v in local.external-dns : k => merge(
+    {
+      values = <<-VALUES
+        image:
+          tag: ${v["version"]}
+        provider: aws
+        aws:
+          region: ${data.aws_region.current.name}
+        txtPrefix: "ext-dns-"
+        rbac:
+         create: true
+         pspEnabled: true
+        serviceAccount:
+          name: ${v["service_account_name"]}
+          annotations:
+            eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].this_iam_role_arn : ""}"
+        metrics:
+          enabled: ${local.kube-prometheus-stack["enabled"]}
+          serviceMonitor:
+            enabled: ${local.kube-prometheus-stack["enabled"]}
+        priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+      VALUES
+    },
+    v,
+  ) }
 }
 
 module "iam_assumable_role_external-dns" {
+  for_each                      = local.external-dns
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 3.0"
-  create_role                   = local.external-dns["enabled"] && local.external-dns["create_iam_resources_irsa"]
-  role_name                     = "tf-${var.cluster-name}-${local.external-dns["name"]}-irsa"
+  create_role                   = each.value["create_iam_resources_irsa"]
+  role_name                     = "tf-${var.cluster-name}-${each.key}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.external-dns["enabled"] && local.external-dns["create_iam_resources_irsa"] ? [aws_iam_policy.external-dns[0].arn] : []
+  role_policy_arns              = each.value["create_iam_resources_irsa"] ? [aws_iam_policy.external-dns[each.key].arn] : []
   number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.external-dns["namespace"]}:${local.external-dns["service_account_name"]}"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${each.value["namespace"]}:${each.value["service_account_name"]}"]
 }
 
 resource "aws_iam_policy" "external-dns" {
-  count  = local.external-dns["enabled"] && local.external-dns["create_iam_resources_irsa"] ? 1 : 0
-  name   = "tf-${var.cluster-name}-${local.external-dns["name"]}"
-  policy = local.external-dns["iam_policy_override"] == "" ? data.aws_iam_policy_document.external-dns.json : local.external-dns["iam_policy_override"]
+  for_each = { for k, v in local.external-dns : k => v if v["create_iam_resources_irsa"] }
+  name     = "tf-${var.cluster-name}-${each.key}"
+  policy   = each.value["iam_policy_override"] == "" ? data.aws_iam_policy_document.external-dns.json : each.value["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "external-dns" {
@@ -82,43 +87,43 @@ data "aws_iam_policy_document" "external-dns" {
 }
 
 resource "kubernetes_namespace" "external-dns" {
-  count = local.external-dns["enabled"] ? 1 : 0
+  for_each = local.external-dns
 
   metadata {
     labels = {
-      name = local.external-dns["namespace"]
+      name = each.value["namespace"]
     }
 
-    name = local.external-dns["namespace"]
+    name = each.value["namespace"]
   }
 }
 
 resource "helm_release" "external-dns" {
-  count                 = local.external-dns["enabled"] ? 1 : 0
-  repository            = local.external-dns["repository"]
-  name                  = local.external-dns["name"]
-  chart                 = local.external-dns["chart"]
-  version               = local.external-dns["chart_version"]
-  timeout               = local.external-dns["timeout"]
-  force_update          = local.external-dns["force_update"]
-  recreate_pods         = local.external-dns["recreate_pods"]
-  wait                  = local.external-dns["wait"]
-  atomic                = local.external-dns["atomic"]
-  cleanup_on_fail       = local.external-dns["cleanup_on_fail"]
-  dependency_update     = local.external-dns["dependency_update"]
-  disable_crd_hooks     = local.external-dns["disable_crd_hooks"]
-  disable_webhooks      = local.external-dns["disable_webhooks"]
-  render_subchart_notes = local.external-dns["render_subchart_notes"]
-  replace               = local.external-dns["replace"]
-  reset_values          = local.external-dns["reset_values"]
-  reuse_values          = local.external-dns["reuse_values"]
-  skip_crds             = local.external-dns["skip_crds"]
-  verify                = local.external-dns["verify"]
+  for_each              = local.external-dns
+  repository            = each.value["repository"]
+  name                  = each.value["name"]
+  chart                 = each.value["chart"]
+  version               = each.value["chart_version"]
+  timeout               = each.value["timeout"]
+  force_update          = each.value["force_update"]
+  recreate_pods         = each.value["recreate_pods"]
+  wait                  = each.value["wait"]
+  atomic                = each.value["atomic"]
+  cleanup_on_fail       = each.value["cleanup_on_fail"]
+  dependency_update     = each.value["dependency_update"]
+  disable_crd_hooks     = each.value["disable_crd_hooks"]
+  disable_webhooks      = each.value["disable_webhooks"]
+  render_subchart_notes = each.value["render_subchart_notes"]
+  replace               = each.value["replace"]
+  reset_values          = each.value["reset_values"]
+  reuse_values          = each.value["reuse_values"]
+  skip_crds             = each.value["skip_crds"]
+  verify                = each.value["verify"]
   values = [
-    local.values_external-dns,
-    local.external-dns["extra_values"]
+    local.values_external-dns[each.key]["values"],
+    each.value["extra_values"]
   ]
-  namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
 
   depends_on = [
     helm_release.kube-prometheus-stack
@@ -126,11 +131,11 @@ resource "helm_release" "external-dns" {
 }
 
 resource "kubernetes_network_policy" "external-dns_default_deny" {
-  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
+  for_each = { for k, v in local.external-dns : k => v if v["default_network_policy"] }
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-default-deny"
+    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
   }
 
   spec {
@@ -141,11 +146,11 @@ resource "kubernetes_network_policy" "external-dns_default_deny" {
 }
 
 resource "kubernetes_network_policy" "external-dns_allow_namespace" {
-  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
+  for_each = { for k, v in local.external-dns : k => v if v["default_network_policy"] }
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-namespace"
+    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
   }
 
   spec {
@@ -156,7 +161,7 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.external-dns[each.key].metadata.0.name
           }
         }
       }
@@ -167,11 +172,11 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
 }
 
 resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
-  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
+  for_each = { for k, v in local.external-dns : k => v if v["default_network_policy"] }
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-monitoring"
+    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
   }
 
   spec {
