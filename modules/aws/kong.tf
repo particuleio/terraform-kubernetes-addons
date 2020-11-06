@@ -9,7 +9,7 @@ locals {
       repository             = "https://charts.konghq.com"
       enabled                = false
       default_network_policy = true
-      ingress_cidr           = "0.0.0.0/0"
+      ingress_cidrs          = ["0.0.0.0/0"]
       chart_version          = "1.11.0"
       version                = "2.1"
     },
@@ -51,7 +51,8 @@ resource "kubernetes_namespace" "kong" {
 
   metadata {
     labels = {
-      name = local.kong["namespace"]
+      name                               = local.kong["namespace"]
+      "${local.labels_prefix}/component" = "ingress"
     }
 
     name = local.kong["namespace"]
@@ -142,7 +143,7 @@ resource "kubernetes_network_policy" "kong_allow_ingress" {
   spec {
     pod_selector {
       match_expressions {
-        key      = "app"
+        key      = "app.kubernetes.io/name"
         operator = "In"
         values   = ["kong"]
       }
@@ -158,9 +159,12 @@ resource "kubernetes_network_policy" "kong_allow_ingress" {
         protocol = "TCP"
       }
 
-      from {
-        ip_block {
-          cidr = local.kong["ingress_cidr"]
+      dynamic "from" {
+        for_each = local.kong["ingress_cidrs"]
+        content {
+          ip_block {
+            cidr = from.value
+          }
         }
       }
     }
@@ -170,7 +174,7 @@ resource "kubernetes_network_policy" "kong_allow_ingress" {
 }
 
 resource "kubernetes_network_policy" "kong_allow_monitoring" {
-  count = local.kong["enabled"] && local.kong["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count = local.kong["enabled"] && local.kong["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.kong.*.metadata.0.name[count.index]}-allow-monitoring"
@@ -190,7 +194,7 @@ resource "kubernetes_network_policy" "kong_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }

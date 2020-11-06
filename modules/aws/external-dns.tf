@@ -167,7 +167,7 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
 }
 
 resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
-  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-monitoring"
@@ -187,7 +187,7 @@ resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }

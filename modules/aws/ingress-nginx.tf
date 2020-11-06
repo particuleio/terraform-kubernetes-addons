@@ -11,7 +11,7 @@ locals {
       use_l7                 = false
       enabled                = false
       default_network_policy = true
-      ingress_cidr           = "0.0.0.0/0"
+      ingress_cidrs          = ["0.0.0.0/0"]
       chart_version          = "3.8.0"
       version                = "0.41.0"
       allowed_cidrs          = ["0.0.0.0/0"]
@@ -105,7 +105,8 @@ resource "kubernetes_namespace" "ingress-nginx" {
 
   metadata {
     labels = {
-      name = local.ingress-nginx["namespace"]
+      name                               = local.ingress-nginx["namespace"]
+      "${local.labels_prefix}/component" = "ingress"
     }
 
     name = local.ingress-nginx["namespace"]
@@ -212,9 +213,12 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
         protocol = "TCP"
       }
 
-      from {
-        ip_block {
-          cidr = local.ingress-nginx["ingress_cidr"]
+      dynamic "from" {
+        for_each = local.ingress-nginx["ingress_cidrs"]
+        content {
+          ip_block {
+            cidr = from.value
+          }
         }
       }
     }
@@ -224,7 +228,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
 }
 
 resource "kubernetes_network_policy" "ingress-nginx_allow_monitoring" {
-  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-monitoring"
@@ -244,7 +248,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }

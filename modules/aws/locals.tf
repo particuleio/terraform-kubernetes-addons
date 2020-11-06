@@ -1,5 +1,7 @@
 locals {
 
+  labels_prefix = var.labels_prefix != "" ? var.labels_prefix : "particule.io"
+
   helm_defaults_defaults = {
     atomic                = false
     cleanup_on_fail       = false

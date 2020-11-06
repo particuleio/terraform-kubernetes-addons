@@ -199,7 +199,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_namespace" {
 }
 
 resource "kubernetes_network_policy" "cert-manager_allow_monitoring" {
-  count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-monitoring"

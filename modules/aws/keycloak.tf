@@ -109,7 +109,7 @@ resource "kubernetes_network_policy" "keycloak_allow_namespace" {
 }
 
 resource "kubernetes_network_policy" "keycloak_allow_monitoring" {
-  count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-allow-monitoring"
@@ -129,7 +129,38 @@ resource "kubernetes_network_policy" "keycloak_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "keycloak_allow_ingress" {
+  count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+      match_expressions {
+        key      = "app.kubernetes.io/name"
+        operator = "In"
+        values   = ["keycloak"]
+      }
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "${local.labels_prefix}/component" = "ingress"
           }
         }
       }

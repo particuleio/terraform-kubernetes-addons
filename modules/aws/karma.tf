@@ -107,12 +107,12 @@ resource "kubernetes_network_policy" "karma_allow_namespace" {
   }
 }
 
-resource "kubernetes_network_policy" "karma_allow_ingress_nginx" {
+resource "kubernetes_network_policy" "karma_allow_ingress" {
   count = local.karma["enabled"] && local.karma["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "karma-allow-ingress-nginx"
-    namespace = local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.karma.*.metadata.0.name[count.index]}-allow-ingress-karma"
+    namespace = local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : local.karma["namespace"]
   }
 
   spec {
@@ -128,7 +128,7 @@ resource "kubernetes_network_policy" "karma_allow_ingress_nginx" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "ingress"
           }
         }
       }

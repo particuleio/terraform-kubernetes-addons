@@ -94,6 +94,18 @@ variable "kong" {
   default     = {}
 }
 
+variable "kube-prometheus-stack" {
+  description = "Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "labels_prefix" {
+  description = "Custom label prefix used for network policy namespace matching"
+  type        = string
+  default     = "particule.io"
+}
+
 variable "metrics-server" {
   description = "Customize metrics-server chart, see `metrics_server.tf` for supported values"
   type        = any
@@ -120,12 +132,6 @@ variable "priority-class" {
 
 variable "priority-class-ds" {
   description = "Customize a priority class for addons daemonsets"
-  type        = any
-  default     = {}
-}
-
-variable "kube-prometheus-stack" {
-  description = "Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values"
   type        = any
   default     = {}
 }

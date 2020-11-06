@@ -65,7 +65,8 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
 
   metadata {
     labels = {
-      name = local.kube-prometheus-stack["namespace"]
+      name                               = local.kube-prometheus-stack["namespace"]
+      "${local.labels_prefix}/component" = "monitoring"
     }
 
     name = local.kube-prometheus-stack["namespace"]
@@ -147,11 +148,11 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_namespace" {
   }
 }
 
-resource "kubernetes_network_policy" "kube-prometheus-stack_allow_ingress_nginx" {
-  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["default_network_policy"] && local.ingress-nginx["enabled"] ? 1 : 0
+resource "kubernetes_network_policy" "kube-prometheus-stack_allow_ingress" {
+  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]}-allow-ingress-nginx"
+    name      = "${kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]}-allow-ingress"
     namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
   }
 
@@ -168,7 +169,7 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_ingress_nginx"
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "ingress"
           }
         }
       }
