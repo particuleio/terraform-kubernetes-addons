@@ -1,1 +1,0 @@
-../../node-problem-detector.tf
