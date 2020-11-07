@@ -1,20 +1,16 @@
 module "kapsule-addons" {
-  source        = "../.."
+  source = "../.."
 
-  nginx_ingress = {
+  ingress-nginx = {
     enabled = true
   }
 
-  istio_operator = {
+  istio-operator = {
     enabled = true
   }
 
-  external_dns = {
+  external-dns = {
     enabled = true
-  }
-
-  metrics_server = {
-    enabled       = true
   }
 
   flux = {
@@ -30,9 +26,9 @@ module "kapsule-addons" {
       EXTRA_VALUES
   }
 
-  prometheus_operator = {
-    enabled       = true
-    extra_values  = <<-EXTRA_VALUES
+  prometheus-operator = {
+    enabled      = true
+    extra_values = <<-EXTRA_VALUES
       grafana:
         deploymentStrategy:
           type: Recreate
@@ -74,7 +70,7 @@ module "kapsule-addons" {
     enabled = true
   }
 
-  sealed_secrets = {
+  sealed-secrets = {
     enabled = true
   }
 
