@@ -6,6 +6,9 @@ on:
     - main
     paths:
     - 'modules/aws/**'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   terraform:
