@@ -10,12 +10,6 @@ variable "cluster-autoscaler" {
   default     = {}
 }
 
-variable "cni-metrics-helper" {
-  description = "Customize cni-metrics-helper deployment, see `cni-metrics-helper.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
 variable "cluster-name" {
   description = "Name of the Kubernetes cluster"
   default     = "sample-cluster"
