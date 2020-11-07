@@ -22,9 +22,9 @@ locals {
   values_ingress-nginx = <<VALUES
 controller:
   metrics:
-    enabled: ${local.prometheus_operator["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"]}
     serviceMonitor:
-      enabled: ${local.prometheus_operator["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"]}
   image:
     tag: ${local.ingress-nginx["version"]}
   updateStrategy:
@@ -32,7 +32,7 @@ controller:
   kind: "DaemonSet"
   publishService:
     enabled: true
-  priorityClassName: ${local.priority_class_ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
+  priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 podSecurityPolicy:
   enabled: true
 VALUES
