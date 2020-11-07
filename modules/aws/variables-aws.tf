@@ -28,6 +28,12 @@ variable "calico" {
   default     = {}
 }
 
+variable "cni-metrics-helper" {
+  description = "Customize cni-metrics-helper deployment, see `cni-metrics-helper.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "eks" {
   description = "EKS cluster inputs"
   type        = any
