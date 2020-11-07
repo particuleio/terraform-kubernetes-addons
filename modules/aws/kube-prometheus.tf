@@ -8,7 +8,7 @@ locals {
       repository             = "https://prometheus-community.github.io/helm-charts"
       enabled                = false
       chart_version          = "11.0.2"
-      allowed_cidr           = "0.0.0.0/0"
+      allowed_cidrs          = ["0.0.0.0/0"]
       default_network_policy = true
     },
     var.kube-prometheus-stack
