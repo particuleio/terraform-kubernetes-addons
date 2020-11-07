@@ -3,14 +3,14 @@ locals {
   external-dns = merge(
     local.helm_defaults,
     {
-      name                      	= "external-dns"
-      namespace                 	= "external-dns"
-      chart                     	= "external-dns"
-      repository                	= "https://charts.bitnami.com/bitnami"
-      service_account_name      	= "external-dns"
-      enabled                   	= false
+      name                        = "external-dns"
+      namespace                   = "external-dns"
+      chart                       = "external-dns"
+      repository                  = "https://charts.bitnami.com/bitnami"
+      service_account_name        = "external-dns"
+      enabled                     = false
       chart_version               = "3.7.0"
-      version                     = "0.7.4"
+      version                     = "0.7.4-debian-10-r29"
       default_network_policy      = true
       scw_access_key              = ""
       scw_secret_key              = ""

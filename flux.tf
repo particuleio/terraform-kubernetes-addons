@@ -3,15 +3,15 @@ locals {
   flux = merge(
     local.helm_defaults,
     {
-      name                      = "flux"
-      namespace                 = "flux"
-      chart                     = "flux"
-      repository                = "https://charts.fluxcd.io"
-      service_account_name      = "flux"
-      enabled                   = false
-      chart_version             = "1.5.0"
-      version                   = "1.20.2"
-      default_network_policy    = true
+      name                   = "flux"
+      namespace              = "flux"
+      chart                  = "flux"
+      repository             = "https://charts.fluxcd.io"
+      service_account_name   = "flux"
+      enabled                = false
+      chart_version          = "1.5.0"
+      version                = "1.20.2"
+      default_network_policy = true
     },
     var.flux
   )
