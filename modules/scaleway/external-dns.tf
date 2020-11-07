@@ -1,0 +1,156 @@
+locals {
+
+  external-dns = merge(
+    local.helm_defaults,
+    {
+      name                        = "external-dns"
+      namespace                   = "external-dns"
+      chart                       = "external-dns"
+      repository                  = "https://charts.bitnami.com/bitnami"
+      service_account_name        = "external-dns"
+      enabled                     = false
+      chart_version               = "3.7.0"
+      version                     = "0.7.4-debian-10-r29"
+      default_network_policy      = true
+      scw_access_key              = ""
+      scw_secret_key              = ""
+      scw_default_organization_id = ""
+    },
+    var.external-dns
+  )
+
+  values_external-dns = <<VALUES
+image:
+  tag: ${local.external-dns["version"]}
+provider: scaleway
+scaleway:
+  scwAccessKey: ${local.external-dns["scw_access_key"]}
+  scwSecretKey: ${local.external-dns["scw_secret_key"]}
+  scwDefaultOrganizationId: ${local.external-dns["scw_default_organization_id"]}
+txtPrefix: "ext-dns-"
+rbac:
+ create: true
+ pspEnabled: false
+metrics:
+  enabled: ${local.kube-prometheus-stack["enabled"]}
+  serviceMonitor:
+    enabled: ${local.kube-prometheus-stack["enabled"]}
+priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+VALUES
+}
+
+resource "kubernetes_namespace" "external-dns" {
+  count = local.external-dns["enabled"] ? 1 : 0
+
+  metadata {
+    labels = {
+      name = local.external-dns["namespace"]
+    }
+
+    name = local.external-dns["namespace"]
+  }
+}
+
+resource "helm_release" "external-dns" {
+  count                 = local.external-dns["enabled"] ? 1 : 0
+  repository            = local.external-dns["repository"]
+  name                  = local.external-dns["name"]
+  chart                 = local.external-dns["chart"]
+  version               = local.external-dns["chart_version"]
+  timeout               = local.external-dns["timeout"]
+  force_update          = local.external-dns["force_update"]
+  recreate_pods         = local.external-dns["recreate_pods"]
+  wait                  = local.external-dns["wait"]
+  atomic                = local.external-dns["atomic"]
+  cleanup_on_fail       = local.external-dns["cleanup_on_fail"]
+  dependency_update     = local.external-dns["dependency_update"]
+  disable_crd_hooks     = local.external-dns["disable_crd_hooks"]
+  disable_webhooks      = local.external-dns["disable_webhooks"]
+  render_subchart_notes = local.external-dns["render_subchart_notes"]
+  replace               = local.external-dns["replace"]
+  reset_values          = local.external-dns["reset_values"]
+  reuse_values          = local.external-dns["reuse_values"]
+  skip_crds             = local.external-dns["skip_crds"]
+  verify                = local.external-dns["verify"]
+  values = [
+    local.values_external-dns,
+    local.external-dns["extra_values"]
+  ]
+  namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+
+  depends_on = [
+    helm_release.kube-prometheus-stack
+  ]
+}
+
+resource "kubernetes_network_policy" "external-dns_default_deny" {
+  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "external-dns_allow_namespace" {
+  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            name = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
+  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      ports {
+        port     = "http"
+        protocol = "TCP"
+      }
+
+      from {
+        namespace_selector {
+          match_labels = {
+            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
