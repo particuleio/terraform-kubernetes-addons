@@ -12,11 +12,11 @@ locals {
       enabled                        = false
       chart_version                  = "v1.0.4"
       version                        = "v1.0.4"
-      iam_policy_override            = ""
+      iam_policy_override            = null
       default_network_policy         = true
       acme_email                     = "contact@acme.com"
       enable_default_cluster_issuers = false
-      allowed_cidr                   = "0.0.0.0/0"
+      allowed_cidrs                  = ["0.0.0.0/0"]
     },
     var.cert-manager
   )
@@ -52,12 +52,13 @@ module "iam_assumable_role_cert-manager" {
   role_policy_arns              = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? [aws_iam_policy.cert-manager[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.cert-manager["namespace"]}:${local.cert-manager["service_account_name"]}"]
+  tags                          = local.tags
 }
 
 resource "aws_iam_policy" "cert-manager" {
   count  = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.cert-manager["name"]}"
-  policy = local.cert-manager["iam_policy_override"] == "" ? data.aws_iam_policy_document.cert-manager.json : local.cert-manager["iam_policy_override"]
+  policy = local.cert-manager["iam_policy_override"] == null ? data.aws_iam_policy_document.cert-manager.json : local.cert-manager["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "cert-manager" {
