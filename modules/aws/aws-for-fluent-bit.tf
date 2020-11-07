@@ -12,7 +12,7 @@ locals {
       enabled                          = false
       chart_version                    = "0.1.5"
       version                          = "2.7.0"
-      iam_policy_override              = ""
+      iam_policy_override              = null
       default_network_policy           = true
       containers_log_retention_in_days = 180
     },
@@ -52,12 +52,13 @@ module "iam_assumable_role_aws-for-fluent-bit" {
   role_policy_arns              = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? [aws_iam_policy.aws-for-fluent-bit[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.aws-for-fluent-bit["namespace"]}:${local.aws-for-fluent-bit["service_account_name"]}"]
+  tags                          = local.tags
 }
 
 resource "aws_iam_policy" "aws-for-fluent-bit" {
   count  = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.aws-for-fluent-bit["name"]}"
-  policy = local.aws-for-fluent-bit["iam_policy_override"] == "" ? data.aws_iam_policy_document.aws-for-fluent-bit.json : local.aws-for-fluent-bit["iam_policy_override"]
+  policy = local.aws-for-fluent-bit["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-for-fluent-bit.json : local.aws-for-fluent-bit["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "aws-for-fluent-bit" {

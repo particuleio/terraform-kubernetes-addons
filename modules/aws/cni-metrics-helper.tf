@@ -4,7 +4,7 @@ locals {
       create_iam_resources_irsa = true
       enabled                   = false
       version                   = "v1.7.5"
-      iam_policy_override       = ""
+      iam_policy_override       = null
     },
     var.cni-metrics-helper
   )
@@ -19,12 +19,13 @@ module "iam_assumable_role_cni-metrics-helper" {
   role_policy_arns              = local.cni-metrics-helper["enabled"] && local.cni-metrics-helper["create_iam_resources_irsa"] ? [aws_iam_policy.cni-metrics-helper[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:cni-metrics-helper"]
+  tags                          = local.tags
 }
 
 resource "aws_iam_policy" "cni-metrics-helper" {
   count  = local.cni-metrics-helper["enabled"] && local.cni-metrics-helper["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-cni-metrics-helper"
-  policy = local.cni-metrics-helper["iam_policy_override"] == "" ? data.aws_iam_policy_document.cni-metrics-helper.json : local.cni-metrics-helper["iam_policy_override"]
+  policy = local.cni-metrics-helper["iam_policy_override"] == null ? data.aws_iam_policy_document.cni-metrics-helper.json : local.cni-metrics-helper["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "cni-metrics-helper" {

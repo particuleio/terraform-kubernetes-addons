@@ -59,7 +59,7 @@ variable "eks" {
 }
 
 variable "external-dns" {
-  description = "Customize external-dns chart, see `external_dns.tf` for supported values"
+  description = "Map of map for external-dns configuration: see `external_dns.tf` for supported values"
   type        = any
   default     = {}
 }
@@ -139,5 +139,11 @@ variable "priority-class-ds" {
 variable "sealed-secrets" {
   description = "Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values"
   type        = any
+  default     = {}
+}
+
+variable "tags" {
+  description = "Map of tags for AWS resources"
+  type        = map
   default     = {}
 }

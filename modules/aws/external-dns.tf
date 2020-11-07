@@ -8,10 +8,11 @@ locals {
       chart                     = "external-dns"
       repository                = "https://charts.bitnami.com/bitnami"
       service_account_name      = "external-dns"
+      enabled                   = false
       create_iam_resources_irsa = true
       chart_version             = "3.6.0"
       version                   = "0.7.4-debian-10-r29"
-      iam_policy_override       = ""
+      iam_policy_override       = null
       default_network_policy    = true
     },
     v,
@@ -48,18 +49,19 @@ module "iam_assumable_role_external-dns" {
   for_each                      = local.external-dns
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 3.0"
-  create_role                   = each.value["create_iam_resources_irsa"]
+  create_role                   = each.value["enabled"] && each.value["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${each.key}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = each.value["create_iam_resources_irsa"] ? [aws_iam_policy.external-dns[each.key].arn] : []
+  role_policy_arns              = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.external-dns[each.key].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${each.value["namespace"]}:${each.value["service_account_name"]}"]
+  tags                          = local.tags
 }
 
 resource "aws_iam_policy" "external-dns" {
-  for_each = { for k, v in local.external-dns : k => v if v["create_iam_resources_irsa"] }
+  for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
   name     = "tf-${var.cluster-name}-${each.key}"
-  policy   = each.value["iam_policy_override"] == "" ? data.aws_iam_policy_document.external-dns.json : each.value["iam_policy_override"]
+  policy   = each.value["iam_policy_override"] == null ? data.aws_iam_policy_document.external-dns.json : each.value["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "external-dns" {
@@ -87,7 +89,7 @@ data "aws_iam_policy_document" "external-dns" {
 }
 
 resource "kubernetes_namespace" "external-dns" {
-  for_each = local.external-dns
+  for_each = { for k, v in local.external-dns : k => v if v["enabled"] }
 
   metadata {
     labels = {
@@ -99,7 +101,7 @@ resource "kubernetes_namespace" "external-dns" {
 }
 
 resource "helm_release" "external-dns" {
-  for_each              = local.external-dns
+  for_each              = { for k, v in local.external-dns : k => v if v["enabled"] }
   repository            = each.value["repository"]
   name                  = each.value["name"]
   chart                 = each.value["chart"]
@@ -131,7 +133,7 @@ resource "helm_release" "external-dns" {
 }
 
 resource "kubernetes_network_policy" "external-dns_default_deny" {
-  for_each = { for k, v in local.external-dns : k => v if v["default_network_policy"] }
+  for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
 
   metadata {
     name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-default-deny"
@@ -146,7 +148,7 @@ resource "kubernetes_network_policy" "external-dns_default_deny" {
 }
 
 resource "kubernetes_network_policy" "external-dns_allow_namespace" {
-  for_each = { for k, v in local.external-dns : k => v if v["default_network_policy"] }
+  for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
 
   metadata {
     name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-namespace"
@@ -172,7 +174,7 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
 }
 
 resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
-  for_each = { for k, v in local.external-dns : k => v if v["default_network_policy"] }
+  for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
 
   metadata {
     name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-monitoring"

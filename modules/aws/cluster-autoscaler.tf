@@ -11,7 +11,7 @@ locals {
       enabled                   = false
       chart_version             = "1.1.0"
       version                   = "v1.18.3"
-      iam_policy_override       = ""
+      iam_policy_override       = null
       default_network_policy    = true
     },
     var.cluster-autoscaler
@@ -48,12 +48,13 @@ module "iam_assumable_role_cluster-autoscaler" {
   role_policy_arns              = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? [aws_iam_policy.cluster-autoscaler[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.cluster-autoscaler["namespace"]}:${local.cluster-autoscaler["service_account_name"]}"]
+  tags                          = local.tags
 }
 
 resource "aws_iam_policy" "cluster-autoscaler" {
   count  = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.cluster-autoscaler["name"]}"
-  policy = local.cluster-autoscaler["iam_policy_override"] == "" ? data.aws_iam_policy_document.cluster-autoscaler.json : local.cluster-autoscaler["iam_policy_override"]
+  policy = local.cluster-autoscaler["iam_policy_override"] == null ? data.aws_iam_policy_document.cluster-autoscaler.json : local.cluster-autoscaler["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "cluster-autoscaler" {

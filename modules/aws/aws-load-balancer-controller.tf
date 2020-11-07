@@ -11,7 +11,7 @@ locals {
       enabled                   = false
       chart_version             = "1.0.5"
       version                   = "v2.0.0"
-      iam_policy_override       = ""
+      iam_policy_override       = null
       default_network_policy    = true
     },
     var.aws-load-balancer-controller
@@ -38,12 +38,13 @@ module "iam_assumable_role_aws-load-balancer-controller" {
   role_policy_arns              = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? [aws_iam_policy.aws-load-balancer-controller[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.aws-load-balancer-controller["namespace"]}:${local.aws-load-balancer-controller["service_account_name"]}"]
+  tags                          = local.tags
 }
 
 resource "aws_iam_policy" "aws-load-balancer-controller" {
   count  = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.aws-load-balancer-controller["name"]}"
-  policy = local.aws-load-balancer-controller["iam_policy_override"] == "" ? file("${path.module}/iam/aws-load-balancer-controller.json") : local.aws-load-balancer-controller["iam_policy_override"]
+  policy = local.aws-load-balancer-controller["iam_policy_override"] == null ? file("${path.module}/iam/aws-load-balancer-controller.json") : local.aws-load-balancer-controller["iam_policy_override"]
 }
 
 resource "kubernetes_namespace" "aws-load-balancer-controller" {
