@@ -1,5 +1,5 @@
 locals {
-  istio_operator = merge(
+  istio-operator = merge(
     local.helm_defaults,
     {
       name                   = "istio-operator"
@@ -8,64 +8,64 @@ locals {
       repository             = "https://clusterfrak-dynamics.github.io/istio/"
       enabled                = false
       chart_version          = "1.7.0"
-      version                = "1.7.0"
+      version                = "1.7.4"
       default_network_policy = true
     },
-    var.istio_operator
+    var.istio-operator
   )
 
-  values_istio_operator = <<VALUES
+  values_istio-operator = <<VALUES
 hub: istio
-tag: ${local.istio_operator["version"]}-distroless
+tag: ${local.istio-operator["version"]}-distroless
 VALUES
 }
 
-resource "kubernetes_namespace" "istio_operator" {
-  count = local.istio_operator["enabled"] ? 1 : 0
+resource "kubernetes_namespace" "istio-operator" {
+  count = local.istio-operator["enabled"] ? 1 : 0
 
   metadata {
     labels = {
-      name = local.istio_operator["namespace"]
+      name = local.istio-operator["namespace"]
     }
 
-    name = local.istio_operator["namespace"]
+    name = local.istio-operator["namespace"]
   }
 }
 
-resource "helm_release" "istio_operator" {
-  count                 = local.istio_operator["enabled"] ? 1 : 0
-  repository            = local.istio_operator["repository"]
-  name                  = local.istio_operator["name"]
-  chart                 = local.istio_operator["chart"]
-  version               = local.istio_operator["chart_version"]
-  timeout               = local.istio_operator["timeout"]
-  force_update          = local.istio_operator["force_update"]
-  recreate_pods         = local.istio_operator["recreate_pods"]
-  wait                  = local.istio_operator["wait"]
-  atomic                = local.istio_operator["atomic"]
-  cleanup_on_fail       = local.istio_operator["cleanup_on_fail"]
-  dependency_update     = local.istio_operator["dependency_update"]
-  disable_crd_hooks     = local.istio_operator["disable_crd_hooks"]
-  disable_webhooks      = local.istio_operator["disable_webhooks"]
-  render_subchart_notes = local.istio_operator["render_subchart_notes"]
-  replace               = local.istio_operator["replace"]
-  reset_values          = local.istio_operator["reset_values"]
-  reuse_values          = local.istio_operator["reuse_values"]
-  skip_crds             = local.istio_operator["skip_crds"]
-  verify                = local.istio_operator["verify"]
+resource "helm_release" "istio-operator" {
+  count                 = local.istio-operator["enabled"] ? 1 : 0
+  repository            = local.istio-operator["repository"]
+  name                  = local.istio-operator["name"]
+  chart                 = local.istio-operator["chart"]
+  version               = local.istio-operator["chart_version"]
+  timeout               = local.istio-operator["timeout"]
+  force_update          = local.istio-operator["force_update"]
+  recreate_pods         = local.istio-operator["recreate_pods"]
+  wait                  = local.istio-operator["wait"]
+  atomic                = local.istio-operator["atomic"]
+  cleanup_on_fail       = local.istio-operator["cleanup_on_fail"]
+  dependency_update     = local.istio-operator["dependency_update"]
+  disable_crd_hooks     = local.istio-operator["disable_crd_hooks"]
+  disable_webhooks      = local.istio-operator["disable_webhooks"]
+  render_subchart_notes = local.istio-operator["render_subchart_notes"]
+  replace               = local.istio-operator["replace"]
+  reset_values          = local.istio-operator["reset_values"]
+  reuse_values          = local.istio-operator["reuse_values"]
+  skip_crds             = local.istio-operator["skip_crds"]
+  verify                = local.istio-operator["verify"]
   values = [
-    local.values_istio_operator,
-    local.istio_operator["extra_values"]
+    local.values_istio-operator,
+    local.istio-operator["extra_values"]
   ]
-  namespace = kubernetes_namespace.istio_operator.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
 }
 
-resource "kubernetes_network_policy" "istio_operator_default_deny" {
-  count = local.istio_operator["enabled"] && local.istio_operator["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "istio-operator_default_deny" {
+  count = local.istio-operator["enabled"] && local.istio-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.istio_operator.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.istio_operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -75,12 +75,12 @@ resource "kubernetes_network_policy" "istio_operator_default_deny" {
   }
 }
 
-resource "kubernetes_network_policy" "istio_operator_allow_namespace" {
-  count = local.istio_operator["enabled"] && local.istio_operator["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "istio-operator_allow_namespace" {
+  count = local.istio-operator["enabled"] && local.istio-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.istio_operator.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.istio_operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -91,7 +91,7 @@ resource "kubernetes_network_policy" "istio_operator_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.istio_operator.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
           }
         }
       }

@@ -1,6 +1,6 @@
 locals {
 
-  sealed_secrets = merge(
+  sealed-secrets = merge(
     local.helm_defaults,
     {
       name                   = "sealed-secrets"
@@ -8,69 +8,69 @@ locals {
       chart                  = "sealed-secrets"
       repository             = "https://kubernetes-charts.storage.googleapis.com/"
       enabled                = false
-      chart_version          = "1.10.3"
-      version                = "v0.12.4"
+      chart_version          = "1.12.0"
+      version                = "v0.13.1"
       default_network_policy = true
     },
-    var.sealed_secrets
+    var.sealed-secrets
   )
 
-  values_sealed_secrets = <<VALUES
+  values_sealed-secrets = <<VALUES
 rbac:
   pspEnabled: true
 image:
-  tag: ${local.sealed_secrets["version"]}
-priorityClassName: ${local.priority_class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+  tag: ${local.sealed-secrets["version"]}
+priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 VALUES
 
 }
 
-resource "kubernetes_namespace" "sealed_secrets" {
-  count = local.sealed_secrets["enabled"] ? 1 : 0
+resource "kubernetes_namespace" "sealed-secrets" {
+  count = local.sealed-secrets["enabled"] ? 1 : 0
 
   metadata {
     labels = {
-      name = local.sealed_secrets["namespace"]
+      name = local.sealed-secrets["namespace"]
     }
 
-    name = local.sealed_secrets["namespace"]
+    name = local.sealed-secrets["namespace"]
   }
 }
 
-resource "helm_release" "sealed_secrets" {
-  count                 = local.sealed_secrets["enabled"] ? 1 : 0
-  repository            = local.sealed_secrets["repository"]
-  name                  = local.sealed_secrets["name"]
-  chart                 = local.sealed_secrets["chart"]
-  version               = local.sealed_secrets["chart_version"]
-  timeout               = local.sealed_secrets["timeout"]
-  force_update          = local.sealed_secrets["force_update"]
-  recreate_pods         = local.sealed_secrets["recreate_pods"]
-  wait                  = local.sealed_secrets["wait"]
-  atomic                = local.sealed_secrets["atomic"]
-  cleanup_on_fail       = local.sealed_secrets["cleanup_on_fail"]
-  dependency_update     = local.sealed_secrets["dependency_update"]
-  disable_crd_hooks     = local.sealed_secrets["disable_crd_hooks"]
-  disable_webhooks      = local.sealed_secrets["disable_webhooks"]
-  render_subchart_notes = local.sealed_secrets["render_subchart_notes"]
-  replace               = local.sealed_secrets["replace"]
-  reset_values          = local.sealed_secrets["reset_values"]
-  reuse_values          = local.sealed_secrets["reuse_values"]
-  skip_crds             = local.sealed_secrets["skip_crds"]
-  verify                = local.sealed_secrets["verify"]
+resource "helm_release" "sealed-secrets" {
+  count                 = local.sealed-secrets["enabled"] ? 1 : 0
+  repository            = local.sealed-secrets["repository"]
+  name                  = local.sealed-secrets["name"]
+  chart                 = local.sealed-secrets["chart"]
+  version               = local.sealed-secrets["chart_version"]
+  timeout               = local.sealed-secrets["timeout"]
+  force_update          = local.sealed-secrets["force_update"]
+  recreate_pods         = local.sealed-secrets["recreate_pods"]
+  wait                  = local.sealed-secrets["wait"]
+  atomic                = local.sealed-secrets["atomic"]
+  cleanup_on_fail       = local.sealed-secrets["cleanup_on_fail"]
+  dependency_update     = local.sealed-secrets["dependency_update"]
+  disable_crd_hooks     = local.sealed-secrets["disable_crd_hooks"]
+  disable_webhooks      = local.sealed-secrets["disable_webhooks"]
+  render_subchart_notes = local.sealed-secrets["render_subchart_notes"]
+  replace               = local.sealed-secrets["replace"]
+  reset_values          = local.sealed-secrets["reset_values"]
+  reuse_values          = local.sealed-secrets["reuse_values"]
+  skip_crds             = local.sealed-secrets["skip_crds"]
+  verify                = local.sealed-secrets["verify"]
   values = [
-    local.values_sealed_secrets,
-    local.sealed_secrets["extra_values"]
+    local.values_sealed-secrets,
+    local.sealed-secrets["extra_values"]
   ]
-  namespace = kubernetes_namespace.sealed_secrets.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.sealed-secrets.*.metadata.0.name[count.index]
 }
 
-resource "kubernetes_network_policy" "sealed_secrets_default_deny" {
-  count = local.sealed_secrets["enabled"] && local.sealed_secrets["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "sealed-secrets_default_deny" {
+  count = local.sealed-secrets["enabled"] && local.sealed-secrets["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.sealed_secrets.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.sealed_secrets.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.sealed-secrets.*.metadata.0.name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.sealed-secrets.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -80,12 +80,12 @@ resource "kubernetes_network_policy" "sealed_secrets_default_deny" {
   }
 }
 
-resource "kubernetes_network_policy" "sealed_secrets_allow_namespace" {
-  count = local.sealed_secrets["enabled"] && local.sealed_secrets["default_network_policy"] ? 1 : 0
+resource "kubernetes_network_policy" "sealed-secrets_allow_namespace" {
+  count = local.sealed-secrets["enabled"] && local.sealed-secrets["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.sealed_secrets.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.sealed_secrets.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.sealed-secrets.*.metadata.0.name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.sealed-secrets.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -96,7 +96,7 @@ resource "kubernetes_network_policy" "sealed_secrets_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.sealed_secrets.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.sealed-secrets.*.metadata.0.name[count.index]
           }
         }
       }

@@ -5,9 +5,9 @@ locals {
       name                   = "node-problem-detector"
       namespace              = "node-problem-detector"
       chart                  = "node-problem-detector"
-      repository             = "https://kubernetes-charts.storage.googleapis.com/"
+      repository             = "https://charts.deliveryhero.io/"
       enabled                = false
-      chart_version          = "1.7.1"
+      chart_version          = "1.8.0"
       version                = "v0.8.1"
       default_network_policy = true
     },
@@ -19,12 +19,12 @@ rbac:
   pspEnabled: true
 image:
   tag: ${local.npd["version"]}
-priorityClassName: ${local.priority_class_ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
+priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 VALUES
 
 }
 
-resource "kubernetes_namespace" "node_problem_detector" {
+resource "kubernetes_namespace" "node-problem-detector" {
   count = local.npd["enabled"] ? 1 : 0
 
   metadata {
@@ -36,7 +36,7 @@ resource "kubernetes_namespace" "node_problem_detector" {
   }
 }
 
-resource "helm_release" "node_problem_detector" {
+resource "helm_release" "node-problem-detector" {
   count                 = local.npd["enabled"] ? 1 : 0
   repository            = local.npd["repository"]
   name                  = local.npd["name"]
@@ -61,15 +61,15 @@ resource "helm_release" "node_problem_detector" {
     local.values_npd,
     local.npd["extra_values"]
   ]
-  namespace = kubernetes_namespace.node_problem_detector.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.node-problem-detector.*.metadata.0.name[count.index]
 }
 
 resource "kubernetes_network_policy" "npd_default_deny" {
   count = local.npd["enabled"] && local.npd["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.node_problem_detector.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.node_problem_detector.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.node-problem-detector.*.metadata.0.name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.node-problem-detector.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -83,8 +83,8 @@ resource "kubernetes_network_policy" "npd_allow_namespace" {
   count = local.npd["enabled"] && local.npd["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.node_problem_detector.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.node_problem_detector.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.node-problem-detector.*.metadata.0.name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.node-problem-detector.*.metadata.0.name[count.index]
   }
 
   spec {
@@ -95,7 +95,7 @@ resource "kubernetes_network_policy" "npd_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.node_problem_detector.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.node-problem-detector.*.metadata.0.name[count.index]
           }
         }
       }

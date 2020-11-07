@@ -5,11 +5,11 @@ locals {
       name                   = "karma"
       namespace              = "monitoring"
       chart                  = "karma"
-      repository             = "https://kubernetes-charts.storage.googleapis.com/"
+      repository             = "https://charts.helm.sh/stable"
       create_ns              = false
       enabled                = false
-      chart_version          = "1.5.2"
-      version                = "v0.68"
+      chart_version          = "1.7.0"
+      version                = "v0.72"
       default_network_policy = true
     },
     var.karma
@@ -62,7 +62,7 @@ resource "helm_release" "karma" {
   namespace = local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : local.karma["namespace"]
 
   depends_on = [
-    helm_release.prometheus_operator
+    helm_release.kube-prometheus-stack
   ]
 }
 
@@ -107,12 +107,12 @@ resource "kubernetes_network_policy" "karma_allow_namespace" {
   }
 }
 
-resource "kubernetes_network_policy" "karma_allow_ingress_nginx" {
+resource "kubernetes_network_policy" "karma_allow_ingress" {
   count = local.karma["enabled"] && local.karma["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "karma-allow-ingress-nginx"
-    namespace = local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : kubernetes_namespace.prometheus_operator.*.metadata.0.name[count.index]
+    name      = "${local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : local.karma["namespace"]}-allow-ingress-karma"
+    namespace = local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : local.karma["namespace"]
   }
 
   spec {
@@ -128,7 +128,7 @@ resource "kubernetes_network_policy" "karma_allow_ingress_nginx" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.nginx_ingress.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "ingress"
           }
         }
       }

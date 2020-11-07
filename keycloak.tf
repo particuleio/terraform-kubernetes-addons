@@ -6,9 +6,8 @@ locals {
       namespace              = "keycloak"
       chart                  = "keycloak"
       repository             = "https://codecentric.github.io/helm-charts"
-      prometheus_plugin      = true
       enabled                = false
-      chart_version          = "9.0.6"
+      chart_version          = "9.5.0"
       version                = "11.0.2"
       default_network_policy = true
     },
@@ -18,38 +17,9 @@ locals {
   values_keycloak = <<VALUES
 image:
   tag: ${local.keycloak["version"]}
-prometheus:
-  operator:
-    enabled: ${local.prometheus_operator["enabled"]}
-    prometheusRules:
-      enabled: ${local.prometheus_operator["enabled"]}
-keycloak:
-  priorityClassName: ${local.priority_class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-VALUES
-
-  values_keycloak_prometheus = <<VALUES
-extraInitContainers: |
-  - name: extensions
-    image: busybox
-    imagePullPolicy: IfNotPresent
-    command:
-      - sh
-    args:
-      - -c
-      - |
-        echo "Copying extensions..."
-        wget -O /deployments/keycloak-metrics-spi.jar https://github.com/aerogear/keycloak-metrics-spi/releases/download/2.0.1/keycloak-metrics-spi-2.0.1.jar
-    volumeMounts:
-      - name: deployments
-        mountPath: /deployments
-
-extraVolumeMounts: |
-  - name: deployments
-    mountPath: /opt/jboss/keycloak/standalone/deployments
-
-extraVolumes: |
-  - name: deployments
-    emptyDir: {}
+serviceMonitor:
+    enabled: ${local.kube-prometheus-stack["enabled"]}
+priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 VALUES
 }
 
@@ -88,13 +58,12 @@ resource "helm_release" "keycloak" {
   verify                = local.keycloak["verify"]
   values = [
     local.values_keycloak,
-    local.keycloak["prometheus_plugin"] ? local.values_keycloak_prometheus : "",
     local.keycloak["extra_values"]
   ]
   namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.prometheus_operator
+    helm_release.kube-prometheus-stack
   ]
 }
 
@@ -140,7 +109,7 @@ resource "kubernetes_network_policy" "keycloak_allow_namespace" {
 }
 
 resource "kubernetes_network_policy" "keycloak_allow_monitoring" {
-  count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] && local.prometheus_operator["enabled"] ? 1 : 0
+  count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-allow-monitoring"
@@ -153,14 +122,45 @@ resource "kubernetes_network_policy" "keycloak_allow_monitoring" {
 
     ingress {
       ports {
-        port     = "8080"
+        port     = "9990"
         protocol = "TCP"
       }
 
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.prometheus_operator.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "keycloak_allow_ingress" {
+  count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+      match_expressions {
+        key      = "app.kubernetes.io/name"
+        operator = "In"
+        values   = ["keycloak"]
+      }
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "${local.labels_prefix}/component" = "ingress"
           }
         }
       }
