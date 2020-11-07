@@ -1,0 +1,58 @@
+name: 'terraform:generic'
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - '*.tf'
+    - '.github/workflows/terraform-generic.yml'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: 'terraform:generic'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init -backend=false
+
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    - name: Terraform Validate
+      run: terraform validate
+
+#    - name: Semantic Release
+#      uses: cycjimmy/semantic-release-action@v2
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      if: github.ref == 'refs/heads/master'
+
+    - name: 'slack:success'
+      if: success()
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      uses: voxmedia/github-action-slack-notify-build@v1
+      with:
+        channel: notifications
+        status: SUCCESS
+        color: good
+
+    - name: 'slack:failure'
+      if: failure()
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      uses: voxmedia/github-action-slack-notify-build@v1
+      with:
+        channel: notifications
+        status: failure
+        color: danger
