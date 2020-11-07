@@ -6,6 +6,10 @@ on:
     - main
     paths:
     - 'modules/scaleway/**'
+    - '.github/workflows/terraform-scaleway.yml'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   terraform:
