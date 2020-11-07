@@ -6,6 +6,7 @@ on:
     - main
     paths:
     - 'modules/aws/**'
+    - '.github/workflows/terraform-aws.yml'
   pull_request:
     branches:
       - main
