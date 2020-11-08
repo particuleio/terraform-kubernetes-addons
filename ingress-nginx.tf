@@ -7,8 +7,6 @@ locals {
       namespace              = "ingress-nginx"
       chart                  = "ingress-nginx"
       repository             = "https://kubernetes.github.io/ingress-nginx"
-      use_nlb                = false
-      use_l7                 = false
       enabled                = false
       default_network_policy = true
       ingress_cidrs          = ["0.0.0.0/0"]
@@ -34,9 +32,8 @@ controller:
     enabled: true
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 podSecurityPolicy:
-  enabled: true
+  enabled: false
 VALUES
-
 
 }
 
@@ -145,11 +142,11 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
 
     ingress {
       ports {
-        port     = "80"
+        port     = "http"
         protocol = "TCP"
       }
       ports {
-        port     = "443"
+        port     = "https"
         protocol = "TCP"
       }
 
@@ -217,7 +214,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
 
     ingress {
       ports {
-        port     = "8443"
+        port     = "webhook"
         protocol = "TCP"
       }
 

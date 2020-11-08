@@ -9,9 +9,9 @@ locals {
       repository             = "https://kubernetes.github.io/ingress-nginx"
       enabled                = false
       default_network_policy = true
-      ingress_cidr           = "0.0.0.0/0"
-      chart_version          = "2.15.0"
-      version                = "0.35.0"
+      ingress_cidrs          = ["0.0.0.0/0"]
+      chart_version          = "3.8.0"
+      version                = "0.41.0"
       allowed_cidrs          = ["0.0.0.0/0"]
     },
     var.ingress-nginx
@@ -148,17 +148,20 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
 
     ingress {
       ports {
-        port     = "80"
+        port     = "http"
         protocol = "TCP"
       }
       ports {
-        port     = "443"
+        port     = "https"
         protocol = "TCP"
       }
 
-      from {
-        ip_block {
-          cidr = local.ingress-nginx["ingress_cidr"]
+      dynamic "from" {
+        for_each = local.ingress-nginx["ingress_cidrs"]
+        content {
+          ip_block {
+            cidr = from.value
+          }
         }
       }
     }
@@ -168,7 +171,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
 }
 
 resource "kubernetes_network_policy" "ingress-nginx_allow_monitoring" {
-  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-monitoring"
@@ -188,7 +191,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }
@@ -217,7 +220,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
 
     ingress {
       ports {
-        port     = "8443"
+        port     = "webhook"
         protocol = "TCP"
       }
 
