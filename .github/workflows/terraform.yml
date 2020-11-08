@@ -146,6 +146,11 @@ jobs:
 
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
+      with:
+        branches: |
+          [
+            'main'
+          ]
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       if: github.ref == 'refs/heads/main'
