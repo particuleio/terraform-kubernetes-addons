@@ -117,11 +117,6 @@ resource "kubernetes_network_policy" "karma_allow_ingress" {
 
   spec {
     pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["karma"]
-      }
     }
 
     ingress {

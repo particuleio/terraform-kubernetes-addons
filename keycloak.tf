@@ -149,11 +149,6 @@ resource "kubernetes_network_policy" "keycloak_allow_ingress" {
 
   spec {
     pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["keycloak"]
-      }
     }
 
     ingress {

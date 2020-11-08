@@ -152,11 +152,6 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_ingress" {
 
   spec {
     pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["grafana"]
-      }
     }
 
     ingress {
