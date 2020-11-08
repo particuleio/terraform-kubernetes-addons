@@ -91,7 +91,7 @@ resource "helm_release" "cert-manager" {
 }
 
 data "kubectl_path_documents" "cert-manager_cluster_issuers" {
-  pattern = "./templates/cert-manager-cluster-issuers.yaml"
+  pattern = "${path.module}/templates/cert-manager-cluster-issuers.yaml"
   vars = {
     acme_email    = local.cert-manager["acme_email"]
     ingress_class = local.cert-manager["cluster_issuers_ingress_class"]
@@ -196,7 +196,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_control_plane" {
   spec {
     pod_selector {
       match_expressions {
-        key      = "app"
+        key      = "app.kubernetes.io/name"
         operator = "In"
         values   = ["webhook"]
       }
