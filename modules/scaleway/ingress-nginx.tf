@@ -31,6 +31,7 @@ controller:
   service:
     annotations:
       service.beta.kubernetes.io/scw-loadbalancer-proxy-protocol-v2: 'true'
+      service.beta.kubernetes.io/scw-loadbalancer-use-hostname: 'true'
   publishService:
     enabled: true
   config:
