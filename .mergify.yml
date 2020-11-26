@@ -3,10 +3,10 @@ pull_request_rules:
     conditions:
       - "approved-reviews-by>=1"
       - "check-success=Semantic Pull Request"
-      - "check-success=terraform-kubernetes-addons / linter (pull_request)"
-      - "check-success=terraform-kubernetes-addons / terraform:generic (pull_request)"
-      - "check-success=terraform-kubernetes-addons / terraform:aws (pull_request)"
-      - "check-success=terraform-kubernetes-addons / terraform:scaleway (pull_request)"
+      - "check-success=linter"
+      - "check-success=terraform:generic"
+      - "check-success=terraform:aws"
+      - "check-success=terraform:scaleway"
     actions:
       merge:
         method: merge
