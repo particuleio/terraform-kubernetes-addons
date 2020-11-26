@@ -48,6 +48,7 @@ Scaleway.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | cert-manager | Customize cert-manager chart, see `cert-manager.tf` for supported values | `any` | `{}` | no |
+| cert-manager\_scaleway\_webhook\_dns | Scaleway webhook dns customization | `any` | `{}` | no |
 | cluster-autoscaler | Customize cluster-autoscaler chart, see `cluster-autoscaler.tf` for supported values | `any` | `{}` | no |
 | cluster-name | Name of the Kubernetes cluster | `string` | `"sample-cluster"` | no |
 | external-dns | Map of map for external-dns configuration: see `external_dns.tf` for supported values | `any` | `{}` | no |
