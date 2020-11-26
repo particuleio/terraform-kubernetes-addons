@@ -1,6 +1,12 @@
 module "kapsule-addons" {
   source = "../.."
 
+  scaleway = {
+    scw_access_key              = "SCWX0000000000000000"
+    scw_secret_key              = "7515164c-2e75-11eb-adc1-0242ac120002"
+    scw_default_organization_id = "7515164c-2e75-11eb-adc1-0242ac120002"
+  }
+
   ingress-nginx = {
     enabled = true
   }
@@ -12,6 +18,16 @@ module "kapsule-addons" {
   external-dns = {
     enabled = true
   }
+
+  cert-manager = {
+    enabled = true
+    enable_default_cluster_issuers = true
+  }
+
+  scaleway_webhook_dns = {
+    enabled = true
+  }
+
 
   flux = {
     enabled      = true

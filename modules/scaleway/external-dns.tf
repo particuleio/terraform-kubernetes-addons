@@ -3,18 +3,15 @@ locals {
   external-dns = merge(
     local.helm_defaults,
     {
-      name                        = "external-dns"
-      namespace                   = "external-dns"
-      chart                       = "external-dns"
-      repository                  = "https://charts.bitnami.com/bitnami"
-      service_account_name        = "external-dns"
-      enabled                     = false
-      chart_version               = "3.7.0"
-      version                     = "0.7.4-debian-10-r29"
-      default_network_policy      = true
-      scw_access_key              = ""
-      scw_secret_key              = ""
-      scw_default_organization_id = ""
+      name                   = "external-dns"
+      namespace              = "external-dns"
+      chart                  = "external-dns"
+      repository             = "https://charts.bitnami.com/bitnami"
+      service_account_name   = "external-dns"
+      enabled                = false
+      chart_version          = "3.7.0"
+      version                = "0.7.4-debian-10-r29"
+      default_network_policy = true
     },
     var.external-dns
   )
@@ -24,9 +21,9 @@ image:
   tag: ${local.external-dns["version"]}
 provider: scaleway
 scaleway:
-  scwAccessKey: ${local.external-dns["scw_access_key"]}
-  scwSecretKey: ${local.external-dns["scw_secret_key"]}
-  scwDefaultOrganizationId: ${local.external-dns["scw_default_organization_id"]}
+  scwAccessKey: ${local.scaleway["scw_access_key"]}
+  scwSecretKey: ${local.scaleway["scw_secret_key"]}
+  scwDefaultOrganizationId: ${local.scaleway["scw_default_organization_id"]}
 txtPrefix: "ext-dns-"
 rbac:
  create: true
