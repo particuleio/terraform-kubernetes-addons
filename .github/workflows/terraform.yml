@@ -33,7 +33,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: notifications
+        channel: ${{ secrets.SLACK_CHANNEL }}
         status: failure
         color: danger
 
@@ -62,7 +62,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: notifications
+        channel: ${{ secrets.SLACK_CHANNEL }}
         status: failure
         color: danger
 
@@ -96,7 +96,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: notifications
+        channel: ${{ secrets.SLACK_CHANNEL }}
         status: failure
         color: danger
 
@@ -128,7 +128,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: notifications
+        channel: ${{ secrets.SLACK_CHANNEL }}
         status: failure
         color: danger
 
@@ -161,7 +161,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: notifications
+        channel: ${{ secrets.SLACK_CHANNEL }}
         status: SUCCESS
         color: good
 
@@ -171,6 +171,6 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: notifications
+        channel: ${{ secrets.SLACK_CHANNEL }}
         status: failure
         color: danger
