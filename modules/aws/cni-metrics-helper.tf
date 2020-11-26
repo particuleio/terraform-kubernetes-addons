@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "cni-metrics-helper" {
 
 resource "kubectl_manifest" "cni-metrics-helper" {
   count = local.cni-metrics-helper["enabled"] ? 1 : 0
-  yaml_body = templatefile("${path.module}/templates/cni-metrics-helper.yaml", {
+  yaml_body = templatefile("${path.module}/templates/cni-metrics-helper.yaml.tpl", {
     cni-metrics-helper_role_arn_irsa = local.cni-metrics-helper["create_iam_resources_irsa"] ? module.iam_assumable_role_cni-metrics-helper.this_iam_role_arn : ""
     cni-metrics-helper_version       = local.cni-metrics-helper["version"]
   })

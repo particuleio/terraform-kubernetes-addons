@@ -3,20 +3,22 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                           = "cert-manager"
-      namespace                      = "cert-manager"
-      chart                          = "cert-manager"
-      repository                     = "https://charts.jetstack.io"
-      service_account_name           = "cert-manager"
-      create_iam_resources_irsa      = true
-      enabled                        = false
-      chart_version                  = "v1.0.4"
-      version                        = "v1.0.4"
-      iam_policy_override            = null
-      default_network_policy         = true
-      acme_email                     = "contact@acme.com"
-      enable_default_cluster_issuers = false
-      allowed_cidrs                  = ["0.0.0.0/0"]
+      name                      = "cert-manager"
+      namespace                 = "cert-manager"
+      chart                     = "cert-manager"
+      repository                = "https://charts.jetstack.io"
+      service_account_name      = "cert-manager"
+      create_iam_resources_irsa = true
+      enabled                   = false
+      chart_version             = "v1.0.4"
+      version                   = "v1.0.4"
+      iam_policy_override       = null
+      default_network_policy    = true
+      acme_email                = "contact@acme.com"
+      acme_http01_enabled       = true
+      acme_http01_ingress_class = ""
+      acme_dns01_enabled        = true
+      allowed_cidrs             = ["0.0.0.0/0"]
     },
     var.cert-manager
   )
@@ -145,10 +147,13 @@ resource "helm_release" "cert-manager" {
 }
 
 data "kubectl_path_documents" "cert-manager_cluster_issuers" {
-  pattern = "./templates/cert-manager-cluster-issuers.yaml"
+  pattern = "./templates/cert-manager-cluster-issuers.yaml.tpl"
   vars = {
-    acme_email = local.cert-manager["acme_email"]
-    aws_region = data.aws_region.current.name
+    aws_region                = data.aws_region.current.name
+    acme_email                = local.cert-manager["acme_email"]
+    acme_http01_enabled       = local.cert-manager["acme_http01_enabled"]
+    acme_http01_ingress_class = local.cert-manager["acme_http01_ingress_class"]
+    acme_dns01_enabled        = local.cert-manager["acme_dns01_enabled"]
   }
 }
 
@@ -158,7 +163,7 @@ resource "time_sleep" "cert-manager_sleep" {
 }
 
 resource "kubectl_manifest" "cert-manager_cluster_issuers" {
-  count     = local.cert-manager["enabled"] && local.cert-manager["enable_default_cluster_issuers"] ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
+  count     = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
   yaml_body = element(data.kubectl_path_documents.cert-manager_cluster_issuers.documents, count.index)
   depends_on = [
     helm_release.cert-manager,
