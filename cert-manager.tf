@@ -99,6 +99,7 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
 }
 
 resource "time_sleep" "cert-manager_sleep" {
+  count           = local.cert-manager["enabled"] && local.cert-manager["enable_default_cluster_issuers"] ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
   depends_on      = [helm_release.cert-manager]
   create_duration = "120s"
 }
