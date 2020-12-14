@@ -42,6 +42,6 @@ variable "eks" {
 
 variable "tags" {
   description = "Map of tags for AWS resources"
-  type        = map
+  type        = map(any)
   default     = {}
 }
