@@ -8,12 +8,13 @@ locals {
       chart                  = "ingress-nginx"
       repository             = "https://kubernetes.github.io/ingress-nginx"
       use_nlb                = false
+      use_nlb_ip             = false
       use_l7                 = false
       enabled                = false
       default_network_policy = true
       ingress_cidrs          = ["0.0.0.0/0"]
-      chart_version          = "3.8.0"
-      version                = "0.41.0"
+      chart_version          = "3.15.2"
+      version                = "0.41.2"
       allowed_cidrs          = ["0.0.0.0/0"]
     },
     var.ingress-nginx
@@ -56,12 +57,42 @@ controller:
   kind: "DaemonSet"
   service:
     annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
       service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
     externalTrafficPolicy: "Local"
   publishService:
     enabled: true
   config:
-    use-proxy-protocol: "false"
+    use-proxy-protocol: "true"
+  priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
+podSecurityPolicy:
+  enabled: true
+VALUES
+
+  values_ingress-nginx_nlb_ip = <<VALUES
+controller:
+  metrics:
+    enabled: ${local.kube-prometheus-stack["enabled"]}
+    serviceMonitor:
+      enabled: ${local.kube-prometheus-stack["enabled"]}
+  image:
+    tag: ${local.ingress-nginx["version"]}
+  updateStrategy:
+    type: RollingUpdate
+  kind: "DaemonSet"
+  service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+    externalTrafficPolicy: "Local"
+  publishService:
+    enabled: true
+  config:
+    use-proxy-protocol: "true"
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 podSecurityPolicy:
   enabled: true
@@ -135,7 +166,7 @@ resource "helm_release" "ingress-nginx" {
   skip_crds             = local.ingress-nginx["skip_crds"]
   verify                = local.ingress-nginx["verify"]
   values = [
-    local.ingress-nginx["use_nlb"] ? local.values_ingress-nginx_nlb : local.ingress-nginx["use_l7"] ? local.values_ingress-nginx_l7 : local.values_ingress-nginx_l4,
+    local.ingress-nginx["use_nlb_ip"] ? local.values_ingress-nginx_nlb_ip : local.ingress-nginx["use_nlb"] ? local.values_ingress-nginx_nlb : local.ingress-nginx["use_l7"] ? local.values_ingress-nginx_l7 : local.values_ingress-nginx_l4,
     local.ingress-nginx["extra_values"],
   ]
   namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
