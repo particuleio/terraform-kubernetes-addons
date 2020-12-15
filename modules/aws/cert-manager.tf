@@ -147,7 +147,7 @@ resource "helm_release" "cert-manager" {
 }
 
 data "kubectl_path_documents" "cert-manager_cluster_issuers" {
-  pattern = "./templates/cert-manager-cluster-issuers.yaml.tpl"
+  pattern = "${path.module}/templates/cert-manager-cluster-issuers.yaml.tpl"
   vars = {
     aws_region                = data.aws_region.current.name
     acme_email                = local.cert-manager["acme_email"]
