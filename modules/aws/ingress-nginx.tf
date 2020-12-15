@@ -88,7 +88,6 @@ controller:
       service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
       service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
       service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
-    externalTrafficPolicy: "Local"
   publishService:
     enabled: true
   config:
