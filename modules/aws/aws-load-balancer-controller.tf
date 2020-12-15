@@ -21,11 +21,10 @@ locals {
 image:
   tag: "${local.aws-load-balancer-controller["version"]}"
 clusterName: ${var.cluster-name}
-rbac:
-  serviceAccount:
-    name: "${local.aws-load-balancer-controller["version"]}"
-    annotations:
-      eks.amazonaws.com/role-arn: "${local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-load-balancer-controller.this_iam_role_arn : ""}"
+serviceAccount:
+  name: "${local.aws-load-balancer-controller["version"]}"
+  annotations:
+    eks.amazonaws.com/role-arn: "${local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-load-balancer-controller.this_iam_role_arn : ""}"
 VALUES
 }
 
