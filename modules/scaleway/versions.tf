@@ -5,7 +5,7 @@ terraform {
       source  = "scaleway/scaleway"
       version = ">= 1.17.0"
     }
-    helm       = "~> 1.0"
+    helm       = "~> 2.0"
     kubernetes = "~> 1.0"
     kubectl = {
       source  = "gavinbunney/kubectl"
