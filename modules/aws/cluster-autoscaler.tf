@@ -36,6 +36,7 @@ extraArgs:
   balance-similar-node-groups: true
 serviceMonitor:
   enabled: ${local.kube-prometheus-stack["enabled"]}
+  namespace: ${local.cluster-autoscaler["namespace"]}
 VALUES
 }
 
