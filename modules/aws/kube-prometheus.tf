@@ -2,14 +2,17 @@ locals {
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
-      name                   = "kube-prometheus-stack"
-      namespace              = "monitoring"
-      chart                  = "kube-prometheus-stack"
-      repository             = "https://prometheus-community.github.io/helm-charts"
-      enabled                = false
-      chart_version          = "12.8.1"
-      allowed_cidrs          = ["0.0.0.0/0"]
-      default_network_policy = true
+      name                                 = "kube-prometheus-stack"
+      namespace                            = "monitoring"
+      chart                                = "kube-prometheus-stack"
+      repository                           = "https://prometheus-community.github.io/helm-charts"
+      grafana_service_account_name         = "kube-prometheus-stack-grafana"
+      cloudwatch_create_iam_resources_irsa = false
+      cloudwatch_iam_policy_override       = null
+      enabled                              = false
+      chart_version                        = "12.9.2"
+      allowed_cidrs                        = ["0.0.0.0/0"]
+      default_network_policy               = true
     },
     var.kube-prometheus-stack
   )
@@ -24,6 +27,12 @@ kubeEtcd:
 grafana:
   rbac:
     pspUseAppArmor: false
+  serviceAccount:
+    create: true
+    name: ${local.kube-prometheus-stack["grafana_service_account_name"]}
+    nameTest: ${local.kube-prometheus-stack["grafana_service_account_name"]}-test
+    annotations:
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["cloudwatch_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack.this_iam_role_arn : ""}"
   adminPassword: ${join(",", random_string.grafana_password.*.result)}
   dashboardProviders:
     dashboardproviders.yaml:
@@ -47,6 +56,7 @@ grafana:
         url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
       cluster-autoscaler:
         gnetId: 3831
+        revision: 1
         datasource: Prometheus
 prometheus-node-exporter:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
@@ -59,6 +69,80 @@ alertmanager:
 VALUES
 }
 
+module "iam_assumable_role_kube-prometheus-stack" {
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "~> 3.0"
+  create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["cloudwatch_create_iam_resources_irsa"]
+  role_name                     = "tf-${var.cluster-name}-${local.kube-prometheus-stack["name"]}-irsa"
+  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
+  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["cloudwatch_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack[0].arn] : []
+  number_of_role_policy_arns    = 1
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["grafana_service_account_name"]}"]
+  tags                          = local.tags
+}
+
+resource "aws_iam_policy" "kube-prometheus-stack" {
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["cloudwatch_create_iam_resources_irsa"] ? 1 : 0
+  name   = "tf-${var.cluster-name}-${local.kube-prometheus-stack["name"]}"
+  policy = local.kube-prometheus-stack["cloudwatch_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack.json : local.kube-prometheus-stack["cloudwatch_iam_policy_override"]
+}
+
+data "aws_iam_policy_document" "kube-prometheus-stack" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "cloudwatch:DescribeAlarmsForMetric",
+      "cloudwatch:DescribeAlarmHistory",
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:ListMetrics",
+      "cloudwatch:GetMetricStatistics",
+      "cloudwatch:GetMetricData"
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:GetLogGroupFields",
+      "logs:StartQuery",
+      "logs:StopQuery",
+      "logs:GetQueryResults",
+      "logs:GetLogEvents"
+    ]
+
+    resources = ["*"]
+
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribeTags",
+      "ec2:DescribeInstances",
+      "ec2:DescribeRegions"
+    ]
+
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribeTags",
+      "ec2:DescribeInstances",
+      "ec2:DescribeRegions"
+    ]
+
+    resources = ["*"]
+
+  }
+}
 
 resource "kubernetes_namespace" "kube-prometheus-stack" {
   count = local.kube-prometheus-stack["enabled"] ? 1 : 0
