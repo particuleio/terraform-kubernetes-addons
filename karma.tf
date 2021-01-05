@@ -27,7 +27,8 @@ resource "kubernetes_namespace" "karma" {
 
   metadata {
     labels = {
-      name = local.karma["namespace"]
+      name                               = local.karma["namespace"]
+      "${local.labels_prefix}/component" = "monitoring"
     }
 
     name = local.karma["namespace"]
