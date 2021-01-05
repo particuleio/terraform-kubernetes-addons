@@ -27,6 +27,7 @@ jobs:
         VALIDATE_STATES: false
         VALIDATE_KUBERNETES_KUBEVAL: false
         VALIDATE_TERRAFORM_TERRASCAN: false
+        VALIDATE_TERRAFORM: false
     - name: 'slack:failure'
       if: failure()
       env:
