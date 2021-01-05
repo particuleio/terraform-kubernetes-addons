@@ -7,7 +7,7 @@ locals {
       chart                  = "kube-prometheus-stack"
       repository             = "https://prometheus-community.github.io/helm-charts"
       enabled                = false
-      chart_version          = "12.8.1"
+      chart_version          = "12.10.4"
       allowed_cidrs          = ["0.0.0.0/0"]
       default_network_policy = true
     },
@@ -31,17 +31,6 @@ grafana:
         editable: true
         options:
           path: /var/lib/grafana/dashboards/default
-  dashboards:
-    default:
-      kong-dash:
-        gnetId: 7424
-        revision: 6
-        datasource: Prometheus
-      nginx-ingress:
-        url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
-      cluster-autoscaler:
-        gnetId: 3831
-        datasource: Prometheus
 prometheus-node-exporter:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 prometheus:
@@ -50,6 +39,44 @@ prometheus:
 alertmanager:
   alertmanagerSpec:
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+VALUES
+
+  values_dashboard_kong = <<VALUES
+grafana:
+  dashboards:
+    default:
+      kong-dash:
+        gnetId: 7424
+        revision: 6
+        datasource: Prometheus
+VALUES
+
+  values_dashboard_ingress-nginx = <<VALUES
+grafana:
+  dashboards:
+    default:
+      nginx-ingress:
+        url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
+VALUES
+
+  values_dashboard_cluster-autoscaler = <<VALUES
+grafana:
+  dashboards:
+    default:
+      cluster-autoscaler:
+        gnetId: 3831
+        revision: 1
+        datasource: Prometheus
+VALUES
+
+  values_dashboard_cert-manager = <<VALUES
+grafana:
+  dashboards:
+    default:
+      cert-manager:
+        gnetId: 11001
+        revision: 1
+        datasource: Prometheus
 VALUES
 }
 
@@ -94,10 +121,14 @@ resource "helm_release" "kube-prometheus-stack" {
   reuse_values          = local.kube-prometheus-stack["reuse_values"]
   skip_crds             = local.kube-prometheus-stack["skip_crds"]
   verify                = local.kube-prometheus-stack["verify"]
-  values = [
+  values = compact([
     local.values_kube-prometheus-stack,
-    local.kube-prometheus-stack["extra_values"]
-  ]
+    local.kube-prometheus-stack["extra_values"],
+    local.kong["enabled"] ? local.values_dashboard_kong : null,
+    local.cert-manager["enabled"] ? local.values_dashboard_cert-manager : null,
+    local.cluster-autoscaler["enabled"] ? local.values_dashboard_cluster-autoscaler : null,
+    local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null
+  ])
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
 }
 
