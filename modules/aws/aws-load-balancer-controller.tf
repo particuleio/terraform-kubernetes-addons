@@ -13,6 +13,7 @@ locals {
       version                   = "v2.0.0"
       iam_policy_override       = null
       default_network_policy    = true
+      allowed_cidrs             = ["0.0.0.0/0"]
     },
     var.aws-load-balancer-controller
   )
@@ -118,6 +119,43 @@ resource "kubernetes_network_policy" "aws-load-balancer-controller_allow_namespa
         namespace_selector {
           match_labels = {
             name = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "aws-load-balancer-controller_allow_control_plane" {
+  count = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+      match_expressions {
+        key      = "app.kubernetes.io/name"
+        operator = "In"
+        values   = ["aws-load-balancer-controller"]
+      }
+    }
+
+    ingress {
+      ports {
+        port     = "9443"
+        protocol = "TCP"
+      }
+
+      dynamic "from" {
+        for_each = local.aws-load-balancer-controller["allowed_cidrs"]
+        content {
+          ip_block {
+            cidr = from.value
           }
         }
       }
