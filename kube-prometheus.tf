@@ -59,16 +59,6 @@ grafana:
         url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
 VALUES
 
-  values_dashboard_cluster-autoscaler = <<VALUES
-grafana:
-  dashboards:
-    default:
-      cluster-autoscaler:
-        gnetId: 3831
-        revision: 1
-        datasource: Prometheus
-VALUES
-
   values_dashboard_cert-manager = <<VALUES
 grafana:
   dashboards:
@@ -126,7 +116,6 @@ resource "helm_release" "kube-prometheus-stack" {
     local.kube-prometheus-stack["extra_values"],
     local.kong["enabled"] ? local.values_dashboard_kong : null,
     local.cert-manager["enabled"] ? local.values_dashboard_cert-manager : null,
-    local.cluster-autoscaler["enabled"] ? local.values_dashboard_cluster-autoscaler : null,
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null
   ])
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
