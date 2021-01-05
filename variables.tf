@@ -70,6 +70,12 @@ variable "labels_prefix" {
   default     = "particule.io"
 }
 
+variable "loki-stack" {
+  description = "Customize loki-stack chart, see `loki-stack.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "metrics-server" {
   description = "Customize metrics-server chart, see `metrics_server.tf` for supported values"
   type        = any
