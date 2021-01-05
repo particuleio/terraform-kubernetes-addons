@@ -6,7 +6,7 @@ locals {
       name                   = "sealed-secrets"
       namespace              = "sealed-secrets"
       chart                  = "sealed-secrets"
-      repository             = "https://kubernetes-charts.storage.googleapis.com/"
+      repository             = "https://charts.helm.sh/stable"
       enabled                = false
       chart_version          = "1.12.0"
       version                = "v0.13.1"
