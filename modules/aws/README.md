@@ -10,23 +10,26 @@ Provides various Kubernetes addons that are often used on Kubernetes with AWS
 ## Main features
 
 * Common addons with associated IAM permissions if needed:
-  * [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler): scale worker nodes based on workload.
-  * [external-dns](https://github.com/kubernetes-incubator/external-dns): sync ingress and service records in route53.
+  * [aws-for-fluent-bit](https://github.com/aws/aws-for-fluent-bit): Cloudwatch logging with fluent bit instead of fluentd
+  * [aws-load-balancer-controller](https://aws.amazon.com/about-aws/whats-new/2020/10/introducing-aws-load-balancer-controller/): Use AWS ALB/NLB for ingress and services.
+  * [aws-node-termination-handler](https://github.com/aws/aws-node-termination-handler): Manage spot instance lifecyle
+  * [aws-calico](https://github.com/aws/eks-charts/tree/master/stable/aws-calico): Use calico for network policy
   * [cert-manager](https://github.com/jetstack/cert-manager): automatically generate TLS certificates, supports ACME v2.
-  * [ingress-ingress](https://github.com/kubernetes/ingress-nginx): processes *Ingress* object and acts as a HTTP/HTTPS proxy (compatible with cert-manager).
-  * [metrics-server](https://github.com/kubernetes-incubator/metrics-server): enable metrics API and horizontal pod scaling (HPA).
-  * [prometheus-operator](https://github.com/prometheus-operator/kube-prometheus): Monitoring / Alerting / Dashboards.
+  * [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler): scale worker nodes based on workload.
+  * [cni-metrics-helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html): Provides cloudwatch metrics for VPC CNI plugins.
+  * [external-dns](https://github.com/kubernetes-incubator/external-dns): sync ingress and service records in route53.
+  * [ingress-nginx](https://github.com/kubernetes/ingress-nginx): processes *Ingress* object and acts as a HTTP/HTTPS proxy (compatible with cert-manager).
+  * [istio-operator](https://istio.io): Service mesh for Kubernetes.
   * [karma](https://github.com/prymitive/karma): An alertmanager dashboard
+  * [keycloak](https://www.keycloak.org/) : Identity and access management
+  * [kong](https://konghq.com/kong): API Gateway ingress controller.
+  * [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus): Monitoring / Alerting / Dashboards.
+  * [loki-stack](https://grafana.com/oss/loki/): Grafana Loki logging stack
+  * [metrics-server](https://github.com/kubernetes-incubator/metrics-server): enable metrics API and horizontal pod scaling (HPA).
   * [node-problem-detector](https://github.com/kubernetes/node-problem-detector): Forwards node problems to Kubernetes events
   * [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets): Technology agnostic, store secrets on git.
-  * [istio-operator](https://istio.io): Service mesh for Kubernetes.
-  * [cni-metrics-helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html): Provides cloudwatch metrics for VPC CNI plugins.
-  * [kong](https://konghq.com/kong): API Gateway ingress controller.
-  * [keycloak](https://www.keycloak.org/) : Identity and access management
-  * [aws-load-balancer-controller](https://aws.amazon.com/about-aws/whats-new/2020/10/introducing-aws-load-balancer-controller/): Use AWS ALB/NLB for ingress and services.
-  * [aws-calico](https://github.com/aws/eks-charts/tree/master/stable/aws-calico): Use calico for network policy
-  * [aws-node-termination-handler](https://github.com/aws/aws-node-termination-handler): Manage spot instance lifecyle
-  * [aws-for-fluent-bit](https://github.com/aws/aws-for-fluent-bit): Cloudwatch logging with fluent bit instead of fluentd
+  * [thanos](https://thanos.io/): Open source, highly available Prometheus setup with long term storage capabilities
+  * [thanos-tls-querier](https://thanos.io/tip/operating/cross-cluster-tls-communication.md/): Thanos TLS querier for cross cluster collection
 
 ## Documentation
 
@@ -44,7 +47,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 |------|---------|
 | terraform | >= 0.13 |
 | aws | ~> 3.0 |
-| helm | ~> 1.0 |
+| helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 1.0 |
 
@@ -53,11 +56,12 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Version |
 |------|---------|
 | aws | ~> 3.0 |
-| helm | ~> 1.0 |
+| helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 1.0 |
 | random | n/a |
 | time | n/a |
+| tls | n/a |
 
 ## Inputs
 
@@ -83,16 +87,19 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | kong | Customize kong-ingress chart, see `kong.tf` for supported values | `any` | `{}` | no |
 | kube-prometheus-stack | Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values | `any` | `{}` | no |
 | labels\_prefix | Custom label prefix used for network policy namespace matching | `string` | `"particule.io"` | no |
+| loki-stack | Customize loki-stack chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | metrics-server | Customize metrics-server chart, see `metrics_server.tf` for supported values | `any` | `{}` | no |
 | npd | Customize node-problem-detector chart, see `npd.tf` for supported values | `any` | `{}` | no |
 | priority-class | Customize a priority class for addons | `any` | `{}` | no |
 | priority-class-ds | Customize a priority class for addons daemonsets | `any` | `{}` | no |
 | sealed-secrets | Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values | `any` | `{}` | no |
-| tags | Map of tags for AWS resources | `map` | `{}` | no |
+| tags | Map of tags for AWS resources | `map(any)` | `{}` | no |
+| thanos | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| thanos-tls-querier | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | grafana\_password | n/a |
-
+| thanos\_ca | n/a |

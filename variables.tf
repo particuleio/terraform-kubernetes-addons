@@ -111,3 +111,15 @@ variable "sealed-secrets" {
   type        = any
   default     = {}
 }
+
+variable "thanos" {
+  description = "Customize thanos chart, see `thanos.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "thanos-tls-querier" {
+  description = "Customize thanos chart, see `thanos.tf` for supported values"
+  type        = any
+  default     = {}
+}
