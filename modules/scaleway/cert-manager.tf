@@ -9,14 +9,15 @@ locals {
       repository                = "https://charts.jetstack.io"
       service_account_name      = "cert-manager"
       enabled                   = false
-      chart_version             = "v1.0.4"
-      version                   = "v1.0.4"
+      chart_version             = "v1.1.0"
+      version                   = "v1.1.0"
       default_network_policy    = true
-      allowed_cidrs             = ["0.0.0.0/0"]
       acme_email                = "contact@acme.com"
-      acme_http01_ingress_class = "nginx"
-      acme_dns01_enabled        = false
       acme_http01_enabled       = false
+      acme_http01_ingress_class = ""
+      acme_dns01_enabled        = false
+      allowed_cidrs             = ["0.0.0.0/0"]
+      experimental_csi_driver   = false
     },
     var.cert-manager
   )
@@ -27,7 +28,7 @@ locals {
       name          = "scaleway-webhook-dns"
       chart         = "scaleway-webhook"
       repository    = "https://particuleio.github.io/charts"
-      enabled       = false
+      enabled       = local.cert-manager["acme_dns01_enabled"]
       chart_version = "v0.0.1"
       version       = "v0.0.1"
       secret_name   = "scaleway-credentials"
@@ -148,25 +149,42 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
   pattern = "${path.module}/templates/cert-manager-cluster-issuers.yaml.tpl"
   vars = {
     acme_email                = local.cert-manager["acme_email"]
-    acme_http01_ingress_class = local.cert-manager["acme_http01_ingress_class"]
-    secret_name               = local.cert-manager_scaleway_webhook_dns["secret_name"]
-    acme_dns01_enabled        = local.cert-manager["acme_dns01_enabled"]
     acme_http01_enabled       = local.cert-manager["acme_http01_enabled"]
+    acme_http01_ingress_class = local.cert-manager["acme_http01_ingress_class"]
+    acme_dns01_enabled        = local.cert-manager["acme_dns01_enabled"]
+    secret_name               = local.cert-manager_scaleway_webhook_dns["secret_name"]
+  }
+}
+
+data "kubectl_path_documents" "cert-manager_csi_driver" {
+  pattern = "${path.module}/templates/cert-manager-csi-driver.yaml.tpl"
+  vars = {
+    namespace = local.cert-manager["namespace"]
   }
 }
 
 resource "time_sleep" "cert-manager_sleep" {
-  count           = local.cert-manager_scaleway_webhook_dns["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
+  count           = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
   depends_on      = [helm_release.cert-manager]
   create_duration = "120s"
 }
 
 resource "kubectl_manifest" "cert-manager_cluster_issuers" {
-  count     = local.cert-manager_scaleway_webhook_dns["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
+  count     = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
   yaml_body = element(data.kubectl_path_documents.cert-manager_cluster_issuers.documents, count.index)
   depends_on = [
     helm_release.cert-manager,
+    kubernetes_namespace.cert-manager,
     time_sleep.cert-manager_sleep
+  ]
+}
+
+resource "kubectl_manifest" "cert-manager_csi_driver" {
+  count     = local.cert-manager["enabled"] && local.cert-manager["experimental_csi_driver"] ? length(data.kubectl_path_documents.cert-manager_csi_driver.documents) : 0
+  yaml_body = element(data.kubectl_path_documents.cert-manager_csi_driver.documents, count.index)
+  depends_on = [
+    helm_release.cert-manager,
+    kubernetes_namespace.cert-manager,
   ]
 }
 
@@ -212,7 +230,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_namespace" {
 }
 
 resource "kubernetes_network_policy" "cert-manager_allow_monitoring" {
-  count = local.cert-manager["enabled"] && local.kube-prometheus-stack["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
+  count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-monitoring"
@@ -232,7 +250,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }

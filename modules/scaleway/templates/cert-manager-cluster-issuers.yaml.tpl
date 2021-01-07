@@ -27,7 +27,7 @@ spec:
     - http01:
         ingress:
           class: '${acme_http01_ingress_class}'
-      %{ acme_dns01_enabled }
+      %{ if acme_dns01_enabled }
       selector:
         matchLabels:
           "use-http01-solver": "true"
@@ -62,7 +62,7 @@ spec:
     - http01:
         ingress:
           class: '${acme_http01_ingress_class}'
-      %{ acme_dns01_enabled }
+      %{ if acme_dns01_enabled }
       selector:
         matchLabels:
           "use-http01-solver": "true"

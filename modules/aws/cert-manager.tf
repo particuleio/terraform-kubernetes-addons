@@ -10,8 +10,8 @@ locals {
       service_account_name      = "cert-manager"
       create_iam_resources_irsa = true
       enabled                   = false
-      chart_version             = "v1.0.4"
-      version                   = "v1.0.4"
+      chart_version             = "v1.1.0"
+      version                   = "v1.1.0"
       iam_policy_override       = null
       default_network_policy    = true
       acme_email                = "contact@acme.com"
@@ -19,6 +19,7 @@ locals {
       acme_http01_ingress_class = ""
       acme_dns01_enabled        = true
       allowed_cidrs             = ["0.0.0.0/0"]
+      experimental_csi_driver   = false
     },
     var.cert-manager
   )
@@ -157,6 +158,13 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
   }
 }
 
+data "kubectl_path_documents" "cert-manager_csi_driver" {
+  pattern = "${path.module}/templates/cert-manager-csi-driver.yaml.tpl"
+  vars = {
+    namespace = local.cert-manager["namespace"]
+  }
+}
+
 resource "time_sleep" "cert-manager_sleep" {
   count           = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
   depends_on      = [helm_release.cert-manager]
@@ -170,6 +178,15 @@ resource "kubectl_manifest" "cert-manager_cluster_issuers" {
     helm_release.cert-manager,
     kubernetes_namespace.cert-manager,
     time_sleep.cert-manager_sleep
+  ]
+}
+
+resource "kubectl_manifest" "cert-manager_csi_driver" {
+  count     = local.cert-manager["enabled"] && local.cert-manager["experimental_csi_driver"] ? length(data.kubectl_path_documents.cert-manager_csi_driver.documents) : 0
+  yaml_body = element(data.kubectl_path_documents.cert-manager_csi_driver.documents, count.index)
+  depends_on = [
+    helm_release.cert-manager,
+    kubernetes_namespace.cert-manager,
   ]
 }
 
@@ -256,7 +273,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_control_plane" {
   spec {
     pod_selector {
       match_expressions {
-        key      = "app"
+        key      = "app.kubernetes.io/name"
         operator = "In"
         values   = ["webhook"]
       }
