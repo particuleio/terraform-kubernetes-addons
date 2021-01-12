@@ -6,9 +6,9 @@ locals {
       name                   = "sealed-secrets"
       namespace              = "sealed-secrets"
       chart                  = "sealed-secrets"
-      repository             = "https://charts.helm.sh/stable"
+      repository             = "https://bitnami-labs.github.io/sealed-secrets"
       enabled                = false
-      chart_version          = "1.12.0"
+      chart_version          = "1.13.2"
       version                = "v0.13.1"
       default_network_policy = true
     },
