@@ -48,7 +48,6 @@ grafana:
       kong-dash:
         gnetId: 7424
         revision: 6
-        datasource: Prometheus
 VALUES
 
   values_dashboard_ingress-nginx = <<VALUES
@@ -66,7 +65,6 @@ grafana:
       cert-manager:
         gnetId: 11001
         revision: 1
-        datasource: Prometheus
 VALUES
 }
 

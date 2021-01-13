@@ -125,7 +125,6 @@ grafana:
       kong-dash:
         gnetId: 7424
         revision: 6
-        datasource: Prometheus
 VALUES
 
   values_dashboard_ingress-nginx = <<VALUES
@@ -143,7 +142,6 @@ grafana:
       cluster-autoscaler:
         gnetId: 3831
         revision: 1
-        datasource: Prometheus
 VALUES
 
   values_dashboard_cert-manager = <<VALUES
@@ -153,7 +151,6 @@ grafana:
       cert-manager:
         gnetId: 11001
         revision: 1
-        datasource: Prometheus
 VALUES
 
   values_thanos_sidecar = <<VALUES
