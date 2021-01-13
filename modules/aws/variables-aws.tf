@@ -4,6 +4,12 @@ variable "aws" {
   default     = {}
 }
 
+variable "aws-ebs-csi-driver" {
+  description = "Customize aws-ebs-csi-driver helm chart, see `aws-ebs-csi-driver.tf`"
+  type        = any
+  default     = {}
+}
+
 variable "aws-for-fluent-bit" {
   description = "Customize aws-for-fluent-bit helm chart, see `aws-fluent-bit.tf`"
   type        = any
