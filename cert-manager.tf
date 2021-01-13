@@ -3,21 +3,20 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                           = "cert-manager"
-      namespace                      = "cert-manager"
-      chart                          = "cert-manager"
-      repository                     = "https://charts.jetstack.io"
-      service_account_name           = "cert-manager"
-      create_iam_resources_irsa      = true
-      enabled                        = false
-      chart_version                  = "v1.0.4"
-      version                        = "v1.0.4"
-      iam_policy_override            = null
-      default_network_policy         = true
-      acme_email                     = "contact@acme.com"
-      enable_default_cluster_issuers = false
-      cluster_issuers_ingress_class  = "nginx"
-      allowed_cidrs                  = ["0.0.0.0/0"]
+      name                      = "cert-manager"
+      namespace                 = "cert-manager"
+      chart                     = "cert-manager"
+      repository                = "https://charts.jetstack.io"
+      service_account_name      = "cert-manager"
+      enabled                   = false
+      chart_version             = "v1.1.0"
+      version                   = "v1.1.0"
+      default_network_policy    = true
+      acme_email                = "contact@acme.com"
+      acme_http01_enabled       = false
+      acme_http01_ingress_class = ""
+      allowed_cidrs             = ["0.0.0.0/0"]
+      experimental_csi_driver   = false
     },
     var.cert-manager
   )
@@ -91,26 +90,43 @@ resource "helm_release" "cert-manager" {
 }
 
 data "kubectl_path_documents" "cert-manager_cluster_issuers" {
-  pattern = "${path.module}/templates/cert-manager-cluster-issuers.yaml"
+  pattern = "${path.module}/templates/cert-manager-cluster-issuers.yaml.tpl"
   vars = {
-    acme_email    = local.cert-manager["acme_email"]
-    ingress_class = local.cert-manager["cluster_issuers_ingress_class"]
+    acme_email                = local.cert-manager["acme_email"]
+    acme_http01_enabled       = local.cert-manager["acme_http01_enabled"]
+    acme_http01_ingress_class = local.cert-manager["acme_http01_ingress_class"]
+  }
+}
+
+data "kubectl_path_documents" "cert-manager_csi_driver" {
+  pattern = "${path.module}/templates/cert-manager-csi-driver.yaml.tpl"
+  vars = {
+    namespace = local.cert-manager["namespace"]
   }
 }
 
 resource "time_sleep" "cert-manager_sleep" {
-  count           = local.cert-manager["enabled"] && local.cert-manager["enable_default_cluster_issuers"] ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
+  count           = local.cert-manager["enabled"] && local.cert-manager["acme_http01_enabled"] ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
   depends_on      = [helm_release.cert-manager]
   create_duration = "120s"
 }
 
 resource "kubectl_manifest" "cert-manager_cluster_issuers" {
-  count     = local.cert-manager["enabled"] && local.cert-manager["enable_default_cluster_issuers"] ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
+  count     = local.cert-manager["enabled"] && local.cert-manager["acme_http01_enabled"] ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
   yaml_body = element(data.kubectl_path_documents.cert-manager_cluster_issuers.documents, count.index)
   depends_on = [
     helm_release.cert-manager,
     kubernetes_namespace.cert-manager,
     time_sleep.cert-manager_sleep
+  ]
+}
+
+resource "kubectl_manifest" "cert-manager_csi_driver" {
+  count     = local.cert-manager["enabled"] && local.cert-manager["experimental_csi_driver"] ? length(data.kubectl_path_documents.cert-manager_csi_driver.documents) : 0
+  yaml_body = element(data.kubectl_path_documents.cert-manager_csi_driver.documents, count.index)
+  depends_on = [
+    helm_release.cert-manager,
+    kubernetes_namespace.cert-manager,
   ]
 }
 
@@ -176,7 +192,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }

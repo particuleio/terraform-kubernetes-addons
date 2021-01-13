@@ -10,9 +10,11 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
+    %{ if acme_http01_enabled }
     - http01:
         ingress:
-          class: ${ingress_class}
+          class: '${acme_http01_ingress_class}'
+    %{ endif }
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -25,6 +27,8 @@ spec:
     privateKeySecretRef:
       name: letsencrypt
     solvers:
+    %{ if acme_http01_enabled }
     - http01:
         ingress:
-          class: ${ingress_class}
+          class: '${acme_http01_ingress_class}'
+    %{ endif }

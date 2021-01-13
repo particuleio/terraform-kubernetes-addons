@@ -1,0 +1,118 @@
+apiVersion: storage.k8s.io/v1beta1
+kind: CSIDriver
+metadata:
+  name: csi.cert-manager.io
+spec:
+  podInfoOnMount: true
+  volumeLifecycleModes:
+  - Ephemeral
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cert-manager-csi
+  namespace: ${namespace}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cert-manager-csi
+rules:
+- apiGroups: ["cert-manager.io"]
+  resources: ["certificaterequests"]
+  verbs: ["get", "create", "delete", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-manager-csi
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-csi
+subjects:
+- apiGroup:
+  kind: ServiceAccount
+  name: cert-manager-csi
+  namespace: cert-manager
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cert-manager-csi
+  namespace: ${namespace}
+spec:
+  selector:
+    matchLabels:
+      app: cert-manager-csi
+  template:
+    metadata:
+      labels:
+        app: cert-manager-csi
+    spec:
+      serviceAccount: cert-manager-csi
+      containers:
+        - name: node-driver-registrar
+          image: quay.io/k8scsi/csi-node-driver-registrar:v1.2.0
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "rm -rf /registration/cert-manager-csi /registration/cert-manager-csi-reg.sock"]
+          args:
+            - --v=5
+            - --csi-address=/plugin/csi.sock
+            - --kubelet-registration-path=/var/lib/kubelet/plugins/cert-manager-csi/csi.sock
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: registration-dir
+              mountPath: /registration
+        - name: cert-manager-csi
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+            allowPrivilegeEscalation: true
+          image: gcr.io/jetstack-josh/cert-manager-csi:v0.1.0-alpha.1
+          imagePullPolicy: "IfNotPresent"
+          args :
+            - --node-id=$(NODE_ID)
+            - --endpoint=$(CSI_ENDPOINT)
+            - --data-root=/csi-data-dir
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix://plugin/csi.sock
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: pods-mount-dir
+              mountPath: /var/lib/kubelet/pods
+              mountPropagation: "Bidirectional"
+            - name: csi-data-dir
+              mountPath: /csi-data-dir
+      volumes:
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/cert-manager-csi
+            type: DirectoryOrCreate
+        - name: pods-mount-dir
+          hostPath:
+            path: /var/lib/kubelet/pods
+            type: Directory
+        - hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+          name: registration-dir
+        - hostPath:
+            path: /tmp/cert-manager-csi
+            type: DirectoryOrCreate
+          name: csi-data-dir
