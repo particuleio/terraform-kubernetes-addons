@@ -36,10 +36,10 @@ kubeEtcd:
 grafana:
   resources:
     limits:
-      cpu: 100m
+      cpu: 300m
       memory: 500Mi
     requests:
-      cpu: 10m
+      cpu: 100m
       memory: 200Mi
   sidecar:
     dashboards:
