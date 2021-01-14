@@ -20,7 +20,7 @@ image:
   tag: ${local.metrics-server["version"]}
 args:
   - --logtostderr
-  - --kubelet-preferred-address-types=InternalIP,ExternalIP
+  - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
 rbac:
   pspEnabled: true
 priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
