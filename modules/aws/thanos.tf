@@ -187,7 +187,7 @@ compactor:
 storegateway:
   resources:
     limits:
-      memory: 128Mi
+      memory: 1Gi
 VALUES
 
 }
