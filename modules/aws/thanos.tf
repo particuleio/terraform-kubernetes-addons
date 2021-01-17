@@ -14,6 +14,8 @@ locals {
       chart_version             = "3.3.0"
       allowed_cidrs             = ["0.0.0.0/0"]
       default_network_policy    = true
+      default_global_requests   = false
+      default_global_limits     = false
       create_bucket             = false
       bucket                    = "thanos-store-${var.cluster-name}"
       generate_ca               = false
@@ -25,15 +27,17 @@ locals {
   thanos-tls-querier = { for k, v in var.thanos-tls-querier : k => merge(
     local.helm_defaults,
     {
-      name               = "${local.thanos["name"]}-tls-querier-${k}"
-      chart              = local.thanos["chart"]
-      repository         = local.thanos["repository"]
-      version            = local.thanos["version"]
-      enabled            = false
-      chart_version      = local.thanos["chart_version"]
-      generate_cert      = local.thanos["generate_ca"]
-      client_server_name = ""
-      stores             = []
+      name                    = "${local.thanos["name"]}-tls-querier-${k}"
+      chart                   = local.thanos["chart"]
+      repository              = local.thanos["repository"]
+      version                 = local.thanos["version"]
+      enabled                 = false
+      chart_version           = local.thanos["chart_version"]
+      generate_cert           = local.thanos["generate_ca"]
+      client_server_name      = ""
+      stores                  = []
+      default_global_requests = false
+      default_global_limits   = false
     },
     v,
   ) }
@@ -61,13 +65,6 @@ locals {
         create: true
         minAvailable: 1
       stores: ${jsonencode([for k, v in local.thanos-tls-querier : "dnssrv+_grpc._tcp.${v["name"]}-query.${local.thanos["namespace"]}.svc.cluster.local"])}
-      resources:
-        limits:
-          cpu: 100m
-          memory: 64Mi
-        requests:
-          cpu: 25m
-          memory: 32Mi
     queryFrontend:
       enabled: true
       autoscaling:
@@ -79,37 +76,16 @@ locals {
       pdb:
         create: true
         minAvailable: 1
-      resources:
-        limits:
-          cpu: 100m
-          memory: 64Mi
-        requests:
-          cpu: 25m
-          memory: 32Mi
     compactor:
       enabled: true
       serviceAccount:
         annotations:
           eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.this_iam_role_arn : ""}"
-      resources:
-        limits:
-          cpu: 100m
-          memory: 512Mi
-        requests:
-          cpu: 50m
-          memory: 128Mi
     storegateway:
       enabled: true
       serviceAccount:
         annotations:
           eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.this_iam_role_arn : ""}"
-      resources:
-        limits:
-          cpu: 100m
-          memory: 128Mi
-        requests:
-          cpu: 25m
-          memory: 64Mi
       autoscaling:
         enabled: true
         minReplicas: 2
@@ -138,13 +114,6 @@ locals {
             maxReplicas: 4
             targetCPU: 50
             targetMemory: 50
-          resources:
-            limits:
-              cpu: 100m
-              memory: 64Mi
-            requests:
-              cpu: 25m
-              memory: 32Mi
           pdb:
             create: true
             minAvailable: 1
@@ -177,6 +146,48 @@ objstoreConfig:
     endpoint: s3.${data.aws_region.current.name}.amazonaws.com
     sse_config:
       type: "SSE-S3"
+VALUES
+
+  values_thanos_global_requests = <<VALUES
+query:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+queryFrontend:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+compactor:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 258Mi
+storegateway:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+VALUES
+
+  values_thanos_global_limits = <<VALUES
+query:
+  resources:
+    limits:
+      memory: 128Mi
+queryFrontend:
+  resources:
+    limits:
+      memory: 64Mi
+compactor:
+  resources:
+    limits:
+      memory: 2Gi
+storegateway:
+  resources:
+    limits:
+      memory: 128Mi
 VALUES
 
 }
@@ -276,6 +287,8 @@ resource "helm_release" "thanos" {
   values = compact([
     local.values_thanos,
     local.values_store_config,
+    local.thanos["default_global_requests"] ? local.values_thanos_global_requests : null,
+    local.thanos["default_global_limits"] ? local.values_thanos_global_limits : null,
     local.thanos["extra_values"]
   ])
   namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[count.index] : local.thanos["namespace"]
@@ -368,6 +381,8 @@ resource "helm_release" "thanos-tls-querier" {
   verify                = each.value["verify"]
   values = compact([
     local.values_thanos-tls-querier[each.key]["values"],
+    each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
+    each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
     each.value["extra_values"]
   ])
   namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[0] : local.thanos["namespace"]
