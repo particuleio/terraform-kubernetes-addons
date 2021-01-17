@@ -22,6 +22,8 @@ locals {
       chart_version                     = "12.10.6"
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true
+      default_global_requests           = false
+      default_global_limits             = false
     },
     var.kube-prometheus-stack
   )
@@ -34,13 +36,6 @@ kubeControllerManager:
 kubeEtcd:
   enabled: false
 grafana:
-  resources:
-    limits:
-      cpu: 300m
-      memory: 500Mi
-    requests:
-      cpu: 100m
-      memory: 200Mi
   sidecar:
     dashboards:
       multicluster: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
@@ -75,47 +70,73 @@ prometheus:
       eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_thanos.this_iam_role_arn : ""}"
   prometheusSpec:
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+alertmanager:
+  alertmanagerSpec:
+    priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+VALUES
+
+  values_kps_global_requests = <<VALUES
+grafana:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+prometheus:
+  prometheusSpec:
     resources:
-      limits:
-        cpu: 250m
-        memory: 2000Mi
       requests:
         cpu: 50m
         memory: 1300Mi
 alertmanager:
   alertmanagerSpec:
-    priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
     resources:
-      limits:
-        cpu: 10m
-        memory: 200Mi
       requests:
         cpu: 10m
         memory: 20Mi
-kube-state-metrics:
+prometheusOperator:
   resources:
-    limits:
-      cpu: 100m
-      memory: 200Mi
     requests:
-      cpu: 10m
-      memory: 50Mi
+      cpu: 50m
+      memory: 64Mi
 prometheus-node-exporter:
   resources:
-    limits:
-      cpu: 100m
-      memory: 200Mi
     requests:
       cpu: 10m
       memory: 20Mi
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 50Mi
+VALUES
+
+  values_kps_global_limits = <<VALUES
+grafana:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 200Mi
 prometheusOperator:
   resources:
     limits:
       cpu: 200m
       memory: 256Mi
-    requests:
-      cpu: 50m
-      memory: 64Mi
+prometheus-node-exporter:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 200Mi
+kube-state-metrics:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 200Mi
 VALUES
 
   values_dashboard_kong = <<VALUES
@@ -413,6 +434,8 @@ resource "helm_release" "kube-prometheus-stack" {
     local.thanos["enabled"] ? local.values_dashboard_thanos : null,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_grafana_ds : null,
+    local.kube-prometheus-stack["default_global_requests"] ? local.values_kps_global_requests : null,
+    local.kube-prometheus-stack["default_global_limits"] ? local.values_kps_global_limits : null,
     local.kube-prometheus-stack["extra_values"]
   ])
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
