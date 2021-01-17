@@ -18,6 +18,7 @@ locals {
       default_global_limits     = false
       create_bucket             = false
       bucket                    = "thanos-store-${var.cluster-name}"
+      bucket_force_destroy      = false
       generate_ca               = false
       trusted_ca_content        = null
     },
@@ -237,6 +238,8 @@ module "thanos_bucket" {
 
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 1.0"
+
+  force_destroy = local.thanos["bucket_force_destroy"]
 
   bucket = local.thanos["bucket"]
   acl    = "private"
