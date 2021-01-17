@@ -78,6 +78,7 @@ locals {
         create: true
         minAvailable: 1
     compactor:
+      strategyType: Recreate
       enabled: true
       serviceAccount:
         annotations:
