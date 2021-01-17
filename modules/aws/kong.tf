@@ -10,8 +10,8 @@ locals {
       enabled                = false
       default_network_policy = true
       ingress_cidrs          = ["0.0.0.0/0"]
-      chart_version          = "1.11.0"
-      version                = "2.1"
+      chart_version          = "1.13.0"
+      version                = "2.2"
     },
     var.kong
   )
