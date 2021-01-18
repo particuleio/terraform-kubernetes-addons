@@ -123,3 +123,9 @@ variable "thanos-tls-querier" {
   type        = any
   default     = {}
 }
+
+variable "thanos-storegateway" {
+  description = "Customize thanos chart, see `thanos.tf` for supported values"
+  type        = any
+  default     = {}
+}

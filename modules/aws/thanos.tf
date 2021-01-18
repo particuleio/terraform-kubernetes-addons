@@ -43,6 +43,24 @@ locals {
     v,
   ) }
 
+  thanos-storegateway = { for k, v in var.thanos-storegateway : k => merge(
+    local.helm_defaults,
+    {
+      name                      = "${local.thanos["name"]}-storegateway-${k}"
+      chart                     = local.thanos["chart"]
+      repository                = local.thanos["repository"]
+      version                   = local.thanos["version"]
+      create_iam_resources_irsa = true
+      iam_policy_override       = null
+      enabled                   = false
+      chart_version             = local.thanos["chart_version"]
+      default_global_requests   = false
+      default_global_limits     = false
+      bucket                    = null
+    },
+    v,
+  ) }
+
   values_thanos = <<-VALUES
     metrics:
       enabled: true
@@ -59,19 +77,19 @@ locals {
       autoscaling:
         enabled: true
         minReplicas: 2
-        maxReplicas: 4
+        maxReplicas: 2
         targetCPU: 70
         targetMemory: 70
       pdb:
         create: true
         minAvailable: 1
-      stores: ${jsonencode([for k, v in local.thanos-tls-querier : "dnssrv+_grpc._tcp.${v["name"]}-query.${local.thanos["namespace"]}.svc.cluster.local"])}
+      stores: ${jsonencode(concat([for k, v in local.thanos-tls-querier : "dnssrv+_grpc._tcp.${v["name"]}-query.${local.thanos["namespace"]}.svc.cluster.local"], [for k, v in local.thanos-storegateway : "dnssrv+_grpc._tcp.${v["name"]}-storegateway.${local.thanos["namespace"]}.svc.cluster.local"]))}
     queryFrontend:
       enabled: true
       autoscaling:
         enabled: true
         minReplicas: 2
-        maxReplicas: 4
+        maxReplicas: 2
         targetCPU: 70
         targetMemory: 70
       pdb:
@@ -91,7 +109,7 @@ locals {
       autoscaling:
         enabled: true
         minReplicas: 2
-        maxReplicas: 4
+        maxReplicas: 2
         targetCPU: 70
         targetMemory: 70
       pdb:
@@ -113,9 +131,9 @@ locals {
           autoscaling:
             enabled: true
             minReplicas: 2
-            maxReplicas: 4
-            targetCPU: 50
-            targetMemory: 50
+            maxReplicas: 2
+            targetCPU: 70
+            targetMemory: 70
           pdb:
             create: true
             minAvailable: 1
@@ -134,6 +152,46 @@ locals {
           enabled: false
         storegateway:
           enabled: false
+        VALUES
+    },
+    v,
+  ) }
+
+  values_thanos-storegateway = { for k, v in local.thanos-storegateway : k => merge(
+    {
+      values = <<-VALUES
+        objstoreConfig:
+          type: S3
+          config:
+            bucket: ${v["bucket"]}
+            region: ${data.aws_region.current.name}
+            endpoint: s3.${data.aws_region.current.name}.amazonaws.com
+            sse_config:
+              type: "SSE-S3"
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: ${local.kube-prometheus-stack["enabled"] ? "true" : "false"}
+        query:
+          enabled: false
+        queryFrontend:
+          enabled: false
+        compactor:
+          enabled: false
+        storegateway:
+          enabled: true
+          serviceAccount:
+            annotations:
+              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].this_iam_role_arn : ""}"
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 2
+            targetCPU: 70
+            targetMemory: 70
+          pdb:
+            create: true
+            minAvailable: 1
         VALUES
     },
     v,
@@ -206,10 +264,29 @@ module "iam_assumable_role_thanos" {
   tags                         = local.tags
 }
 
+module "iam_assumable_role_thanos-storegateway" {
+  for_each                     = local.thanos-storegateway
+  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                      = "~> 3.0"
+  create_role                  = each.value["enabled"] && each.value["create_iam_resources_irsa"]
+  role_name                    = "${var.cluster-name}-${each.value["name"]}-irsa"
+  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
+  role_policy_arns             = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.thanos-storegateway[each.key].arn] : []
+  number_of_role_policy_arns   = 1
+  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.thanos["namespace"]}:${each.value["name"]}-storegateway"]
+  tags                         = local.tags
+}
+
 resource "aws_iam_policy" "thanos" {
   count  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0
   name   = "${var.cluster-name}-${local.thanos["name"]}-thanos"
   policy = local.thanos["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos.json : local.thanos["iam_policy_override"]
+}
+
+resource "aws_iam_policy" "thanos-storegateway" {
+  for_each = { for k, v in local.thanos-storegateway : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
+  name     = "${var.cluster-name}-${each.value["name"]}"
+  policy   = each.value["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos-storegateway[each.key].json : each.value["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "thanos" {
@@ -231,6 +308,31 @@ data "aws_iam_policy_document" "thanos" {
     ]
 
     resources = ["arn:aws:s3:::${local.thanos["bucket"]}/*"]
+  }
+}
+
+data "aws_iam_policy_document" "thanos-storegateway" {
+
+  for_each = { for k, v in local.thanos-storegateway : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket"
+    ]
+
+    resources = ["arn:aws:s3:::${each.value["bucket"]}"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:*Object"
+    ]
+
+    resources = ["arn:aws:s3:::${each.value["bucket"]}/*"]
   }
 }
 
@@ -385,6 +487,40 @@ resource "helm_release" "thanos-tls-querier" {
   verify                = each.value["verify"]
   values = compact([
     local.values_thanos-tls-querier[each.key]["values"],
+    each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
+    each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
+    each.value["extra_values"]
+  ])
+  namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[0] : local.thanos["namespace"]
+
+  depends_on = [
+    helm_release.kube-prometheus-stack
+  ]
+}
+
+resource "helm_release" "thanos-storegateway" {
+  for_each              = { for k, v in local.thanos-storegateway : k => v if v["enabled"] }
+  repository            = each.value["repository"]
+  name                  = each.value["name"]
+  chart                 = each.value["chart"]
+  version               = each.value["chart_version"]
+  timeout               = each.value["timeout"]
+  force_update          = each.value["force_update"]
+  recreate_pods         = each.value["recreate_pods"]
+  wait                  = each.value["wait"]
+  atomic                = each.value["atomic"]
+  cleanup_on_fail       = each.value["cleanup_on_fail"]
+  dependency_update     = each.value["dependency_update"]
+  disable_crd_hooks     = each.value["disable_crd_hooks"]
+  disable_webhooks      = each.value["disable_webhooks"]
+  render_subchart_notes = each.value["render_subchart_notes"]
+  replace               = each.value["replace"]
+  reset_values          = each.value["reset_values"]
+  reuse_values          = each.value["reuse_values"]
+  skip_crds             = each.value["skip_crds"]
+  verify                = each.value["verify"]
+  values = compact([
+    local.values_thanos-storegateway[each.key]["values"],
     each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
     each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
     each.value["extra_values"]
