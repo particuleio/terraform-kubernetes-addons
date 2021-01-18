@@ -192,7 +192,7 @@ grafana:
     datasources:
       defaultDatasourceEnabled: false
   additionalDataSources:
-  - name: Thanos
+  - name: Prometheus
     access: proxy
     editable: false
     orgId: 1
