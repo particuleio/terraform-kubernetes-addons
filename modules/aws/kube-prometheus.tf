@@ -19,7 +19,7 @@ locals {
       thanos_store_config               = null
       thanos_version                    = "v0.17.2"
       enabled                           = false
-      chart_version                     = "12.10.6"
+      chart_version                     = "12.12.1"
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true
       default_global_requests           = false
@@ -63,6 +63,8 @@ grafana:
 prometheus-node-exporter:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 prometheus:
+  thanosService:
+    enabled: ${local.thanos["enabled"]}
   serviceAccount:
     create: true
     name: ${local.kube-prometheus-stack["prometheus_service_account_name"]}
@@ -146,6 +148,7 @@ grafana:
       kong-dash:
         gnetId: 7424
         revision: 6
+        datasource: Prometheus
 VALUES
 
   values_dashboard_ingress-nginx = <<VALUES
@@ -163,6 +166,7 @@ grafana:
       cluster-autoscaler:
         gnetId: 3831
         revision: 1
+        datasource: Prometheus
 VALUES
 
   values_dashboard_cert-manager = <<VALUES
@@ -172,6 +176,21 @@ grafana:
       cert-manager:
         gnetId: 11001
         revision: 1
+        datasource: Prometheus
+VALUES
+
+  values_dashboard_node_exporter = <<VALUES
+grafana:
+  dashboards:
+    default:
+      node-exporter-full:
+        gnetId: 1860
+        revision: 21
+        datasource: Prometheus
+      node-exporter:
+        gnetId: 11074
+        revision: 9
+        datasource: Prometheus
 VALUES
 
   values_thanos_sidecar = <<VALUES
@@ -432,6 +451,7 @@ resource "helm_release" "kube-prometheus-stack" {
     local.cluster-autoscaler["enabled"] ? local.values_dashboard_cluster-autoscaler : null,
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
     local.thanos["enabled"] ? local.values_dashboard_thanos : null,
+    local.values_dashboard_node_exporter,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_grafana_ds : null,
     local.kube-prometheus-stack["default_global_requests"] ? local.values_kps_global_requests : null,

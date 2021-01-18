@@ -54,7 +54,7 @@ locals {
       enabled: true
       dnsDiscovery:
         enabled: true
-        sidecarsService: prometheus-operated
+        sidecarsService: ${local.kube-prometheus-stack["name"]}-thanos-discovery
         sidecarsNamespace: "${local.kube-prometheus-stack["namespace"]}"
       autoscaling:
         enabled: true
