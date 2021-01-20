@@ -10,6 +10,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with AWS
 ## Main features
 
 * Common addons with associated IAM permissions if needed:
+  * [aws-ebs-csi-driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver): Enable new feature and the use of `gp3` volumes.
   * [aws-for-fluent-bit](https://github.com/aws/aws-for-fluent-bit): Cloudwatch logging with fluent bit instead of fluentd
   * [aws-load-balancer-controller](https://aws.amazon.com/about-aws/whats-new/2020/10/introducing-aws-load-balancer-controller/): Use AWS ALB/NLB for ingress and services.
   * [aws-node-termination-handler](https://github.com/aws/aws-node-termination-handler): Manage spot instance lifecyle
@@ -25,10 +26,12 @@ Provides various Kubernetes addons that are often used on Kubernetes with AWS
   * [kong](https://konghq.com/kong): API Gateway ingress controller.
   * [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus): Monitoring / Alerting / Dashboards.
   * [loki-stack](https://grafana.com/oss/loki/): Grafana Loki logging stack
+  * [promtail](https://grafana.com/docs/loki/latest/clients/promtail/): Ship log to loki from other cluster (eg. mTLS)
   * [metrics-server](https://github.com/kubernetes-incubator/metrics-server): enable metrics API and horizontal pod scaling (HPA).
   * [node-problem-detector](https://github.com/kubernetes/node-problem-detector): Forwards node problems to Kubernetes events
   * [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets): Technology agnostic, store secrets on git.
   * [thanos](https://thanos.io/): Open source, highly available Prometheus setup with long term storage capabilities
+  * [thanos-storegateway](https://thanos.io/): Additional storegateway to query multiple object stores
   * [thanos-tls-querier](https://thanos.io/tip/operating/cross-cluster-tls-communication.md/): Thanos TLS querier for cross cluster collection
 
 ## Documentation
@@ -68,6 +71,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | aws | AWS provider customization | `any` | `{}` | no |
+| aws-ebs-csi-driver | Customize aws-ebs-csi-driver helm chart, see `aws-ebs-csi-driver.tf` | `any` | `{}` | no |
 | aws-for-fluent-bit | Customize aws-for-fluent-bit helm chart, see `aws-fluent-bit.tf` | `any` | `{}` | no |
 | aws-load-balancer-controller | Customize aws-load-balancer-controller chart, see `aws-load-balancer-controller.tf` for supported values | `any` | `{}` | no |
 | aws-node-termination-handler | Customize aws-node-termination-handler chart, see `aws-node-termination-handler.tf` | `any` | `{}` | no |
@@ -92,9 +96,11 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | npd | Customize node-problem-detector chart, see `npd.tf` for supported values | `any` | `{}` | no |
 | priority-class | Customize a priority class for addons | `any` | `{}` | no |
 | priority-class-ds | Customize a priority class for addons daemonsets | `any` | `{}` | no |
+| promtail | Customize promtail chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | sealed-secrets | Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values | `any` | `{}` | no |
 | tags | Map of tags for AWS resources | `map(any)` | `{}` | no |
 | thanos | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| thanos-storegateway | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | thanos-tls-querier | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 
 ## Outputs
@@ -102,4 +108,8 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Description |
 |------|-------------|
 | grafana\_password | n/a |
+| loki-stack-ca | n/a |
+| promtail-cert | n/a |
+| promtail-key | n/a |
 | thanos\_ca | n/a |
+

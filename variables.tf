@@ -106,6 +106,12 @@ variable "priority-class-ds" {
   default     = {}
 }
 
+variable "promtail" {
+  description = "Customize promtail chart, see `loki-stack.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "sealed-secrets" {
   description = "Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values"
   type        = any
