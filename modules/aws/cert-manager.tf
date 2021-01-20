@@ -161,7 +161,8 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
 data "kubectl_path_documents" "cert-manager_csi_driver" {
   pattern = "${path.module}/templates/cert-manager-csi-driver.yaml.tpl"
   vars = {
-    namespace = local.cert-manager["namespace"]
+    namespace      = local.cert-manager["namespace"]
+    priority_class = local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""
   }
 }
 

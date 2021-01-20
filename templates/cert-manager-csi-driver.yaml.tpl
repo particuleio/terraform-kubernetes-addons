@@ -51,6 +51,7 @@ spec:
         app: cert-manager-csi
     spec:
       serviceAccount: cert-manager-csi
+      priorityClassName: ${priority_class}
       containers:
         - name: node-driver-registrar
           image: quay.io/k8scsi/csi-node-driver-registrar:v1.2.0
