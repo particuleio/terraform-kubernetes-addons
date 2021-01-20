@@ -9,8 +9,8 @@ locals {
       service_account_name      = "aws-load-balancer-controller"
       create_iam_resources_irsa = true
       enabled                   = false
-      chart_version             = "1.0.5"
-      version                   = "v2.0.0"
+      chart_version             = "1.1.2"
+      version                   = "v2.1.1"
       iam_policy_override       = null
       default_network_policy    = true
       allowed_cidrs             = ["0.0.0.0/0"]
