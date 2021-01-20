@@ -19,7 +19,7 @@ locals {
       thanos_store_config               = null
       thanos_version                    = "v0.17.2"
       enabled                           = false
-      chart_version                     = "12.12.1"
+      chart_version                     = "13.0.2"
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true
       default_global_requests           = false
