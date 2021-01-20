@@ -12,7 +12,6 @@ locals {
       version                   = "v0.17.2"
       enabled                   = false
       chart_version             = "3.3.0"
-      allowed_cidrs             = ["0.0.0.0/0"]
       default_network_policy    = true
       default_global_requests   = false
       default_global_limits     = false
