@@ -11,7 +11,7 @@ locals {
       create_ns                 = false
       version                   = "v0.17.2"
       enabled                   = false
-      chart_version             = "3.3.0"
+      chart_version             = "3.4.1"
       default_network_policy    = true
       default_global_requests   = false
       default_global_limits     = false
@@ -20,6 +20,19 @@ locals {
       bucket_force_destroy      = false
       generate_ca               = false
       trusted_ca_content        = null
+    },
+    var.thanos
+  )
+
+  thanos-memcached = merge(
+    local.helm_defaults,
+    {
+      name          = "thanos-memcached"
+      namespace     = local.thanos["namespace"]
+      chart         = "memcached"
+      repository    = "https://charts.bitnami.com/bitnami"
+      enabled       = false
+      chart_version = "5.4.2"
     },
     var.thanos
   )
@@ -66,6 +79,11 @@ locals {
       serviceMonitor:
         enabled: ${local.kube-prometheus-stack["enabled"] ? "true" : "false"}
     query:
+      extraFlags:
+        - --query.timeout=5m
+        - --query.lookback-delta=15m
+        - --query.replica-label=rule_replica
+      replicaCount: 2
       replicaLabel:
         - prometheus_replica
       enabled: true
@@ -73,47 +91,126 @@ locals {
         enabled: true
         sidecarsService: ${local.kube-prometheus-stack["name"]}-thanos-discovery
         sidecarsNamespace: "${local.kube-prometheus-stack["namespace"]}"
-      autoscaling:
-        enabled: true
-        minReplicas: 2
-        maxReplicas: 2
-        targetCPU: 70
-        targetMemory: 70
       pdb:
         create: true
         minAvailable: 1
       stores: ${jsonencode(concat([for k, v in local.thanos-tls-querier : "dnssrv+_grpc._tcp.${v["name"]}-query.${local.thanos["namespace"]}.svc.cluster.local"], [for k, v in local.thanos-storegateway : "dnssrv+_grpc._tcp.${v["name"]}-storegateway.${local.thanos["namespace"]}.svc.cluster.local"]))}
     queryFrontend:
+      extraFlags:
+        - --query-frontend.compress-responses
+        - --query-range.split-interval=12h
+        - --labels.split-interval=12h
+        - --query-range.max-retries-per-request=10
+        - --labels.max-retries-per-request=10
+        - --query-frontend.log-queries-longer-than=10s
+      replicaCount: 2
       enabled: true
-      autoscaling:
-        enabled: true
-        minReplicas: 2
-        maxReplicas: 2
-        targetCPU: 70
-        targetMemory: 70
       pdb:
         create: true
         minAvailable: 1
     compactor:
+      extraFlags:
+        - --deduplication.replica-label=prometheus_replica
+        - --deduplication.replica-label=rule_replica
       strategyType: Recreate
       enabled: true
       serviceAccount:
         annotations:
           eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.this_iam_role_arn : ""}"
     storegateway:
+      extraFlags:
+        - --ignore-deletion-marks-delay=24h
+      replicaCount: 2
       enabled: true
       serviceAccount:
         annotations:
           eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.this_iam_role_arn : ""}"
-      autoscaling:
-        enabled: true
-        minReplicas: 2
-        maxReplicas: 2
-        targetCPU: 70
-        targetMemory: 70
       pdb:
         create: true
         minAvailable: 1
+    VALUES
+
+  values_thanos-memcached = <<-VALUES
+    architecture: "high-availability"
+    replicaCount: 2
+    podAntiAffinityPreset: hard
+    metrics:
+      enabled: ${local.kube-prometheus-stack["enabled"]}
+      serviceMonitor:
+        enabled: ${local.kube-prometheus-stack["enabled"]}
+    VALUES
+
+  values_thanos_caching = <<-VALUES
+    queryFrontend:
+      extraFlags:
+        - --query-frontend.compress-responses
+        - --query-range.split-interval=12h
+        - --labels.split-interval=12h
+        - --query-range.max-retries-per-request=10
+        - --labels.max-retries-per-request=10
+        - --query-frontend.log-queries-longer-than=10s
+        - |-
+          --query-range.response-cache-config="config":
+            "addresses":
+            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "timeout": "500ms"
+          "type": "memcached"
+        - |-
+          --labels.response-cache-config="config":
+            "addresses":
+            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "timeout": "500ms"
+          "type": "memcached"
+    storegateway:
+      extraFlags:
+        - --ignore-deletion-marks-delay=24h
+        - |-
+          --index-cache.config="config":
+            "addresses":
+            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "max_item_size": "1MiB"
+            "timeout": "500ms"
+          "type": "memcached"
+        - |-
+          --store.caching-bucket.config="blocks_iter_ttl": "5m"
+          "chunk_object_attrs_ttl": "24h"
+          "chunk_subrange_size": 16000
+          "chunk_subrange_ttl": "24h"
+          "config":
+            "addresses":
+            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "max_item_size": "1MiB"
+            "timeout": "500ms"
+          "max_chunks_get_range_requests": 3
+          "metafile_content_ttl": "24h"
+          "metafile_doesnt_exist_ttl": "15m"
+          "metafile_exists_ttl": "2h"
+          "metafile_max_size": "1MiB"
+          "type": "memcached"
     VALUES
 
   values_thanos-tls-querier = { for k, v in local.thanos-tls-querier : k => merge(
@@ -124,15 +221,14 @@ locals {
           serviceMonitor:
             enabled: ${local.kube-prometheus-stack["enabled"] ? "true" : "false"}
         query:
+          replicaCount: 2
+          extraFlags:
+            - --query.timeout=5m
+            - --query.lookback-delta=15m
+            - --query.replica-label=rule_replica
           enabled: true
           dnsDiscovery:
             enabled: false
-          autoscaling:
-            enabled: true
-            minReplicas: 2
-            maxReplicas: 2
-            targetCPU: 70
-            targetMemory: 70
           pdb:
             create: true
             minAvailable: 1
@@ -178,16 +274,13 @@ locals {
         compactor:
           enabled: false
         storegateway:
+          replicaCount: 2
+          extraFlags:
+            - --ignore-deletion-marks-delay=24h
           enabled: true
           serviceAccount:
             annotations:
               eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].this_iam_role_arn : ""}"
-          autoscaling:
-            enabled: true
-            minReplicas: 2
-            maxReplicas: 2
-            targetCPU: 70
-            targetMemory: 70
           pdb:
             create: true
             minAvailable: 1
@@ -394,12 +487,46 @@ resource "helm_release" "thanos" {
     local.values_store_config,
     local.thanos["default_global_requests"] ? local.values_thanos_global_requests : null,
     local.thanos["default_global_limits"] ? local.values_thanos_global_limits : null,
+    local.thanos-memcached["enabled"] ? local.values_thanos_caching : null,
     local.thanos["extra_values"]
   ])
   namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[count.index] : local.thanos["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    helm_release.kube-prometheus-stack,
+    helm_release.thanos-memcached
+  ]
+}
+
+resource "helm_release" "thanos-memcached" {
+  count                 = local.thanos-memcached["enabled"] ? 1 : 0
+  repository            = local.thanos-memcached["repository"]
+  name                  = local.thanos-memcached["name"]
+  chart                 = local.thanos-memcached["chart"]
+  version               = local.thanos-memcached["chart_version"]
+  timeout               = local.thanos-memcached["timeout"]
+  force_update          = local.thanos-memcached["force_update"]
+  recreate_pods         = local.thanos-memcached["recreate_pods"]
+  wait                  = local.thanos-memcached["wait"]
+  atomic                = local.thanos-memcached["atomic"]
+  cleanup_on_fail       = local.thanos-memcached["cleanup_on_fail"]
+  dependency_update     = local.thanos-memcached["dependency_update"]
+  disable_crd_hooks     = local.thanos-memcached["disable_crd_hooks"]
+  disable_webhooks      = local.thanos-memcached["disable_webhooks"]
+  render_subchart_notes = local.thanos-memcached["render_subchart_notes"]
+  replace               = local.thanos-memcached["replace"]
+  reset_values          = local.thanos-memcached["reset_values"]
+  reuse_values          = local.thanos-memcached["reuse_values"]
+  skip_crds             = local.thanos-memcached["skip_crds"]
+  verify                = local.thanos-memcached["verify"]
+  values = compact([
+    local.values_thanos-memcached,
+    local.thanos-memcached["extra_values"]
+  ])
+  namespace = local.thanos-memcached["namespace"]
+
+  depends_on = [
+    helm_release.kube-prometheus-stack,
   ]
 }
 
@@ -488,12 +615,14 @@ resource "helm_release" "thanos-tls-querier" {
     local.values_thanos-tls-querier[each.key]["values"],
     each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
     each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
+    local.thanos-memcached["enabled"] ? local.values_thanos_caching : null,
     each.value["extra_values"]
   ])
   namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[0] : local.thanos["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    helm_release.kube-prometheus-stack,
+    helm_release.thanos-memcached
   ]
 }
 
@@ -522,12 +651,14 @@ resource "helm_release" "thanos-storegateway" {
     local.values_thanos-storegateway[each.key]["values"],
     each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
     each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
+    local.thanos-memcached["enabled"] ? local.values_thanos_caching : null,
     each.value["extra_values"]
   ])
   namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[0] : local.thanos["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    helm_release.kube-prometheus-stack,
+    helm_release.thanos-memcached
   ]
 }
 

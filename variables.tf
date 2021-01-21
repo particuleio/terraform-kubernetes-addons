@@ -135,3 +135,9 @@ variable "thanos-storegateway" {
   type        = any
   default     = {}
 }
+
+variable "thanos-memcached" {
+  description = "Customize thanos chart, see `thanos.tf` for supported values"
+  type        = any
+  default     = {}
+}
