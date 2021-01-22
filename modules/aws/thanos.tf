@@ -1,4 +1,5 @@
 locals {
+
   thanos = merge(
     local.helm_defaults,
     {
@@ -23,55 +24,6 @@ locals {
     },
     var.thanos
   )
-
-  thanos-memcached = merge(
-    local.helm_defaults,
-    {
-      name          = "thanos-memcached"
-      namespace     = local.thanos["namespace"]
-      chart         = "memcached"
-      repository    = "https://charts.bitnami.com/bitnami"
-      enabled       = false
-      chart_version = "5.4.2"
-    },
-    var.thanos
-  )
-
-  thanos-tls-querier = { for k, v in var.thanos-tls-querier : k => merge(
-    local.helm_defaults,
-    {
-      name                    = "${local.thanos["name"]}-tls-querier-${k}"
-      chart                   = local.thanos["chart"]
-      repository              = local.thanos["repository"]
-      version                 = local.thanos["version"]
-      enabled                 = false
-      chart_version           = local.thanos["chart_version"]
-      generate_cert           = local.thanos["generate_ca"]
-      client_server_name      = ""
-      stores                  = []
-      default_global_requests = false
-      default_global_limits   = false
-    },
-    v,
-  ) }
-
-  thanos-storegateway = { for k, v in var.thanos-storegateway : k => merge(
-    local.helm_defaults,
-    {
-      name                      = "${local.thanos["name"]}-storegateway-${k}"
-      chart                     = local.thanos["chart"]
-      repository                = local.thanos["repository"]
-      version                   = local.thanos["version"]
-      create_iam_resources_irsa = true
-      iam_policy_override       = null
-      enabled                   = false
-      chart_version             = local.thanos["chart_version"]
-      default_global_requests   = false
-      default_global_limits     = false
-      bucket                    = null
-    },
-    v,
-  ) }
 
   values_thanos = <<-VALUES
     metrics:
@@ -130,15 +82,6 @@ locals {
         minAvailable: 1
     VALUES
 
-  values_thanos-memcached = <<-VALUES
-    architecture: "high-availability"
-    replicaCount: 2
-    podAntiAffinityPreset: hard
-    metrics:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
-      serviceMonitor:
-        enabled: ${local.kube-prometheus-stack["enabled"]}
-    VALUES
 
   values_thanos_caching = <<-VALUES
     queryFrontend:
@@ -213,135 +156,59 @@ locals {
           "type": "memcached"
     VALUES
 
-  values_thanos-tls-querier = { for k, v in local.thanos-tls-querier : k => merge(
-    {
-      values = <<-VALUES
-        metrics:
-          enabled: true
-          serviceMonitor:
-            enabled: ${local.kube-prometheus-stack["enabled"] ? "true" : "false"}
-        query:
-          replicaCount: 2
-          extraFlags:
-            - --query.timeout=5m
-            - --query.lookback-delta=15m
-            - --query.replica-label=rule_replica
-          enabled: true
-          dnsDiscovery:
-            enabled: false
-          pdb:
-            create: true
-            minAvailable: 1
-          grpcTLS:
-            client:
-              secure: true
-              key: |
-                ${indent(8, v["generate_cert"] ? tls_private_key.thanos-tls-querier-cert-key[k].private_key_pem : "")}
-              cert: |
-                ${indent(8, v["generate_cert"] ? tls_locally_signed_cert.thanos-tls-querier-cert[k].cert_pem : "")}
-              servername: ${v["client_server_name"]}
-          stores: ${jsonencode(v["stores"])}
-        queryFrontend:
-          enabled: false
-        compactor:
-          enabled: false
-        storegateway:
-          enabled: false
-        VALUES
-    },
-    v,
-  ) }
 
-  values_thanos-storegateway = { for k, v in local.thanos-storegateway : k => merge(
-    {
-      values = <<-VALUES
-        objstoreConfig:
-          type: S3
-          config:
-            bucket: ${v["bucket"]}
-            region: ${data.aws_region.current.name}
-            endpoint: s3.${data.aws_region.current.name}.amazonaws.com
-            sse_config:
-              type: "SSE-S3"
-        metrics:
-          enabled: true
-          serviceMonitor:
-            enabled: ${local.kube-prometheus-stack["enabled"] ? "true" : "false"}
-        query:
-          enabled: false
-        queryFrontend:
-          enabled: false
-        compactor:
-          enabled: false
-        storegateway:
-          replicaCount: 2
-          extraFlags:
-            - --ignore-deletion-marks-delay=24h
-          enabled: true
-          serviceAccount:
-            annotations:
-              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].this_iam_role_arn : ""}"
-          pdb:
-            create: true
-            minAvailable: 1
-        VALUES
-    },
-    v,
-  ) }
+  values_store_config = <<-VALUES
+    objstoreConfig:
+      type: S3
+      config:
+        bucket: ${local.thanos["bucket"]}
+        region: ${data.aws_region.current.name}
+        endpoint: s3.${data.aws_region.current.name}.amazonaws.com
+        sse_config:
+          type: "SSE-S3"
+    VALUES
 
-  values_store_config = <<VALUES
-objstoreConfig:
-  type: S3
-  config:
-    bucket: ${local.thanos["bucket"]}
-    region: ${data.aws_region.current.name}
-    endpoint: s3.${data.aws_region.current.name}.amazonaws.com
-    sse_config:
-      type: "SSE-S3"
-VALUES
+  values_thanos_global_requests = <<-VALUES
+    query:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 32Mi
+    queryFrontend:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 32Mi
+    compactor:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 258Mi
+    storegateway:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+    VALUES
 
-  values_thanos_global_requests = <<VALUES
-query:
-  resources:
-    requests:
-      cpu: 25m
-      memory: 32Mi
-queryFrontend:
-  resources:
-    requests:
-      cpu: 25m
-      memory: 32Mi
-compactor:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 258Mi
-storegateway:
-  resources:
-    requests:
-      cpu: 25m
-      memory: 64Mi
-VALUES
-
-  values_thanos_global_limits = <<VALUES
-query:
-  resources:
-    limits:
-      memory: 128Mi
-queryFrontend:
-  resources:
-    limits:
-      memory: 64Mi
-compactor:
-  resources:
-    limits:
-      memory: 2Gi
-storegateway:
-  resources:
-    limits:
-      memory: 1Gi
-VALUES
-
+  values_thanos_global_limits = <<-VALUES
+    query:
+      resources:
+        limits:
+          memory: 128Mi
+    queryFrontend:
+      resources:
+        limits:
+          memory: 64Mi
+    compactor:
+      resources:
+        limits:
+          memory: 2Gi
+    storegateway:
+      resources:
+        limits:
+          memory: 1Gi
+    VALUES
 }
 
 module "iam_assumable_role_thanos" {
@@ -356,18 +223,6 @@ module "iam_assumable_role_thanos" {
   tags                         = local.tags
 }
 
-module "iam_assumable_role_thanos-storegateway" {
-  for_each                     = local.thanos-storegateway
-  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 3.0"
-  create_role                  = each.value["enabled"] && each.value["create_iam_resources_irsa"]
-  role_name                    = "${var.cluster-name}-${each.value["name"]}-irsa"
-  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns             = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.thanos-storegateway[each.key].arn] : []
-  number_of_role_policy_arns   = 1
-  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.thanos["namespace"]}:${each.value["name"]}-storegateway"]
-  tags                         = local.tags
-}
 
 resource "aws_iam_policy" "thanos" {
   count  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0
@@ -375,11 +230,6 @@ resource "aws_iam_policy" "thanos" {
   policy = local.thanos["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos.json : local.thanos["iam_policy_override"]
 }
 
-resource "aws_iam_policy" "thanos-storegateway" {
-  for_each = { for k, v in local.thanos-storegateway : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
-  name     = "${var.cluster-name}-${each.value["name"]}"
-  policy   = each.value["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos-storegateway[each.key].json : each.value["iam_policy_override"]
-}
 
 data "aws_iam_policy_document" "thanos" {
   statement {
@@ -403,30 +253,6 @@ data "aws_iam_policy_document" "thanos" {
   }
 }
 
-data "aws_iam_policy_document" "thanos-storegateway" {
-
-  for_each = { for k, v in local.thanos-storegateway : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:ListBucket"
-    ]
-
-    resources = ["arn:aws:s3:::${each.value["bucket"]}"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:*Object"
-    ]
-
-    resources = ["arn:aws:s3:::${each.value["bucket"]}/*"]
-  }
-}
 
 module "thanos_bucket" {
   create_bucket = local.thanos["enabled"] && local.thanos["create_bucket"]
@@ -498,38 +324,6 @@ resource "helm_release" "thanos" {
   ]
 }
 
-resource "helm_release" "thanos-memcached" {
-  count                 = local.thanos-memcached["enabled"] ? 1 : 0
-  repository            = local.thanos-memcached["repository"]
-  name                  = local.thanos-memcached["name"]
-  chart                 = local.thanos-memcached["chart"]
-  version               = local.thanos-memcached["chart_version"]
-  timeout               = local.thanos-memcached["timeout"]
-  force_update          = local.thanos-memcached["force_update"]
-  recreate_pods         = local.thanos-memcached["recreate_pods"]
-  wait                  = local.thanos-memcached["wait"]
-  atomic                = local.thanos-memcached["atomic"]
-  cleanup_on_fail       = local.thanos-memcached["cleanup_on_fail"]
-  dependency_update     = local.thanos-memcached["dependency_update"]
-  disable_crd_hooks     = local.thanos-memcached["disable_crd_hooks"]
-  disable_webhooks      = local.thanos-memcached["disable_webhooks"]
-  render_subchart_notes = local.thanos-memcached["render_subchart_notes"]
-  replace               = local.thanos-memcached["replace"]
-  reset_values          = local.thanos-memcached["reset_values"]
-  reuse_values          = local.thanos-memcached["reuse_values"]
-  skip_crds             = local.thanos-memcached["skip_crds"]
-  verify                = local.thanos-memcached["verify"]
-  values = compact([
-    local.values_thanos-memcached,
-    local.thanos-memcached["extra_values"]
-  ])
-  namespace = local.thanos-memcached["namespace"]
-
-  depends_on = [
-    helm_release.kube-prometheus-stack,
-  ]
-}
-
 resource "tls_private_key" "thanos-tls-querier-ca-key" {
   count       = local.thanos["generate_ca"] ? 1 : 0
   algorithm   = "ECDSA"
@@ -551,114 +345,6 @@ resource "tls_self_signed_cert" "thanos-tls-querier-ca-cert" {
 
   allowed_uses = [
     "cert_signing"
-  ]
-}
-
-resource "tls_private_key" "thanos-tls-querier-cert-key" {
-  for_each    = { for k, v in local.thanos-tls-querier : k => v if v["enabled"] && v["generate_cert"] }
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P384"
-}
-
-resource "tls_cert_request" "thanos-tls-querier-cert-csr" {
-  for_each        = { for k, v in local.thanos-tls-querier : k => v if v["enabled"] && v["generate_cert"] }
-  key_algorithm   = "ECDSA"
-  private_key_pem = tls_private_key.thanos-tls-querier-cert-key[each.key].private_key_pem
-
-  subject {
-    common_name = each.key
-  }
-
-  dns_names = [
-    each.key
-  ]
-}
-
-resource "tls_locally_signed_cert" "thanos-tls-querier-cert" {
-  for_each           = { for k, v in local.thanos-tls-querier : k => v if v["enabled"] && v["generate_cert"] }
-  cert_request_pem   = tls_cert_request.thanos-tls-querier-cert-csr[each.key].cert_request_pem
-  ca_key_algorithm   = "ECDSA"
-  ca_private_key_pem = tls_private_key.thanos-tls-querier-ca-key[0].private_key_pem
-  ca_cert_pem        = tls_self_signed_cert.thanos-tls-querier-ca-cert[0].cert_pem
-
-  validity_period_hours = 8760
-
-  allowed_uses = [
-    "key_encipherment",
-    "digital_signature",
-    "client_auth"
-  ]
-}
-
-resource "helm_release" "thanos-tls-querier" {
-  for_each              = { for k, v in local.thanos-tls-querier : k => v if v["enabled"] }
-  repository            = each.value["repository"]
-  name                  = each.value["name"]
-  chart                 = each.value["chart"]
-  version               = each.value["chart_version"]
-  timeout               = each.value["timeout"]
-  force_update          = each.value["force_update"]
-  recreate_pods         = each.value["recreate_pods"]
-  wait                  = each.value["wait"]
-  atomic                = each.value["atomic"]
-  cleanup_on_fail       = each.value["cleanup_on_fail"]
-  dependency_update     = each.value["dependency_update"]
-  disable_crd_hooks     = each.value["disable_crd_hooks"]
-  disable_webhooks      = each.value["disable_webhooks"]
-  render_subchart_notes = each.value["render_subchart_notes"]
-  replace               = each.value["replace"]
-  reset_values          = each.value["reset_values"]
-  reuse_values          = each.value["reuse_values"]
-  skip_crds             = each.value["skip_crds"]
-  verify                = each.value["verify"]
-  values = compact([
-    local.values_thanos-tls-querier[each.key]["values"],
-    each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
-    each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
-    local.thanos-memcached["enabled"] ? local.values_thanos_caching : null,
-    each.value["extra_values"]
-  ])
-  namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[0] : local.thanos["namespace"]
-
-  depends_on = [
-    helm_release.kube-prometheus-stack,
-    helm_release.thanos-memcached
-  ]
-}
-
-resource "helm_release" "thanos-storegateway" {
-  for_each              = { for k, v in local.thanos-storegateway : k => v if v["enabled"] }
-  repository            = each.value["repository"]
-  name                  = each.value["name"]
-  chart                 = each.value["chart"]
-  version               = each.value["chart_version"]
-  timeout               = each.value["timeout"]
-  force_update          = each.value["force_update"]
-  recreate_pods         = each.value["recreate_pods"]
-  wait                  = each.value["wait"]
-  atomic                = each.value["atomic"]
-  cleanup_on_fail       = each.value["cleanup_on_fail"]
-  dependency_update     = each.value["dependency_update"]
-  disable_crd_hooks     = each.value["disable_crd_hooks"]
-  disable_webhooks      = each.value["disable_webhooks"]
-  render_subchart_notes = each.value["render_subchart_notes"]
-  replace               = each.value["replace"]
-  reset_values          = each.value["reset_values"]
-  reuse_values          = each.value["reuse_values"]
-  skip_crds             = each.value["skip_crds"]
-  verify                = each.value["verify"]
-  values = compact([
-    local.values_thanos-storegateway[each.key]["values"],
-    each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
-    each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
-    local.thanos-memcached["enabled"] ? local.values_thanos_caching : null,
-    each.value["extra_values"]
-  ])
-  namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[0] : local.thanos["namespace"]
-
-  depends_on = [
-    helm_release.kube-prometheus-stack,
-    helm_release.thanos-memcached
   ]
 }
 
