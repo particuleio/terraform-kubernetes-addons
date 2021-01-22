@@ -83,14 +83,12 @@ resource "helm_release" "thanos-tls-querier" {
     local.values_thanos-tls-querier[each.key]["values"],
     each.value["default_global_requests"] ? local.values_thanos_global_requests : null,
     each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
-    local.thanos-memcached["enabled"] ? local.values_thanos_caching : null,
     each.value["extra_values"]
   ])
   namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[0] : local.thanos["namespace"]
 
   depends_on = [
     helm_release.kube-prometheus-stack,
-    helm_release.thanos-memcached
   ]
 }
 

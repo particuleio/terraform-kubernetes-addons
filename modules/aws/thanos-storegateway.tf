@@ -131,6 +131,5 @@ resource "helm_release" "thanos-storegateway" {
 
   depends_on = [
     helm_release.kube-prometheus-stack,
-    helm_release.thanos-memcached
   ]
 }
