@@ -25,9 +25,8 @@ jobs:
         DEFAULT_BRANCH: main
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         VALIDATE_STATES: false
-        VALIDATE_KUBERNETES_KUBEVAL: false
         VALIDATE_TERRAFORM_TERRASCAN: false
-        VALIDATE_TERRAFORM: false
+        VALIDATE_JSCPD: false
     - name: 'slack:failure'
       if: failure()
       env:
