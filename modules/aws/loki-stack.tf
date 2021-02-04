@@ -14,6 +14,7 @@ locals {
       default_network_policy    = true
       create_bucket             = true
       bucket                    = "loki-store-${var.cluster-name}"
+      bucket_lifecycle_rule     = []
       bucket_force_destroy      = false
       generate_ca               = true
       trusted_ca_content        = null
@@ -243,6 +244,8 @@ module "loki_bucket" {
       }
     }
   }
+
+  lifecycle_rule = local.bucket_lifecycle_rule
 }
 
 resource "tls_private_key" "loki-stack-ca-key" {
