@@ -6,7 +6,7 @@ terraform {
       version = ">= 1.17.0"
     }
     helm       = "~> 2.0"
-    kubernetes = "~> 1.0"
+    kubernetes = "~> 2.0"
     kubectl = {
       source  = "gavinbunney/kubectl"
       version = "~> 1.0"
