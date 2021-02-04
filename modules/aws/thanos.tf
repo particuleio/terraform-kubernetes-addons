@@ -95,7 +95,7 @@ locals {
         - |-
           --query-range.response-cache-config="config":
             "addresses":
-            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            - "dnssrv+_memcache._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
@@ -107,7 +107,7 @@ locals {
         - |-
           --labels.response-cache-config="config":
             "addresses":
-            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            - "dnssrv+_memcache._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
@@ -122,7 +122,7 @@ locals {
         - |-
           --index-cache.config="config":
             "addresses":
-            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            - "dnssrv+_memcache._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
@@ -139,7 +139,7 @@ locals {
           "chunk_subrange_ttl": "24h"
           "config":
             "addresses":
-            - "dnssrv+_client._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
+            - "dnssrv+_memcache._tcp.${local.thanos-memcached["name"]}.${local.thanos-memcached["namespace"]}.svc.cluster.local"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
