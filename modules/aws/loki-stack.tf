@@ -245,7 +245,7 @@ module "loki_bucket" {
     }
   }
 
-  lifecycle_rule = local.bucket_lifecycle_rule
+  lifecycle_rule = local.loki-stack["bucket_lifecycle_rule"]
 }
 
 resource "tls_private_key" "loki-stack-ca-key" {
