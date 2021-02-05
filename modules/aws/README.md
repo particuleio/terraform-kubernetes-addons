@@ -7,36 +7,9 @@
 
 Provides various Kubernetes addons that are often used on Kubernetes with AWS
 
-## Main features
-
-* Common addons with associated IAM permissions if needed:
-  * [aws-ebs-csi-driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver): Enable new feature and the use of `gp3` volumes.
-  * [aws-for-fluent-bit](https://github.com/aws/aws-for-fluent-bit): Cloudwatch logging with fluent bit instead of fluentd
-  * [aws-load-balancer-controller](https://aws.amazon.com/about-aws/whats-new/2020/10/introducing-aws-load-balancer-controller/): Use AWS ALB/NLB for ingress and services.
-  * [aws-node-termination-handler](https://github.com/aws/aws-node-termination-handler): Manage spot instance lifecyle
-  * [aws-calico](https://github.com/aws/eks-charts/tree/master/stable/aws-calico): Use calico for network policy
-  * [cert-manager](https://github.com/jetstack/cert-manager): automatically generate TLS certificates, supports ACME v2.
-  * [cluster-autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler): scale worker nodes based on workload.
-  * [cni-metrics-helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html): Provides cloudwatch metrics for VPC CNI plugins.
-  * [external-dns](https://github.com/kubernetes-incubator/external-dns): sync ingress and service records in route53.
-  * [ingress-nginx](https://github.com/kubernetes/ingress-nginx): processes *Ingress* object and acts as a HTTP/HTTPS proxy (compatible with cert-manager).
-  * [istio-operator](https://istio.io): Service mesh for Kubernetes.
-  * [karma](https://github.com/prymitive/karma): An alertmanager dashboard
-  * [keycloak](https://www.keycloak.org/) : Identity and access management
-  * [kong](https://konghq.com/kong): API Gateway ingress controller.
-  * [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus): Monitoring / Alerting / Dashboards.
-  * [loki-stack](https://grafana.com/oss/loki/): Grafana Loki logging stack
-  * [promtail](https://grafana.com/docs/loki/latest/clients/promtail/): Ship log to loki from other cluster (eg. mTLS)
-  * [metrics-server](https://github.com/kubernetes-incubator/metrics-server): enable metrics API and horizontal pod scaling (HPA).
-  * [node-problem-detector](https://github.com/kubernetes/node-problem-detector): Forwards node problems to Kubernetes events
-  * [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets): Technology agnostic, store secrets on git.
-  * [thanos](https://thanos.io/): Open source, highly available Prometheus setup with long term storage capabilities
-  * [thanos-storegateway](https://thanos.io/): Additional storegateway to query multiple object stores
-  * [thanos-tls-querier](https://thanos.io/tip/operating/cross-cluster-tls-communication.md/): Thanos TLS querier for cross cluster collection
-
 ## Documentation
 
-User guides, feature documentation and examples are available [here](https://particuleio.github.io/teks/)
+User guides, feature documentation and examples are available [here](https://github.com/particuleio/teks/)
 
 ## IAM permissions
 
@@ -52,7 +25,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | aws | ~> 3.0 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
-| kubernetes | ~> 1.0 |
+| kubernetes | ~> 2.0 |
 
 ## Providers
 
@@ -61,7 +34,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | aws | ~> 3.0 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
-| kubernetes | ~> 1.0 |
+| kubernetes | ~> 2.0 |
 | random | n/a |
 | time | n/a |
 | tls | n/a |
@@ -98,8 +71,10 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | priority-class-ds | Customize a priority class for addons daemonsets | `any` | `{}` | no |
 | promtail | Customize promtail chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | sealed-secrets | Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values | `any` | `{}` | no |
+| strimzi-kafka-operator | Customize strimzi-kafka-operator chart, see `strimzi-kafka-operator.tf` for supported values | `any` | `{}` | no |
 | tags | Map of tags for AWS resources | `map(any)` | `{}` | no |
 | thanos | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| thanos-memcached | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | thanos-storegateway | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | thanos-tls-querier | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 

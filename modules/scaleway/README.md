@@ -1,4 +1,4 @@
-# terraform-kubernetes-addons
+# terraform-kubernetes-addons:scaleway
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/terraform-kubernetes-addons)
 [![terraform-kubernetes-addons](https://github.com/particuleio/terraform-kubernetes-addons/workflows/terraform-kubernetes-addons/badge.svg)](https://github.com/particuleio/terraform-kubernetes-addons/actions?query=workflow%3Aterraform-kubernetes-addons)
@@ -8,18 +8,9 @@
 Provides various addons that are often used on Kubernetes Kapsule with
 Scaleway.
 
-## Main features
+## Documentation
 
-* Common addons:
-  * [external-dns](https://github.com/kubernetes-incubator/external-dns): sync ingress and service records in Scaleway DNS.
-  * [nginx-ingress](https://github.com/kubernetes/ingress-nginx): processes *Ingress* object and acts as a HTTP/HTTPS proxy (compatible with cert-manager).
-  * [prometheus-operator](https://github.com/coreos/prometheus-operator): Monitoring / Alerting / Dashboards.
-  * [karma](https://github.com/prymitive/karma): An alertmanager dashboard
-  * [flux](https://github.com/weaveworks/flux): Continuous Delivery with Gitops workflow.
-  * [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets): Technology agnostic, store secrets on git.
-  * [istio-operator](https://istio.io): Service mesh for Kubernetes.
-  * [kong](https://konghq.com/kong): API Gateway ingress controller.
-  * [keycloak](https://www.keycloak.org/) : Identity and access management
+User guides, feature documentation and examples are available [here](https://github.com/particuleio/tkap/)
 
 ## Terraform docs
 
@@ -28,18 +19,18 @@ Scaleway.
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| helm | ~> 1.0 |
+| helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
-| kubernetes | ~> 1.0 |
+| kubernetes | ~> 2.0 |
 | scaleway | >= 1.17.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| helm | ~> 1.0 |
+| helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
-| kubernetes | ~> 1.0 |
+| kubernetes | ~> 2.0 |
 | random | n/a |
 | time | n/a |
 
@@ -62,12 +53,19 @@ Scaleway.
 | kong | Customize kong-ingress chart, see `kong.tf` for supported values | `any` | `{}` | no |
 | kube-prometheus-stack | Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values | `any` | `{}` | no |
 | labels\_prefix | Custom label prefix used for network policy namespace matching | `string` | `"particule.io"` | no |
+| loki-stack | Customize loki-stack chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | metrics-server | Customize metrics-server chart, see `metrics_server.tf` for supported values | `any` | `{}` | no |
 | npd | Customize node-problem-detector chart, see `npd.tf` for supported values | `any` | `{}` | no |
 | priority-class | Customize a priority class for addons | `any` | `{}` | no |
 | priority-class-ds | Customize a priority class for addons daemonsets | `any` | `{}` | no |
+| promtail | Customize promtail chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | scaleway | Scaleway provider customization | `any` | `{}` | no |
 | sealed-secrets | Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values | `any` | `{}` | no |
+| strimzi-kafka-operator | Customize strimzi-kafka-operator chart, see `strimzi-kafka-operator.tf` for supported values | `any` | `{}` | no |
+| thanos | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| thanos-memcached | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| thanos-storegateway | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| thanos-tls-querier | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 
 ## Outputs
 

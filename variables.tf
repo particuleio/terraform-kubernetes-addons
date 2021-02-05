@@ -118,6 +118,12 @@ variable "sealed-secrets" {
   default     = {}
 }
 
+variable "strimzi-kafka-operator" {
+  description = "Customize strimzi-kafka-operator chart, see `strimzi-kafka-operator.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "thanos" {
   description = "Customize thanos chart, see `thanos.tf` for supported values"
   type        = any
