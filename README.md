@@ -5,7 +5,7 @@
 
 ## Main components
 
-| Name | Description | Generic | AWS | Scaleway | GCP | Azure |
+| Name                                                                                                                          | Description                                                                                      | Generic             | AWS                 | Scaleway            | GCP                 | Azure               |
 |------|-------------|:-------:|:---:|:--------:|:---:|:-----:|
 | [aws-ebs-csi-driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)                                                   | Enable new feature and the use of `gp3` volumes                                             | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
 | [aws-efs-csi-driver](https://github.com/kubernetes-sigs/aws-efs-csi-driver)                                                   | Enable EFS Support                                                                          | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
@@ -27,6 +27,8 @@
 | [kyverno](https://github.com/kyverno/kyverno)                                                                                 | Kubernetes Native Policy Management                                                         | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [loki-stack](https://grafana.com/oss/loki/)                                                                                   | Grafana Loki logging stack                                                                  | :heavy_check_mark:  | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
 | [promtail](https://grafana.com/docs/loki/latest/clients/promtail/)                                                            | Ship log to loki from other cluster (eg. mTLS)                                              | :construction:      | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
+| [prometheus-adapter](https://github.com/kubernetes-sigs/prometheus-adapter)                                                   | Prometheus metrics for use with the autoscaling/v2 Horizontal Pod Autoscaler in Kubernetes 1.6+  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
+| [prometheus-blackbox-exporter](https://github.com/prometheus/blackbox_exporter)                                               | The blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP and ICMP.  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
 | [metrics-server](https://github.com/kubernetes-incubator/metrics-server)                                                      | enable metrics API and horizontal pod scaling (HPA)                                         | :heavy_check_mark:  | :heavy_check_mark:  | Included            | Included            | Included            |
 | [node-problem-detector](https://github.com/kubernetes/node-problem-detector)                                                  | Forwards node problems to Kubernetes events                                                 | :heavy_check_mark:  | :heavy_check_mark:  | Included            | Included            | Included            |
 | [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets)                                                              | Technology agnostic, store secrets on git                                                   | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
@@ -149,6 +151,8 @@ No Modules.
 | npd | Customize node-problem-detector chart, see `npd.tf` for supported values | `any` | `{}` | no |
 | priority-class | Customize a priority class for addons | `any` | `{}` | no |
 | priority-class-ds | Customize a priority class for addons daemonsets | `any` | `{}` | no |
+| prometheus-adapter | Customize prometheus-adapter chart, see `prometheus-adapter.tf` for supported values | `any` | `{}` | no |
+| prometheus-blackbox-exporter | Customize prometheus-blackbox-exporter chart, see `prometheus-blackbox-exporter.tf` for supported values | `any` | `{}` | no |
 | promtail | Customize promtail chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | sealed-secrets | Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values | `any` | `{}` | no |
 | strimzi-kafka-operator | Customize strimzi-kafka-operator chart, see `strimzi-kafka-operator.tf` for supported values | `any` | `{}` | no |

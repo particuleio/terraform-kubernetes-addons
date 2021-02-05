@@ -94,6 +94,8 @@ No Modules.
 | npd | Customize node-problem-detector chart, see `npd.tf` for supported values | `any` | `{}` | no |
 | priority-class | Customize a priority class for addons | `any` | `{}` | no |
 | priority-class-ds | Customize a priority class for addons daemonsets | `any` | `{}` | no |
+| prometheus-adapter | Customize prometheus-adapter chart, see `prometheus-adapter.tf` for supported values | `any` | `{}` | no |
+| prometheus-blackbox-exporter | Customize prometheus-blackbox-exporter chart, see `prometheus-blackbox-exporter.tf` for supported values | `any` | `{}` | no |
 | promtail | Customize promtail chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | scaleway | Scaleway provider customization | `any` | `{}` | no |
 | sealed-secrets | Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values | `any` | `{}` | no |
