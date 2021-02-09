@@ -16,8 +16,8 @@ locals {
       storage_class_name        = "ebs-sc"
       is_default_class          = false
       enabled                   = false
-      chart_version             = "0.8.1"
-      version                   = "v0.8.1"
+      chart_version             = "0.9.4"
+      version                   = "v0.9.0"
       iam_policy_override       = null
       default_network_policy    = true
     },
