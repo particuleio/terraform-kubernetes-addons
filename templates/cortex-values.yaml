@@ -1,0 +1,136 @@
+---
+config:
+    # multi-tenancy - will be enabled soon
+    auth_enabled: false
+
+    # The distributor_config configures the Cortex distributor.
+    distributor:
+      ring:
+        kvstore:
+          store: memberlist
+          prefix: "collectors/"
+    
+    limits:
+      max_label_names_per_series: 55
+    
+    # The querier_config configures the Cortex querier.################
+    querier:
+      query_ingesters_within: 5m
+      store_gateway_addresses: cortex-store-gateway-headless:9095
+
+    # The ingester_client_config configures how the Cortex distributors connect to
+    # the ingesters.
+    ingester_client: 
+      grpc_client_config:
+        use_gzip_compression: true
+
+    # The ingester_config configures the Cortex ingester.
+    ingester:
+      lifecycler:
+        num_tokens: 512
+        ring:
+          kvstore:
+            store: memberlist
+          replication_factor: 1
+
+    storage:
+      engine: blocks
+
+    frontend:
+      log_queries_longer_than: 10s
+      compress_responses: true
+
+    store_gateway:
+      sharding_enabled: false
+      sharding_ring:
+        replication_factor: 1
+        heartbeat_period:   5s
+        heartbeat_timeout:  15s
+        kvstore:
+          store: memberlist
+
+    memberlist:
+      bind_port: 7946
+      join_members:
+        - cortex-ingester-headless
+
+
+### RESOURCE ####
+
+### Alertmanager
+alertmanager:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### Distributor
+distributor:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### Ingester
+ingester:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### Ruler
+ruler:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+
+### Querier
+querier:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### Query_Front
+query_frontend:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### TableManager
+table_manager:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### Config
+configs:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### NGINX
+nginx:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### StoreGW
+store_gateway:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator
+
+### Compactor
+compactor:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: 
+      release: prometheus-operator

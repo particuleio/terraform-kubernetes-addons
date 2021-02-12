@@ -147,3 +147,9 @@ variable "thanos-memcached" {
   type        = any
   default     = {}
 }
+
+variable "cortex" {
+  description = "Customize thanos chart, see `cortex.tf` for supported values"
+  type        = any
+  default     = {}
+}
