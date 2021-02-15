@@ -30,13 +30,6 @@ image:
 enableVolumeScheduling: true
 enableVolumeResizing: true
 enableVolumeSnapshot: true
-resources:
-  limits:
-    cpu: 100m
-    memory: 128Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
 extraCreateMetadata: true
 k8sTagClusterId: ${var.cluster-name}
 serviceAccount:
