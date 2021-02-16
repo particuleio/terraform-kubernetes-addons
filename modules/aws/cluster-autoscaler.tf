@@ -4,12 +4,12 @@ locals {
     {
       name                      = "cluster-autoscaler"
       namespace                 = "cluster-autoscaler"
-      chart                     = "cluster-autoscaler-chart"
+      chart                     = "cluster-autoscaler"
       repository                = "https://kubernetes.github.io/autoscaler"
       service_account_name      = "cluster-autoscaler"
       create_iam_resources_irsa = true
       enabled                   = false
-      chart_version             = "1.1.0"
+      chart_version             = "9.4.0"
       version                   = "v1.18.3"
       iam_policy_override       = null
       default_network_policy    = true
@@ -37,6 +37,7 @@ extraArgs:
 serviceMonitor:
   enabled: ${local.kube-prometheus-stack["enabled"]}
   namespace: ${local.cluster-autoscaler["namespace"]}
+priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 VALUES
 }
 
