@@ -165,7 +165,7 @@ data "kubectl_path_documents" "cert-manager_csi_driver" {
 }
 
 resource "time_sleep" "cert-manager_sleep" {
-  count           = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
+  count           = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? 1 : 0
   depends_on      = [helm_release.cert-manager]
   create_duration = "120s"
 }
