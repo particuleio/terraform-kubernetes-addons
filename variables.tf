@@ -64,6 +64,12 @@ variable "kube-prometheus-stack" {
   default     = {}
 }
 
+variable "kyverno" {
+  description = "Customize kyverno chart, see `kyverno.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "labels_prefix" {
   description = "Custom label prefix used for network policy namespace matching"
   type        = string

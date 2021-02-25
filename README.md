@@ -22,6 +22,7 @@
 | [keycloak](https://www.keycloak.org/)                                                                                         | Identity and access management                                                            | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [kong](https://konghq.com/kong)                                                                                               | API Gateway ingress controller                                                            | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
 | [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus)                                               | Monitoring / Alerting / Dashboards                                                        | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
+| [kyverno](https://github.com/kyverno/kyverno)                                                                                 | Kubernetes Native Policy Management                                                       | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [loki-stack](https://grafana.com/oss/loki/)                                                                                   | Grafana Loki logging stack                                                                | :heavy_check_mark:  | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
 | [promtail](https://grafana.com/docs/loki/latest/clients/promtail/)                                                            | Ship log to loki from other cluster (eg. mTLS)                                            | :construction:      | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
 | [metrics-server](https://github.com/kubernetes-incubator/metrics-server)                                                      | enable metrics API and horizontal pod scaling (HPA)                                       | :heavy_check_mark:  | :heavy_check_mark:  | Included            | Included            | Included            |
@@ -115,6 +116,7 @@ No Modules.
 | keycloak | Customize keycloak chart, see `keycloak.tf` for supported values | `any` | `{}` | no |
 | kong | Customize kong-ingress chart, see `kong.tf` for supported values | `any` | `{}` | no |
 | kube-prometheus-stack | Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values | `any` | `{}` | no |
+| kyverno | Customize kyverno chart, see `kyverno.tf` for supported values | `any` | `{}` | no |
 | labels\_prefix | Custom label prefix used for network policy namespace matching | `string` | `"particule.io"` | no |
 | loki-stack | Customize loki-stack chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | metrics-server | Customize metrics-server chart, see `metrics_server.tf` for supported values | `any` | `{}` | no |

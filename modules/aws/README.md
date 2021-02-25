@@ -108,6 +108,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | keycloak | Customize keycloak chart, see `keycloak.tf` for supported values | `any` | `{}` | no |
 | kong | Customize kong-ingress chart, see `kong.tf` for supported values | `any` | `{}` | no |
 | kube-prometheus-stack | Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values | `any` | `{}` | no |
+| kyverno | Customize kyverno chart, see `kyverno.tf` for supported values | `any` | `{}` | no |
 | labels\_prefix | Custom label prefix used for network policy namespace matching | `string` | `"particule.io"` | no |
 | loki-stack | Customize loki-stack chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | metrics-server | Customize metrics-server chart, see `metrics_server.tf` for supported values | `any` | `{}` | no |
