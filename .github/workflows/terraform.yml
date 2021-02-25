@@ -18,13 +18,14 @@ jobs:
 
     - uses: actions/setup-python@v2
 
-    - name: Install terraform-docs
+    - name: Install terraform tooling
       run: |
         # Get the download url of the latest version of terraform-docs
         tf_docs_download_url=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -rc '.assets[] | select( .name | contains("linux-amd64")).browser_download_url')
         mkdir -p $GITHUB_WORKSPACE/bin
         curl -Lo $GITHUB_WORKSPACE/bin/terraform-docs $tf_docs_download_url
         chmod +x $GITHUB_WORKSPACE/bin/terraform-docs
+        curl -L "$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" > tflint.zip && unzip tflint.zip && rm tflint.zip && sudo mv tflint /usr/bin/
         echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
 
     - name: Check modules

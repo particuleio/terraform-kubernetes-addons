@@ -73,14 +73,14 @@ No Modules.
 
 | Name |
 |------|
-| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/2.0/docs/resources/release) |
-| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/resources/manifest) |
-| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/data-sources/path_documents) |
-| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/namespace) |
-| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/network_policy) |
-| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/priority_class) |
-| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role_binding) |
-| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role) |
+| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) |
+| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) |
+| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/path_documents) |
+| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) |
+| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) |
+| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) |
+| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role) |
+| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) |
 | [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
 | [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
 

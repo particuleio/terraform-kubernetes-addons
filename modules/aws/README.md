@@ -62,21 +62,21 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name |
 |------|
-| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/caller_identity) |
-| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/cloudwatch_log_group) |
-| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/iam_policy_document) |
-| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_policy) |
-| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/region) |
-| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/2.0/docs/resources/release) |
-| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/resources/manifest) |
-| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/data-sources/path_documents) |
-| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/namespace) |
-| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/network_policy) |
-| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/priority_class) |
-| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role_binding) |
-| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role) |
-| [kubernetes_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/secret) |
-| [kubernetes_storage_class](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/storage_class) |
+| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) |
+| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) |
+| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) |
+| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) |
+| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/path_documents) |
+| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) |
+| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) |
+| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) |
+| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role) |
+| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) |
+| [kubernetes_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) |
+| [kubernetes_storage_class](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/storage_class) |
 | [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
 | [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
 | [tls_cert_request](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) |
