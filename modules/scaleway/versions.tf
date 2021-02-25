@@ -1,10 +1,6 @@
 terraform {
   required_version = ">= 0.13"
   required_providers {
-    scaleway = {
-      source  = "scaleway/scaleway"
-      version = ">= 1.17.0"
-    }
     helm       = "~> 2.0"
     kubernetes = "~> 2.0"
     kubectl = {

@@ -15,8 +15,7 @@ User guides, feature documentation and examples are available [here](https://git
 
 This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/).
 
-## Terraform docs
-
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
@@ -38,6 +37,52 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | random | n/a |
 | time | n/a |
 | tls | n/a |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| iam_assumable_role_aws-ebs-csi-driver | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_aws-for-fluent-bit | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_aws-load-balancer-controller | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_cert-manager | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_cluster-autoscaler | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_cni-metrics-helper | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_external-dns | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_kube-prometheus-stack_grafana | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_kube-prometheus-stack_thanos | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_loki-stack | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_thanos | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_thanos-storegateway | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| kube-prometheus-stack_thanos_bucket | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+| loki_bucket | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+| thanos_bucket | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+
+## Resources
+
+| Name |
+|------|
+| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/caller_identity) |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/cloudwatch_log_group) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/iam_policy_document) |
+| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_policy) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/region) |
+| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/2.0/docs/resources/release) |
+| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/resources/manifest) |
+| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/data-sources/path_documents) |
+| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/namespace) |
+| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/network_policy) |
+| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/priority_class) |
+| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role_binding) |
+| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role) |
+| [kubernetes_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/secret) |
+| [kubernetes_storage_class](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/storage_class) |
+| [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
+| [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
+| [tls_cert_request](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) |
+| [tls_locally_signed_cert](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/locally_signed_cert) |
+| [tls_private_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) |
+| [tls_self_signed_cert](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) |
 
 ## Inputs
 
@@ -87,4 +132,4 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | promtail-cert | n/a |
 | promtail-key | n/a |
 | thanos\_ca | n/a |
-
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

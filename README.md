@@ -45,6 +45,7 @@ Any contribution supporting a new cloud provider is welcomed.
 * [GCP](./modules/gcp)
 * [Azure](./modules/azure)
 
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
@@ -63,6 +64,25 @@ Any contribution supporting a new cloud provider is welcomed.
 | kubernetes | ~> 2.0 |
 | random | n/a |
 | time | n/a |
+
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/2.0/docs/resources/release) |
+| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/resources/manifest) |
+| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/1.0/docs/data-sources/path_documents) |
+| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/namespace) |
+| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/network_policy) |
+| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/priority_class) |
+| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role_binding) |
+| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/2.0/docs/resources/role) |
+| [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
+| [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
 
 ## Inputs
 
@@ -99,4 +119,4 @@ Any contribution supporting a new cloud provider is welcomed.
 | Name | Description |
 |------|-------------|
 | grafana\_password | n/a |
-
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
