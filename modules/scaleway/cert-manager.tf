@@ -105,7 +105,7 @@ resource "helm_release" "cert-manager" {
 }
 
 resource "helm_release" "scaleway-webhook-dns" {
-  count                 = local.cert-manager_scaleway_webhook_dns["enabled"] ? 1 : 0
+  count                 = local.cert-manager_scaleway_webhook_dns["enabled"] && local.cert-manager["enabled"] ? 1 : 0
   repository            = local.cert-manager_scaleway_webhook_dns["repository"]
   name                  = local.cert-manager_scaleway_webhook_dns["name"]
   chart                 = local.cert-manager_scaleway_webhook_dns["chart"]
@@ -136,7 +136,7 @@ resource "helm_release" "scaleway-webhook-dns" {
 }
 
 resource "kubernetes_secret" "scaleway_credentials" {
-  count = local.cert-manager_scaleway_webhook_dns["enabled"] ? 1 : 0
+  count = local.cert-manager_scaleway_webhook_dns["enabled"] && local.cert-manager["enabled"] ? 1 : 0
   metadata {
     name      = local.cert-manager_scaleway_webhook_dns["secret_name"]
     namespace = local.cert-manager["namespace"]
