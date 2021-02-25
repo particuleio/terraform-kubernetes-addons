@@ -3,10 +3,7 @@ pull_request_rules:
     conditions:
       - "approved-reviews-by>=1"
       - "check-success=Semantic Pull Request"
-      - "check-success=linter"
-      - "check-success=terraform:generic"
-      - "check-success=terraform:aws"
-      - "check-success=terraform:scaleway"
+      - "check-success=terraform:pre-commit"
     actions:
       merge:
-        method: merge
+        method: squash
