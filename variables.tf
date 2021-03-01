@@ -28,6 +28,12 @@ variable "flux" {
   default     = {}
 }
 
+variable "flux2" {
+  description = "Customize Flux chart, see `flux2.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "helm_defaults" {
   description = "Customize default Helm behavior"
   type        = any
@@ -60,6 +66,12 @@ variable "kong" {
 
 variable "kube-prometheus-stack" {
   description = "Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "kyverno" {
+  description = "Customize kyverno chart, see `kyverno.tf` for supported values"
   type        = any
   default     = {}
 }
@@ -147,3 +159,4 @@ variable "thanos-memcached" {
   type        = any
   default     = {}
 }
+
