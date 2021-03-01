@@ -168,7 +168,7 @@ resource "kubernetes_network_policy" "flux2_allow_monitoring" {
   count = local.flux2["enabled"] && local.flux2["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
 
   metadata {
-    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-namespace"
+    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-monitoring"
     namespace = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
   }
 
@@ -199,7 +199,7 @@ resource "kubernetes_network_policy" "flux2_allow_namespace" {
   count = local.flux2["enabled"] && local.flux2["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-ingress-flux2"
+    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-namespace"
     namespace = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
   }
 
