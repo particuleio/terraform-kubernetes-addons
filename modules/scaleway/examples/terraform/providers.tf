@@ -9,28 +9,17 @@ terraform {
   }
 }
 
-provider "scaleway" {
-  region          = var.scaleway["region"]
-  zone            = var.scaleway["fr-par-1"]
-  access_key      = var.scaleway["access_key"]
-  secret_key      = var.scaleway["secret_key"]
-  organization_id = var.scaleway["organization_id"]
-}
-
 provider "kubernetes" {
   host                   = module.kapsule.kubeconfig[0]["host"]
   cluster_ca_certificate = base64decode(module.kapsule.kubeconfig[0]["cluster_ca_certificate"])
   token                  = module.kapsule.kubeconfig[0]["token"]
-  load_config_file       = false
 }
 
 provider "helm" {
-  version = "~> 1.0"
   kubernetes {
     host                   = module.kapsule.kubeconfig[0]["host"]
     cluster_ca_certificate = base64decode(module.kapsule.kubeconfig[0]["cluster_ca_certificate"])
     token                  = module.kapsule.kubeconfig[0]["token"]
-    load_config_file       = false
   }
 }
 

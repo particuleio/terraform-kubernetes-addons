@@ -1,3 +1,18 @@
+module "kapsule" {
+  source              = "particuleio/kapsule/scaleway"
+  cluster_name        = "tkap"
+  cluster_description = "tkap"
+
+  node_pools = {
+    tkap = {
+      size        = 2
+      max_size    = 3
+      min_size    = 1
+      autoscaling = true
+    }
+  }
+}
+
 module "kapsule-addons" {
   source = "../.."
 
@@ -20,11 +35,11 @@ module "kapsule-addons" {
   }
 
   cert-manager = {
-    enabled = true
+    enabled                        = true
     enable_default_cluster_issuers = true
   }
 
-  scaleway_webhook_dns = {
+  cert-manager_scaleway_webhook_dns = {
     enabled = true
   }
 
@@ -42,7 +57,7 @@ module "kapsule-addons" {
       EXTRA_VALUES
   }
 
-  prometheus-operator = {
+  kube-prometheus-stack = {
     enabled      = true
     extra_values = <<-EXTRA_VALUES
       grafana:
