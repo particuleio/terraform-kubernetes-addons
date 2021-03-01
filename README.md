@@ -46,6 +46,22 @@ Any contribution supporting a new cloud provider is welcomed.
 * [GCP](./modules/gcp)
 * [Azure](./modules/azure)
 
+## Doc generation
+
+Code formatting and documentation for variables and outputs is generated using
+[pre-commit-terraform
+hooks](https://github.com/antonbabenko/pre-commit-terraform) which uses
+[terraform-docs](https://github.com/segmentio/terraform-docs).
+
+Follow [these
+instructions](https://github.com/antonbabenko/pre-commit-terraform#how-to-install)
+to install pre-commit locally.
+
+And install `terraform-docs` with `go get github.com/segmentio/terraform-docs`
+or `brew install terraform-docs`.
+
+
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
@@ -64,6 +80,25 @@ Any contribution supporting a new cloud provider is welcomed.
 | kubernetes | ~> 2.0 |
 | random | n/a |
 | time | n/a |
+
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) |
+| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) |
+| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/path_documents) |
+| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) |
+| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) |
+| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) |
+| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role) |
+| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) |
+| [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
+| [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
 
 ## Inputs
 
@@ -100,4 +135,4 @@ Any contribution supporting a new cloud provider is welcomed.
 | Name | Description |
 |------|-------------|
 | grafana\_password | n/a |
-
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

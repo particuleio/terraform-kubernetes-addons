@@ -9,52 +9,29 @@ on:
       - main
 
 jobs:
-  linter:
-    name: 'linter'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Lint Code Base
-      uses: github/super-linter@v3
-      env:
-        VALIDATE_ALL_CODEBASE: false
-        DEFAULT_BRANCH: main
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VALIDATE_STATES: false
-        VALIDATE_TERRAFORM_TERRASCAN: false
-        VALIDATE_JSCPD: false
-    - name: 'slack:failure'
-      if: failure()
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: voxmedia/github-action-slack-notify-build@v1
-      with:
-        channel: ${{ secrets.SLACK_CHANNEL }}
-        status: failure
-        color: danger
-
-  terraform-generic:
-    name: 'terraform:generic'
+  terraform-pre-commit:
+    name: 'terraform:pre-commit'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+    - uses: actions/setup-python@v2
 
-    - name: Terraform Init
-      run: terraform init -backend=false
+    - name: Install terraform tooling
+      run: |
+        # Get the download url of the latest version of terraform-docs
+        tf_docs_download_url=$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | jq -rc '.assets[] | select( .name | contains("linux-amd64")).browser_download_url')
+        mkdir -p $GITHUB_WORKSPACE/bin
+        curl -Lo $GITHUB_WORKSPACE/bin/terraform-docs $tf_docs_download_url
+        chmod +x $GITHUB_WORKSPACE/bin/terraform-docs
+        curl -L "$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" > tflint.zip && unzip tflint.zip && rm tflint.zip && sudo mv tflint /usr/bin/
+        echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
 
-    - name: Terraform Format
-      run: terraform fmt -check
-
-    - name: Terraform Validate
-      run: terraform validate
+    - name: Check modules
+      uses: pre-commit/action@v2.0.0
+      with:
+        extra_args: --show-diff-on-failure --all-files
 
     - name: 'slack:failure'
       if: failure()
@@ -66,81 +43,13 @@ jobs:
         status: failure
         color: danger
 
-  terraform-aws:
-    name: 'terraform:aws'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-
-    - name: Terraform Init
-      run: terraform init -backend=false
-      working-directory: modules/aws
-
-    - name: Terraform Format
-      run: terraform fmt -check
-      working-directory: modules/aws
-
-    - name: Terraform Validate
-      run: terraform validate
-      working-directory: modules/aws
-      env:
-        AWS_REGION: eu-west-3
-
-    - name: 'slack:failure'
-      if: failure()
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: voxmedia/github-action-slack-notify-build@v1
-      with:
-        channel: ${{ secrets.SLACK_CHANNEL }}
-        status: failure
-        color: danger
-
-  terraform-scaleway:
-    name: 'terraform:scaleway'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-
-    - name: Terraform Init
-      run: terraform init -backend=false
-      working-directory: modules/scaleway
-
-    - name: Terraform Format
-      run: terraform fmt -check
-      working-directory: modules/scaleway
-
-    - name: Terraform Validate
-      run: terraform validate
-      working-directory: modules/scaleway
-
-    - name: 'slack:failure'
-      if: failure()
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: voxmedia/github-action-slack-notify-build@v1
-      with:
-        channel: ${{ secrets.SLACK_CHANNEL }}
-        status: failure
-        color: danger
 
   terraform-release:
     if: github.ref == 'refs/heads/main'
     name: 'terraform:release'
     runs-on: ubuntu-latest
     needs:
-      - linter
-      - terraform-generic
-      - terraform-aws
-      - terraform-scaleway
+      - terraform-pre-commit
     steps:
     - name: Checkout
       uses: actions/checkout@v2
