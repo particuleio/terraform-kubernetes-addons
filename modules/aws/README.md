@@ -22,6 +22,8 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 |------|---------|
 | terraform | >= 0.13 |
 | aws | ~> 3.0 |
+| flux | ~> 0.0 |
+| github | ~> 4.5 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 2.0 |
@@ -31,6 +33,8 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Version |
 |------|---------|
 | aws | ~> 3.0 |
+| flux | ~> 0.0 |
+| github | ~> 4.5 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 2.0 |
@@ -67,7 +71,14 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) |
 | [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) |
 | [aws_region](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) |
+| [flux_install](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/install) |
+| [flux_sync](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/sync) |
+| [github_branch_default](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) |
+| [github_repository](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) |
+| [github_repository_deploy_key](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) |
+| [github_repository_file](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) |
 | [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) |
+| [kubectl_file_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/file_documents) |
 | [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) |
 | [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/path_documents) |
 | [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) |
@@ -101,6 +112,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | eks | EKS cluster inputs | `any` | `{}` | no |
 | external-dns | Map of map for external-dns configuration: see `external_dns.tf` for supported values | `any` | `{}` | no |
 | flux | Customize Flux chart, see `flux.tf` for supported values | `any` | `{}` | no |
+| flux2 | Customize Flux chart, see `flux2.tf` for supported values | `any` | `{}` | no |
 | helm\_defaults | Customize default Helm behavior | `any` | `{}` | no |
 | ingress-nginx | Customize ingress-nginx chart, see `nginx-ingress.tf` for supported values | `any` | `{}` | no |
 | istio-operator | Customize istio operator deployment, see `istio_operator.tf` for supported values | `any` | `{}` | no |

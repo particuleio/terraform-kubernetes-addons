@@ -28,6 +28,12 @@ variable "flux" {
   default     = {}
 }
 
+variable "flux2" {
+  description = "Customize Flux chart, see `flux2.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "helm_defaults" {
   description = "Customize default Helm behavior"
   type        = any
@@ -147,3 +153,4 @@ variable "thanos-memcached" {
   type        = any
   default     = {}
 }
+
