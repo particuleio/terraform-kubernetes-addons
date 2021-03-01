@@ -67,6 +67,8 @@ or `brew install terraform-docs`.
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
+| flux | ~> 0.0 |
+| github | ~> 4.5 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 2.0 |
@@ -75,11 +77,14 @@ or `brew install terraform-docs`.
 
 | Name | Version |
 |------|---------|
+| flux | ~> 0.0 |
+| github | ~> 4.5 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 2.0 |
 | random | n/a |
 | time | n/a |
+| tls | n/a |
 
 ## Modules
 
@@ -89,7 +94,14 @@ No Modules.
 
 | Name |
 |------|
+| [flux_install](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/install) |
+| [flux_sync](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/sync) |
+| [github_branch_default](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) |
+| [github_repository](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) |
+| [github_repository_deploy_key](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) |
+| [github_repository_file](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) |
 | [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) |
+| [kubectl_file_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/file_documents) |
 | [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) |
 | [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/path_documents) |
 | [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) |
@@ -97,8 +109,10 @@ No Modules.
 | [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) |
 | [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role) |
 | [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) |
+| [kubernetes_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) |
 | [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
 | [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
+| [tls_private_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) |
 
 ## Inputs
 
@@ -109,6 +123,7 @@ No Modules.
 | cluster-name | Name of the Kubernetes cluster | `string` | `"sample-cluster"` | no |
 | external-dns | Map of map for external-dns configuration: see `external_dns.tf` for supported values | `any` | `{}` | no |
 | flux | Customize Flux chart, see `flux.tf` for supported values | `any` | `{}` | no |
+| flux2 | Customize Flux chart, see `flux2.tf` for supported values | `any` | `{}` | no |
 | helm\_defaults | Customize default Helm behavior | `any` | `{}` | no |
 | ingress-nginx | Customize ingress-nginx chart, see `nginx-ingress.tf` for supported values | `any` | `{}` | no |
 | istio-operator | Customize istio operator deployment, see `istio_operator.tf` for supported values | `any` | `{}` | no |
