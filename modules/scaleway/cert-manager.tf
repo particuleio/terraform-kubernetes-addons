@@ -28,7 +28,7 @@ locals {
       name          = "scaleway-webhook-dns"
       chart         = "scaleway-webhook"
       repository    = "https://particuleio.github.io/charts"
-      enabled       = local.cert-manager["acme_dns01_enabled"] && local.cert-manager["enabled"] ? true : false
+      enabled       = local.cert-manager["acme_dns01_enabled"] && local.cert-manager["enabled"]
       chart_version = "v0.0.1"
       version       = "v0.0.1"
       secret_name   = "scaleway-credentials"
@@ -136,7 +136,7 @@ resource "helm_release" "scaleway-webhook-dns" {
 }
 
 resource "kubernetes_secret" "scaleway_credentials" {
-  count = local.cert-manager_scaleway_webhook_dns["enabled"] && local.cert-manager["enabled"] ? 1 : 0
+  count = local.cert-manager_scaleway_webhook_dns["enabled"] ? 1 : 0
   metadata {
     name      = local.cert-manager_scaleway_webhook_dns["secret_name"]
     namespace = local.cert-manager["namespace"]
