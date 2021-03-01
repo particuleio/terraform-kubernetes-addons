@@ -28,7 +28,7 @@ locals {
       name          = "scaleway-webhook-dns"
       chart         = "scaleway-webhook"
       repository    = "https://particuleio.github.io/charts"
-      enabled       = local.cert-manager["acme_dns01_enabled"]
+      enabled       = local.cert-manager["acme_dns01_enabled"] && local.cert-manager["enabled"]
       chart_version = "v0.0.1"
       version       = "v0.0.1"
       secret_name   = "scaleway-credentials"
