@@ -14,6 +14,7 @@ User guides, feature documentation and examples are available [here](https://git
 
 ## Terraform docs
 
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
@@ -22,7 +23,6 @@ User guides, feature documentation and examples are available [here](https://git
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 2.0 |
-| scaleway | >= 1.17.0 |
 
 ## Providers
 
@@ -33,6 +33,26 @@ User guides, feature documentation and examples are available [here](https://git
 | kubernetes | ~> 2.0 |
 | random | n/a |
 | time | n/a |
+
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) |
+| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) |
+| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/path_documents) |
+| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) |
+| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) |
+| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) |
+| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role) |
+| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) |
+| [kubernetes_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) |
+| [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
+| [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
 
 ## Inputs
 
@@ -72,4 +92,4 @@ User guides, feature documentation and examples are available [here](https://git
 | Name | Description |
 |------|-------------|
 | grafana\_password | n/a |
-
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
