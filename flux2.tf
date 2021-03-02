@@ -19,17 +19,17 @@ locals {
     var.flux2
   )
 
-  apply = local.flux2["enabled"] ? [for v in data.kubectl_file_documents.apply[0].documents : {
+  apply = try(local.flux2["enabled"] ? [for v in data.kubectl_file_documents.apply[0].documents : {
     data : yamldecode(v)
     content : v
     }
-  ] : []
+  ] : [], {})
 
-  sync = local.flux2["enabled"] ? [for v in data.kubectl_file_documents.sync[0].documents : {
+  sync = try(local.flux2["enabled"] ? [for v in data.kubectl_file_documents.sync[0].documents : {
     data : yamldecode(v)
     content : v
     }
-  ] : []
+  ] : [], {})
 }
 
 resource "kubernetes_namespace" "flux2" {
