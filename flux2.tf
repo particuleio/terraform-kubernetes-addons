@@ -9,12 +9,14 @@ locals {
       target_path              = "production"
       default_network_policy   = true
       version                  = "v0.8.0"
-      github_url               = "https://github.com/particuleio/gitops"
+      github_url               = "ssh://git@<host>/<org>/<repository>"
       create_github_repository = false
       github_token             = ""
       repository               = "gitops"
       repository_visibility    = "public"
       branch                   = "main"
+      default_components       = ["source-controller", "kustomize-controller", "helm-controller", "notification-controller"]
+      components               = []
     },
     var.flux2
   )
@@ -23,13 +25,13 @@ locals {
     data : yamldecode(v)
     content : v
     }
-  ] : []
+  ] : null
 
   sync = local.flux2["enabled"] ? [for v in data.kubectl_file_documents.sync[0].documents : {
     data : yamldecode(v)
     content : v
     }
-  ] : []
+  ] : null
 }
 
 resource "kubernetes_namespace" "flux2" {
@@ -61,6 +63,7 @@ data "flux_install" "main" {
   target_path    = local.flux2["target_path"]
   network_policy = false
   version        = local.flux2["version"]
+  components     = concat(local.flux2["default_components"], local.flux2["components"])
 }
 
 # Split multi-doc YAML with
@@ -113,8 +116,7 @@ resource "kubernetes_secret" "main" {
   data = {
     "identity.pub" = tls_private_key.identity[0].public_key_pem
     identity       = tls_private_key.identity[0].private_key_pem
-    username       = "git"
-    password       = local.flux2["github_token"]
+    known_hosts    = local.known_hosts
   }
 }
 
@@ -126,46 +128,54 @@ resource "github_repository" "main" {
   auto_init  = true
 }
 
+data "github_repository" "main" {
+  count = local.flux2["enabled"] && local.flux2["create_github_repository"] ? 0 : 1
+  name  = local.flux2["repository"]
+}
+
 resource "github_branch_default" "main" {
   count      = local.flux2["enabled"] && local.flux2["create_github_repository"] ? 1 : 0
-  repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : local.flux2["repository"]
+  repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
   branch     = local.flux2["branch"]
 }
 
 resource "github_repository_deploy_key" "main" {
   count      = local.flux2["enabled"] ? 1 : 0
   title      = "flux-${local.flux2["create_github_repository"] ? github_repository.main[0].name : local.flux2["repository"]}-${local.flux2["branch"]}"
-  repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : local.flux2["repository"]
+  repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
   key        = tls_private_key.identity[0].public_key_openssh
   read_only  = true
 }
 
 resource "github_repository_file" "install" {
-  count      = local.flux2["enabled"] ? 1 : 0
-  repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : local.flux2["repository"]
-  file       = data.flux_install.main[0].path
-  content    = data.flux_install.main[0].content
-  branch     = local.flux2["branch"]
+  count               = local.flux2["enabled"] ? 1 : 0
+  repository          = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
+  file                = data.flux_install.main[0].path
+  content             = data.flux_install.main[0].content
+  branch              = local.flux2["branch"]
+  overwrite_on_create = true
 }
 
 resource "github_repository_file" "sync" {
-  count      = local.flux2["enabled"] ? 1 : 0
-  repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : local.flux2["repository"]
-  file       = data.flux_sync.main[0].path
-  content    = data.flux_sync.main[0].content
-  branch     = local.flux2["branch"]
+  count               = local.flux2["enabled"] ? 1 : 0
+  repository          = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
+  file                = data.flux_sync.main[0].path
+  content             = data.flux_sync.main[0].content
+  branch              = local.flux2["branch"]
+  overwrite_on_create = true
 }
 
 resource "github_repository_file" "kustomize" {
-  count      = local.flux2["enabled"] ? 1 : 0
-  repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : local.flux2["repository"]
-  file       = data.flux_sync.main[0].kustomize_path
-  content    = data.flux_sync.main[0].kustomize_content
-  branch     = local.flux2["branch"]
+  count               = local.flux2["enabled"] ? 1 : 0
+  repository          = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
+  file                = data.flux_sync.main[0].kustomize_path
+  content             = data.flux_sync.main[0].kustomize_content
+  branch              = local.flux2["branch"]
+  overwrite_on_create = true
 }
 
 resource "kubernetes_network_policy" "flux2_allow_monitoring" {
-  count = local.flux2["enabled"] && local.flux2["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count = local.flux2["enabled"] && local.flux2["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-monitoring"
