@@ -106,9 +106,12 @@ data "kubectl_file_documents" "sync" {
 
 # Apply manifests on the cluster
 resource "kubectl_manifest" "sync" {
-  for_each   = local.flux2["enabled"] ? { for v in local.sync : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-  depends_on = [kubernetes_namespace.flux2]
-  yaml_body  = each.value
+  for_each = local.flux2["enabled"] ? { for v in local.sync : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
+  depends_on = [
+    kubernetes_namespace.flux2,
+    kubectl_manifest.apply
+  ]
+  yaml_body = each.value
 }
 
 # Generate a Kubernetes secret with the Git credentials
