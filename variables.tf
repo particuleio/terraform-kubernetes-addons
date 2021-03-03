@@ -16,6 +16,12 @@ variable "cluster-name" {
   type        = string
 }
 
+variable "cortex" {
+  description = "Customize thanos chart, see `cortex.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "external-dns" {
   description = "Map of map for external-dns configuration: see `external_dns.tf` for supported values"
   type        = any
@@ -24,6 +30,12 @@ variable "external-dns" {
 
 variable "flux" {
   description = "Customize Flux chart, see `flux.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "flux2" {
+  description = "Customize Flux chart, see `flux2.tf` for supported values"
   type        = any
   default     = {}
 }
@@ -60,6 +72,12 @@ variable "kong" {
 
 variable "kube-prometheus-stack" {
   description = "Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "kyverno" {
+  description = "Customize kyverno chart, see `kyverno.tf` for supported values"
   type        = any
   default     = {}
 }
@@ -144,12 +162,6 @@ variable "thanos-storegateway" {
 
 variable "thanos-memcached" {
   description = "Customize thanos chart, see `thanos.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
-variable "cortex" {
-  description = "Customize thanos chart, see `cortex.tf` for supported values"
   type        = any
   default     = {}
 }

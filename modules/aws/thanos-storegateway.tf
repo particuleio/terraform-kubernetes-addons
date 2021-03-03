@@ -14,6 +14,7 @@ locals {
       default_global_requests   = false
       default_global_limits     = false
       bucket                    = null
+      region                    = null
     },
     v,
   ) }
@@ -25,8 +26,8 @@ locals {
           type: S3
           config:
             bucket: ${v["bucket"]}
-            region: ${data.aws_region.current.name}
-            endpoint: s3.${data.aws_region.current.name}.amazonaws.com
+            region: ${v["region"] == null ? data.aws_region.current.name : v["region"]}
+            endpoint: s3.${v["region"] == null ? data.aws_region.current.name : v["region"]}.amazonaws.com
             sse_config:
               type: "SSE-S3"
         metrics:

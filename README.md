@@ -8,6 +8,7 @@
 | Name | Description | Generic | AWS | Scaleway | GCP | Azure |
 |------|-------------|:-------:|:---:|:--------:|:---:|:-----:|
 | [aws-ebs-csi-driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)                                                   | Enable new feature and the use of `gp3` volumes                                           | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
+| [aws-efs-csi-driver](https://github.com/kubernetes-sigs/aws-efs-csi-driver)                                                   | Enable EFS Support                                                                        | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
 | [aws-for-fluent-bit](https://github.com/aws/aws-for-fluent-bit)                                                               | Cloudwatch logging with fluent bit instead of fluentd                                     | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
 | [aws-load-balancer-controller](https://aws.amazon.com/about-aws/whats-new/2020/10/introducing-aws-load-balancer-controller/)  | Use AWS ALB/NLB for ingress and services                                                  | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
 | [aws-node-termination-handler](https://github.com/aws/aws-node-termination-handler)                                           | Manage spot instance lifecyle                                                             | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
@@ -22,6 +23,7 @@
 | [keycloak](https://www.keycloak.org/)                                                                                         | Identity and access management                                                            | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [kong](https://konghq.com/kong)                                                                                               | API Gateway ingress controller                                                            | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
 | [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus)                                               | Monitoring / Alerting / Dashboards                                                        | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
+| [kyverno](https://github.com/kyverno/kyverno)                                                                                 | Kubernetes Native Policy Management                                                       | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [loki-stack](https://grafana.com/oss/loki/)                                                                                   | Grafana Loki logging stack                                                                | :heavy_check_mark:  | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
 | [promtail](https://grafana.com/docs/loki/latest/clients/promtail/)                                                            | Ship log to loki from other cluster (eg. mTLS)                                            | :construction:      | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
 | [metrics-server](https://github.com/kubernetes-incubator/metrics-server)                                                      | enable metrics API and horizontal pod scaling (HPA)                                       | :heavy_check_mark:  | :heavy_check_mark:  | Included            | Included            | Included            |
@@ -45,11 +47,29 @@ Any contribution supporting a new cloud provider is welcomed.
 * [GCP](./modules/gcp)
 * [Azure](./modules/azure)
 
+## Doc generation
+
+Code formatting and documentation for variables and outputs is generated using
+[pre-commit-terraform
+hooks](https://github.com/antonbabenko/pre-commit-terraform) which uses
+[terraform-docs](https://github.com/segmentio/terraform-docs).
+
+Follow [these
+instructions](https://github.com/antonbabenko/pre-commit-terraform#how-to-install)
+to install pre-commit locally.
+
+And install `terraform-docs` with `go get github.com/segmentio/terraform-docs`
+or `brew install terraform-docs`.
+
+
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
+| flux | ~> 0.0 |
+| github | ~> 4.5 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 2.0 |
@@ -58,11 +78,42 @@ Any contribution supporting a new cloud provider is welcomed.
 
 | Name | Version |
 |------|---------|
+| flux | ~> 0.0 |
+| github | ~> 4.5 |
 | helm | ~> 2.0 |
 | kubectl | ~> 1.0 |
 | kubernetes | ~> 2.0 |
 | random | n/a |
 | time | n/a |
+| tls | n/a |
+
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [flux_install](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/install) |
+| [flux_sync](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/sync) |
+| [github_branch_default](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) |
+| [github_repository](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) |
+| [github_repository_deploy_key](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) |
+| [github_repository_file](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) |
+| [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) |
+| [kubectl_file_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/file_documents) |
+| [kubectl_manifest](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) |
+| [kubectl_path_documents](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/path_documents) |
+| [kubernetes_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) |
+| [kubernetes_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) |
+| [kubernetes_priority_class](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) |
+| [kubernetes_role](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role) |
+| [kubernetes_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) |
+| [kubernetes_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) |
+| [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
+| [time_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) |
+| [tls_private_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) |
 
 ## Inputs
 
@@ -73,6 +124,7 @@ Any contribution supporting a new cloud provider is welcomed.
 | cluster-name | Name of the Kubernetes cluster | `string` | `"sample-cluster"` | no |
 | external-dns | Map of map for external-dns configuration: see `external_dns.tf` for supported values | `any` | `{}` | no |
 | flux | Customize Flux chart, see `flux.tf` for supported values | `any` | `{}` | no |
+| flux2 | Customize Flux chart, see `flux2.tf` for supported values | `any` | `{}` | no |
 | helm\_defaults | Customize default Helm behavior | `any` | `{}` | no |
 | ingress-nginx | Customize ingress-nginx chart, see `nginx-ingress.tf` for supported values | `any` | `{}` | no |
 | istio-operator | Customize istio operator deployment, see `istio_operator.tf` for supported values | `any` | `{}` | no |
@@ -80,6 +132,7 @@ Any contribution supporting a new cloud provider is welcomed.
 | keycloak | Customize keycloak chart, see `keycloak.tf` for supported values | `any` | `{}` | no |
 | kong | Customize kong-ingress chart, see `kong.tf` for supported values | `any` | `{}` | no |
 | kube-prometheus-stack | Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values | `any` | `{}` | no |
+| kyverno | Customize kyverno chart, see `kyverno.tf` for supported values | `any` | `{}` | no |
 | labels\_prefix | Custom label prefix used for network policy namespace matching | `string` | `"particule.io"` | no |
 | loki-stack | Customize loki-stack chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | metrics-server | Customize metrics-server chart, see `metrics_server.tf` for supported values | `any` | `{}` | no |
@@ -99,4 +152,4 @@ Any contribution supporting a new cloud provider is welcomed.
 | Name | Description |
 |------|-------------|
 | grafana\_password | n/a |
-
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

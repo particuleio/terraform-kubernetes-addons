@@ -1,10 +1,25 @@
+module "kapsule" {
+  source              = "particuleio/kapsule/scaleway"
+  cluster_name        = "tkap"
+  cluster_description = "tkap"
+
+  node_pools = {
+    tkap = {
+      size        = 2
+      max_size    = 3
+      min_size    = 1
+      autoscaling = true
+    }
+  }
+}
+
 module "kapsule-addons" {
   source = "../.."
 
   scaleway = {
     scw_access_key              = "SCWX0000000000000000"
-    scw_secret_key              = "7515164c-2e75-11eb-adc1-0242ac120002"
-    scw_default_organization_id = "7515164c-2e75-11eb-adc1-0242ac120002"
+    scw_secret_key              = "00000000-0000-0000-0000-000000000000"
+    scw_default_organization_id = "00000000-0000-0000-0000-000000000000"
   }
 
   ingress-nginx = {
@@ -20,20 +35,22 @@ module "kapsule-addons" {
   }
 
   cert-manager = {
-    enabled = true
-    enable_default_cluster_issuers = true
+    enabled                   = true
+    acme_http01_enabled       = true
+    acme_email                = "kevin@particule.io"
+    acme_dns01_enabled        = true
+    acme_http01_ingress_class = "nginx"
   }
 
-  scaleway_webhook_dns = {
+  cert-manager_scaleway_webhook_dns = {
     enabled = true
   }
-
 
   flux = {
     enabled      = true
     extra_values = <<-EXTRA_VALUES
       git:
-        url: "ssh://git@gitlab.com/myrepo/gitops.git"
+        url: "ssh://git@gitlab.com/particuleio/gitops.git"
         pollInterval: "2m"
       rbac:
         create: false
@@ -42,7 +59,16 @@ module "kapsule-addons" {
       EXTRA_VALUES
   }
 
-  prometheus-operator = {
+  flux2 = {
+    enabled               = true
+    github_url            = "https://github.com/particuleio/gitops"
+    github_token          = "000000000000000000000"
+    repository            = "gitops"
+    repository_visibility = "public"
+    branch                = "main"
+  }
+
+  kube-prometheus-stack = {
     enabled      = true
     extra_values = <<-EXTRA_VALUES
       grafana:
@@ -54,11 +80,11 @@ module "kapsule-addons" {
             kubernetes.io/ingress.class: nginx
             cert-manager.io/cluster-issuer: "letsencrypt"
           hosts:
-            - grafana.particule.cloud
+            - grafana.scw.particule.cloud
           tls:
-            - secretName: grafana-particule-cloud
+            - secretName: grafana-scw-particule-cloud
               hosts:
-                - grafana.particule.cloud
+                - grafana.scw.particule.cloud
         persistence:
           enabled: true
           storageClassName: scw-bssd
@@ -108,11 +134,11 @@ module "kapsule-addons" {
           kubernetes.io/ingress.class: nginx
           cert-manager.io/cluster-issuer: "letsencrypt"
         hosts:
-          - karma.particule.cloud
+          - karma.scw.particule.cloud
         tls:
-          - secretName: karma-particule-cloud
+          - secretName: karma-scw-particule-cloud
             hosts:
-              - karma.particule.cloud
+              - karma.scw.particule.cloud
       env:
         - name: ALERTMANAGER_URI
           value: "http://prometheus-operator-alertmanager.monitoring.svc.cluster.local:9093"

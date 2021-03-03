@@ -5,7 +5,7 @@ locals {
       name       = "aws-ebs-csi-driver"
       namespace  = "kube-system"
       chart      = "aws-ebs-csi-driver"
-      repository = "https://particuleio.github.io/charts"
+      repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
       create_ns  = false
       service_account_names = {
         controller = "ebs-csi-controller-sa"
@@ -16,7 +16,7 @@ locals {
       storage_class_name        = "ebs-sc"
       is_default_class          = false
       enabled                   = false
-      chart_version             = "0.9.4"
+      chart_version             = "0.9.12"
       version                   = "v0.9.0"
       iam_policy_override       = null
       default_network_policy    = true
@@ -30,13 +30,6 @@ image:
 enableVolumeScheduling: true
 enableVolumeResizing: true
 enableVolumeSnapshot: true
-resources:
-  limits:
-    cpu: 100m
-    memory: 128Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
 extraCreateMetadata: true
 k8sTagClusterId: ${var.cluster-name}
 serviceAccount:

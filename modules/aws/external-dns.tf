@@ -10,8 +10,8 @@ locals {
       service_account_name      = "external-dns"
       enabled                   = false
       create_iam_resources_irsa = true
-      chart_version             = "3.6.0"
-      version                   = "0.7.4-debian-10-r29"
+      chart_version             = "4.7.0"
+      version                   = "0.7.6-debian-10-r25"
       iam_policy_override       = null
       default_network_policy    = true
     },

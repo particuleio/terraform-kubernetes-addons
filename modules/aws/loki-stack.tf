@@ -77,6 +77,7 @@ locals {
     VALUES
 
   values_promtail = <<-VALUES
+    priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
     extraArgs:
       - -client.external-labels=cluster=${var.cluster-name}
     serviceMonitor:

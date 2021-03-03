@@ -28,7 +28,7 @@ locals {
       name          = "scaleway-webhook-dns"
       chart         = "scaleway-webhook"
       repository    = "https://particuleio.github.io/charts"
-      enabled       = local.cert-manager["acme_dns01_enabled"]
+      enabled       = local.cert-manager["acme_dns01_enabled"] && local.cert-manager["enabled"]
       chart_version = "v0.0.1"
       version       = "v0.0.1"
       secret_name   = "scaleway-credentials"
@@ -129,7 +129,9 @@ resource "helm_release" "scaleway-webhook-dns" {
   namespace             = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    helm_release.kube-prometheus-stack,
+    helm_release.cert-manager,
+    time_sleep.cert-manager_sleep
   ]
 }
 
@@ -165,7 +167,7 @@ data "kubectl_path_documents" "cert-manager_csi_driver" {
 }
 
 resource "time_sleep" "cert-manager_sleep" {
-  count           = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? length(data.kubectl_path_documents.cert-manager_cluster_issuers.documents) : 0
+  count           = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? 1 : 0
   depends_on      = [helm_release.cert-manager]
   create_duration = "120s"
 }
