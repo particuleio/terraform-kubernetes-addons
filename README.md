@@ -98,6 +98,7 @@ No Modules.
 | [flux_install](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/install) |
 | [flux_sync](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/sync) |
 | [github_branch_default](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) |
+| [github_repository](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) |
 | [github_repository](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) |
 | [github_repository_deploy_key](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) |
 | [github_repository_file](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) |
