@@ -83,7 +83,7 @@ data "kubectl_file_documents" "apply" {
 
 # Apply manifests on the cluster
 resource "kubectl_manifest" "apply" {
-  for_each   = { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
+  for_each   = local.flux2["enabled"] ? { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
   depends_on = [kubernetes_namespace.flux2]
   yaml_body  = each.value
 }
@@ -106,7 +106,7 @@ data "kubectl_file_documents" "sync" {
 
 # Apply manifests on the cluster
 resource "kubectl_manifest" "sync" {
-  for_each   = { for v in local.sync : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
+  for_each   = local.flux2["enabled"] ? { for v in local.sync : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
   depends_on = [kubernetes_namespace.flux2]
   yaml_body  = each.value
 }
