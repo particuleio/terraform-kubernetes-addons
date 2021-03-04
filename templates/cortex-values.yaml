@@ -1,6 +1,6 @@
 ---
 config:
-    # multi-tenancy - will be enabled soon
+    # multi-tenancy
     auth_enabled: false
 
     # The distributor_config configures the Cortex distributor.
