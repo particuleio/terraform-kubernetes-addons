@@ -7,11 +7,10 @@ locals {
       chart                     = "cortex"
       repository                = "https://cortexproject.github.io/cortex-helm-chart"
       service_account_name      = "cortex"
-      create_iam_resources_kiam = false
       create_iam_resources_irsa = true
       enabled                   = false
-      chart_version             = "0.3.0"
-      version                   = "v1.6.0"
+      chart_version             = "0.4.0"
+      version                   = "v1.7.0"
       iam_policy_override       = ""
       default_network_policy    = true
       cluster_name              = "cluster"
@@ -30,8 +29,6 @@ rbac:
   serviceAccount:
     annotations:
       eks.amazonaws.com/role-arn: "${local.cortex["enabled"] && local.cortex["create_iam_resources_irsa"] ? module.iam_assumable_role_cortex[0].this_iam_role_arn : ""}"
-  podAnnotations:
-    iam.amazonaws.com/role: "${local.cortex["enabled"] && local.cortex["create_iam_resources_kiam"] ? aws_iam_role.eks-cortex-kiam[0].arn : ""}"
 VALUES
 }
 
@@ -62,41 +59,6 @@ data "aws_iam_policy_document" "cortex" {
     resources = ["*"]
     effect    = "Allow"
   }
-}
-
-resource "aws_iam_role" "eks-cortex-kiam" {
-  count = local.cortex["enabled"] && local.cortex["create_iam_resources_kiam"] ? 1 : 0
-  name  = "tf-eks-${var.cluster-name}-cortex-kiam"
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    },
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "${aws_iam_role.eks-kiam-server-role[count.index].arn}"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-
-}
-
-resource "aws_iam_role_policy_attachment" "eks-cortex-kiam" {
-  count      = local.cortex["enabled"] && local.cortex["create_iam_resources_kiam"] ? 1 : 0
-  role       = aws_iam_role.eks-cortex-kiam[count.index].name
-  policy_arn = aws_iam_policy.eks-cortex[count.index].arn
 }
 
 resource "kubernetes_namespace" "cortex" {
