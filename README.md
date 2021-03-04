@@ -61,6 +61,14 @@ to install pre-commit locally.
 And install `terraform-docs` with `go get github.com/segmentio/terraform-docs`
 or `brew install terraform-docs`.
 
+## Contributing
+
+Report issues/questions/feature requests on in the
+[issues](https://github.com/particuleio/terraform-kubernetes-addons/issues/new)
+section.
+
+Full contributing [guidelines are covered
+here](https://github.com/particuleio/terraform-kubernetes-addons/blob/master/.github/CONTRIBUTING.md).
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
