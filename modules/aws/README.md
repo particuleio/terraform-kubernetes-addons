@@ -56,6 +56,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | iam_assumable_role_kube-prometheus-stack_grafana | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | iam_assumable_role_kube-prometheus-stack_thanos | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | iam_assumable_role_loki-stack | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| iam_assumable_role_prometheus-cloudwatch-exporter | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | iam_assumable_role_thanos | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | iam_assumable_role_thanos-storegateway | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | kube-prometheus-stack_thanos_bucket | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
@@ -131,6 +132,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | priority-class-ds | Customize a priority class for addons daemonsets | `any` | `{}` | no |
 | prometheus-adapter | Customize prometheus-adapter chart, see `prometheus-adapter.tf` for supported values | `any` | `{}` | no |
 | prometheus-blackbox-exporter | Customize prometheus-blackbox-exporter chart, see `prometheus-blackbox-exporter.tf` for supported values | `any` | `{}` | no |
+| prometheus-cloudwatch-exporter | Customize prometheus-cloudwatch-exporter chart, see `prometheus-cloudwatch-exporter.tf` for supported values | `any` | `{}` | no |
 | promtail | Customize promtail chart, see `loki-stack.tf` for supported values | `any` | `{}` | no |
 | sealed-secrets | Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values | `any` | `{}` | no |
 | strimzi-kafka-operator | Customize strimzi-kafka-operator chart, see `strimzi-kafka-operator.tf` for supported values | `any` | `{}` | no |

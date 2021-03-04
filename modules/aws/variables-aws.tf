@@ -52,6 +52,12 @@ variable "eks" {
   default     = {}
 }
 
+variable "prometheus-cloudwatch-exporter" {
+  description = "Customize prometheus-cloudwatch-exporter chart, see `prometheus-cloudwatch-exporter.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "tags" {
   description = "Map of tags for AWS resources"
   type        = map(any)
