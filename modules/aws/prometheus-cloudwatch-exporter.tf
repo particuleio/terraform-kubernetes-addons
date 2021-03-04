@@ -9,7 +9,6 @@ locals {
       create_ns              = false
       enabled                = false
       chart_version          = "0.14.1"
-      version                = ""
       default_network_policy = true
       service_account_name   = "prometheus-cloudwatch-exporter"
     },
@@ -17,8 +16,6 @@ locals {
   )
 
   values_prometheus-cloudwatch-exporter = <<-VALUES
-    image:
-      tag: ${local.prometheus-cloudwatch-exporter["version"]}
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"]}
     aws:

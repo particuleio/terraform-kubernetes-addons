@@ -8,16 +8,13 @@ locals {
       repository             = "https://prometheus-community.github.io/helm-charts"
       create_ns              = false
       enabled                = false
-      chart_version          = "4.10.3"
-      version                = "v0.18.0"
+      chart_version          = "4.10.2"
       default_network_policy = true
     },
     var.prometheus-blackbox-exporter
   )
 
   values_prometheus-blackbox-exporter = <<VALUES
-image:
-  tag: ${local.prometheus-blackbox-exporter["version"]}
 serviceMonitor:
   enabled: ${local.kube-prometheus-stack["enabled"]}
 VALUES

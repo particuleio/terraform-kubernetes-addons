@@ -9,15 +9,12 @@ locals {
       create_ns              = false
       enabled                = false
       chart_version          = "2.11.1"
-      version                = "v0.8.3"
       default_network_policy = true
     },
     var.prometheus-adapter
   )
 
   values_prometheus-adapter = <<VALUES
-image:
-  tag: ${local.prometheus-adapter["version"]}
 prometheus:
   url: http://"${local.kube-prometheus-stack["name"]}-prometheus:9090".${local.kube-prometheus-stack["namespace"]}.svc
 VALUES
