@@ -118,6 +118,18 @@ variable "priority-class-ds" {
   default     = {}
 }
 
+variable "prometheus-blackbox-exporter" {
+  description = "Customize prometheus-blackbox-exporter chart, see `prometheus-blackbox-exporter.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "prometheus-adapter" {
+  description = "Customize prometheus-adapter chart, see `prometheus-adapter.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "promtail" {
   description = "Customize promtail chart, see `loki-stack.tf` for supported values"
   type        = any
