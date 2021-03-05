@@ -2,15 +2,14 @@ locals {
   aws-load-balancer-controller = merge(
     local.helm_defaults,
     {
-      name                      = "aws-load-balancer-controller"
+      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].version
       namespace                 = "aws-load-balancer-controller"
-      chart                     = "aws-load-balancer-controller"
-      repository                = "https://aws.github.io/eks-charts"
       service_account_name      = "aws-load-balancer-controller"
       create_iam_resources_irsa = true
       enabled                   = false
-      chart_version             = "1.1.2"
-      version                   = "v2.1.1"
       iam_policy_override       = null
       default_network_policy    = true
       allowed_cidrs             = ["0.0.0.0/0"]
@@ -19,8 +18,6 @@ locals {
   )
 
   values_aws-load-balancer-controller = <<VALUES
-image:
-  tag: "${local.aws-load-balancer-controller["version"]}"
 clusterName: ${var.cluster-name}
 serviceAccount:
   name: "${local.aws-load-balancer-controller["service_account_name"]}"

@@ -2,13 +2,13 @@ locals {
   kyverno = merge(
     local.helm_defaults,
     {
-      name                   = "kyverno"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].version
       namespace              = "kyverno"
-      chart                  = "kyverno"
-      repository             = "https://kyverno.github.io/kyverno/"
       create_ns              = false
       enabled                = false
-      chart_version          = "1.3.3"
       default_network_policy = true
     },
     var.kyverno

@@ -2,14 +2,14 @@ locals {
   cluster-autoscaler = merge(
     local.helm_defaults,
     {
-      name                      = "cluster-autoscaler"
+      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].version
       namespace                 = "cluster-autoscaler"
-      chart                     = "cluster-autoscaler"
-      repository                = "https://kubernetes.github.io/autoscaler"
       service_account_name      = "cluster-autoscaler"
       create_iam_resources_irsa = true
       enabled                   = false
-      chart_version             = "9.4.0"
       version                   = "v1.18.3"
       iam_policy_override       = null
       default_network_policy    = true

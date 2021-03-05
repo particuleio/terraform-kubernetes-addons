@@ -3,22 +3,19 @@ locals {
   kong = merge(
     local.helm_defaults,
     {
-      name                   = "kong"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kong")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "kong")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kong")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "kong")].version
       namespace              = "kong"
-      chart                  = "kong"
-      repository             = "https://charts.konghq.com"
       enabled                = false
       default_network_policy = true
       ingress_cidrs          = ["0.0.0.0/0"]
-      chart_version          = "1.13.0"
-      version                = "2.2"
     },
     var.kong
   )
 
   values_kong = <<VALUES
-image:
-  tag: "${local.kong["version"]}"
 ingressController:
   enabled: true
   installCRDs: false

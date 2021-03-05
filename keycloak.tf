@@ -2,21 +2,18 @@ locals {
   keycloak = merge(
     local.helm_defaults,
     {
-      name                   = "keycloak"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].version
       namespace              = "keycloak"
-      chart                  = "keycloak"
-      repository             = "https://codecentric.github.io/helm-charts"
       enabled                = false
-      chart_version          = "9.5.0"
-      version                = "11.0.2"
       default_network_policy = true
     },
     var.keycloak
   )
 
   values_keycloak = <<VALUES
-image:
-  tag: ${local.keycloak["version"]}
 serviceMonitor:
     enabled: ${local.kube-prometheus-stack["enabled"]}
 priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}

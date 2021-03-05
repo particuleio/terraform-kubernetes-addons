@@ -3,15 +3,14 @@ locals {
   external-dns = { for k, v in var.external-dns : k => merge(
     local.helm_defaults,
     {
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].version
       name                      = k
       namespace                 = k
-      chart                     = "external-dns"
-      repository                = "https://charts.bitnami.com/bitnami"
       service_account_name      = "external-dns"
       enabled                   = false
       create_iam_resources_irsa = true
-      chart_version             = "4.7.0"
-      version                   = "0.7.6-debian-10-r25"
       iam_policy_override       = null
       default_network_policy    = true
     },
@@ -21,8 +20,6 @@ locals {
   values_external-dns = { for k, v in local.external-dns : k => merge(
     {
       values = <<-VALUES
-        image:
-          tag: ${v["version"]}
         provider: aws
         aws:
           region: ${data.aws_region.current.name}

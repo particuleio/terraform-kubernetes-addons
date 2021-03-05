@@ -2,11 +2,12 @@ locals {
   aws-ebs-csi-driver = merge(
     local.helm_defaults,
     {
-      name       = "aws-ebs-csi-driver"
-      namespace  = "kube-system"
-      chart      = "aws-ebs-csi-driver"
-      repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
-      create_ns  = false
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].version
+      namespace     = "kube-system"
+      create_ns     = false
       service_account_names = {
         controller = "ebs-csi-controller-sa"
         snapshot   = "ebs-snapshot-controller"
@@ -16,8 +17,6 @@ locals {
       storage_class_name        = "ebs-sc"
       is_default_class          = false
       enabled                   = false
-      chart_version             = "0.9.12"
-      version                   = "v0.9.0"
       iam_policy_override       = null
       default_network_policy    = true
     },
@@ -25,8 +24,6 @@ locals {
   )
 
   values_aws-ebs-csi-driver = <<VALUES
-image:
-  tag: "${local.aws-ebs-csi-driver["version"]}"
 enableVolumeScheduling: true
 enableVolumeResizing: true
 enableVolumeSnapshot: true

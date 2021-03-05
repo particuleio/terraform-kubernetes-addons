@@ -2,15 +2,15 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                      = "loki-stack"
+      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].version
       namespace                 = "monitoring"
-      chart                     = "loki-stack"
-      repository                = "https://grafana.github.io/helm-charts"
       create_iam_resources_irsa = true
       iam_policy_override       = null
       create_ns                 = false
       enabled                   = false
-      chart_version             = "2.3.1"
       default_network_policy    = true
       create_bucket             = true
       bucket                    = "loki-store-${var.cluster-name}"
@@ -26,13 +26,13 @@ locals {
   promtail = merge(
     local.helm_defaults,
     {
-      name          = "promtail"
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].version
       namespace     = local.loki-stack["namespace"]
-      chart         = "promtail"
-      repository    = "https://grafana.github.io/helm-charts"
       create_ns     = false
       enabled       = false
-      chart_version = "3.0.1"
       loki_address  = ""
       tls_crt       = null
       tls_key       = null

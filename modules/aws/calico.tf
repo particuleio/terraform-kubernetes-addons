@@ -3,13 +3,12 @@ locals {
   calico = merge(
     local.helm_defaults,
     {
-      name                   = "calico"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].version
       namespace              = "kube-system"
-      chart                  = "aws-calico"
-      repository             = "https://aws.github.io/eks-charts"
       enabled                = false
-      chart_version          = "0.3.4"
-      version                = "v3.15.1"
       default_network_policy = true
       create_ns              = false
 
@@ -18,8 +17,6 @@ locals {
   )
 
   values_calico = <<VALUES
-calico:
-  tag: ${local.calico["version"]}
 VALUES
 
 }

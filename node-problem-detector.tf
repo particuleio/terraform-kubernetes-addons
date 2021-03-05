@@ -2,13 +2,12 @@ locals {
   npd = merge(
     local.helm_defaults,
     {
-      name                   = "node-problem-detector"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "node-problem-detector")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "node-problem-detector")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "node-problem-detector")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "node-problem-detector")].version
       namespace              = "node-problem-detector"
-      chart                  = "node-problem-detector"
-      repository             = "https://charts.deliveryhero.io/"
       enabled                = false
-      chart_version          = "1.8.0"
-      version                = "v0.8.1"
       default_network_policy = true
     },
     var.npd
@@ -17,8 +16,6 @@ locals {
   values_npd = <<VALUES
 rbac:
   pspEnabled: true
-image:
-  tag: ${local.npd["version"]}
 priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 VALUES
 

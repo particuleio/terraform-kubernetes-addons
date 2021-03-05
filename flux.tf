@@ -3,22 +3,19 @@ locals {
   flux = merge(
     local.helm_defaults,
     {
-      name                   = "flux"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].version
       namespace              = "flux"
-      chart                  = "flux"
-      repository             = "https://charts.fluxcd.io"
       service_account_name   = "flux"
       enabled                = false
-      chart_version          = "1.5.0"
-      version                = "1.20.2"
       default_network_policy = true
     },
     var.flux
   )
 
   values_flux = <<VALUES
-image:
-  tag: ${local.flux["version"]}
 rbac:
   create: true
   pspEnabled: false

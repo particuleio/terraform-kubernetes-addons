@@ -3,15 +3,14 @@ locals {
   aws-for-fluent-bit = merge(
     local.helm_defaults,
     {
-      name                             = "aws-for-fluent-bit"
+      name                             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].name
+      chart                            = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].name
+      repository                       = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].repository
+      chart_version                    = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].version
       namespace                        = "aws-for-fluent-bit"
-      chart                            = "aws-for-fluent-bit"
-      repository                       = "https://aws.github.io/eks-charts"
       service_account_name             = "aws-for-fluent-bit"
       create_iam_resources_irsa        = true
       enabled                          = false
-      chart_version                    = "0.1.5"
-      version                          = "2.7.0"
       iam_policy_override              = null
       default_network_policy           = true
       containers_log_retention_in_days = 180
@@ -31,8 +30,6 @@ cloudWatch:
   region: "${data.aws_region.current.name}"
   logGroupName: "${local.aws-for-fluent-bit["enabled"] ? aws_cloudwatch_log_group.aws-for-fluent-bit[0].name : ""}"
   autoCreateGroup: false
-image:
-  tag: ${local.aws-for-fluent-bit["version"]}
 serviceAccount:
   name: ${local.aws-for-fluent-bit["service_account_name"]}
   annotations:

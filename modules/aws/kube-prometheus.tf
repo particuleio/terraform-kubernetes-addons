@@ -2,10 +2,11 @@ locals {
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
-      name                              = "kube-prometheus-stack"
+      name                              = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      chart                             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      repository                        = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].repository
+      chart_version                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
       namespace                         = "monitoring"
-      chart                             = "kube-prometheus-stack"
-      repository                        = "https://prometheus-community.github.io/helm-charts"
       grafana_service_account_name      = "kube-prometheus-stack-grafana"
       prometheus_service_account_name   = "kube-prometheus-stack-prometheus"
       grafana_create_iam_resources_irsa = false
@@ -17,9 +18,8 @@ locals {
       thanos_bucket                     = "thanos-store-${var.cluster-name}"
       thanos_bucket_force_destroy       = false
       thanos_store_config               = null
-      thanos_version                    = "v0.17.2"
+      thanos_version                    = "v0.18.0"
       enabled                           = false
-      chart_version                     = "13.0.2"
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true
       default_global_requests           = false

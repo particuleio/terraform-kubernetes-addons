@@ -2,22 +2,19 @@ locals {
   karma = merge(
     local.helm_defaults,
     {
-      name                   = "karma"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].version
       namespace              = "monitoring"
-      chart                  = "karma"
-      repository             = "https://charts.helm.sh/stable"
       create_ns              = false
       enabled                = false
-      chart_version          = "1.7.0"
-      version                = "v0.72"
       default_network_policy = true
     },
     var.karma
   )
 
   values_karma = <<VALUES
-image:
-  tag: ${local.karma["version"]}
 VALUES
 
 }

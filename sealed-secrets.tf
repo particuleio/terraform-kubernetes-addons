@@ -3,13 +3,12 @@ locals {
   sealed-secrets = merge(
     local.helm_defaults,
     {
-      name                   = "sealed-secrets"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "sealed-secrets")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "sealed-secrets")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "sealed-secrets")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "sealed-secrets")].version
       namespace              = "sealed-secrets"
-      chart                  = "sealed-secrets"
-      repository             = "https://bitnami-labs.github.io/sealed-secrets"
       enabled                = false
-      chart_version          = "1.13.2"
-      version                = "v0.13.1"
       default_network_policy = true
     },
     var.sealed-secrets
@@ -18,8 +17,6 @@ locals {
   values_sealed-secrets = <<VALUES
 rbac:
   pspEnabled: true
-image:
-  tag: ${local.sealed-secrets["version"]}
 priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 VALUES
 

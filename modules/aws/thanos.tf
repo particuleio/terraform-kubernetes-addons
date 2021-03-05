@@ -3,16 +3,15 @@ locals {
   thanos = merge(
     local.helm_defaults,
     {
-      name                      = "thanos"
+      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].version
       namespace                 = "monitoring"
-      chart                     = "thanos"
-      repository                = "https://charts.bitnami.com/bitnami"
       create_iam_resources_irsa = true
       iam_policy_override       = null
       create_ns                 = false
-      version                   = "v0.17.2"
       enabled                   = false
-      chart_version             = "3.4.1"
       default_network_policy    = true
       default_global_requests   = false
       default_global_limits     = false

@@ -3,14 +3,13 @@ locals {
   thanos-storegateway = { for k, v in var.thanos-storegateway : k => merge(
     local.helm_defaults,
     {
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].version
       name                      = "${local.thanos["name"]}-storegateway-${k}"
-      chart                     = local.thanos["chart"]
-      repository                = local.thanos["repository"]
-      version                   = local.thanos["version"]
       create_iam_resources_irsa = true
       iam_policy_override       = null
       enabled                   = false
-      chart_version             = local.thanos["chart_version"]
       default_global_requests   = false
       default_global_limits     = false
       bucket                    = null

@@ -2,13 +2,12 @@ locals {
   metrics-server = merge(
     local.helm_defaults,
     {
-      name                   = "metrics-server"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].version
       namespace              = "metrics-server"
-      chart                  = "metrics-server"
-      repository             = "https://charts.helm.sh/stable"
       enabled                = false
-      chart_version          = "2.11.2"
-      version                = "v0.3.6"
       default_network_policy = true
       allowed_cidrs          = ["0.0.0.0/0"]
     },
@@ -16,8 +15,6 @@ locals {
   )
 
   values_metrics-server = <<VALUES
-image:
-  tag: ${local.metrics-server["version"]}
 args:
   - --logtostderr
   - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
