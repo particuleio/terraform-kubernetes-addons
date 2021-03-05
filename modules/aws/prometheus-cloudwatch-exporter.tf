@@ -2,15 +2,17 @@ locals {
   prometheus-cloudwatch-exporter = merge(
     local.helm_defaults,
     {
-      name                   = "prometheus-cloudwatch-exporter"
-      namespace              = "monitoring"
-      chart                  = "prometheus-cloudwatch-exporter"
-      repository             = "https://prometheus-community.github.io/helm-charts"
-      create_ns              = false
-      enabled                = false
-      chart_version          = "0.14.1"
-      default_network_policy = true
-      service_account_name   = "prometheus-cloudwatch-exporter"
+      name                      = "prometheus-cloudwatch-exporter"
+      namespace                 = "monitoring"
+      chart                     = "prometheus-cloudwatch-exporter"
+      repository                = "https://prometheus-community.github.io/helm-charts"
+      create_ns                 = false
+      enabled                   = false
+      chart_version             = "0.14.1"
+      default_network_policy    = true
+      service_account_name      = "prometheus-cloudwatch-exporter"
+      create_iam_resources_irsa = true
+      iam_policy_override       = null
     },
     var.prometheus-cloudwatch-exporter
   )
