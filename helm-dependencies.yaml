@@ -42,7 +42,7 @@ dependencies:
     version: 1.7.0
     repository: https://charts.helm.sh/stable
   - name: keycloak
-    version: 9.5.0
+    version: 9.9.5
     repository: https://codecentric.github.io/helm-charts
   - name: kong
     version: 1.13.0
