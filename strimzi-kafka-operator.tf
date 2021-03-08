@@ -2,21 +2,21 @@ locals {
   strimzi-kafka-operator = merge(
     local.helm_defaults,
     {
-      name                   = "strimzi-kafka-operator"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].version
       namespace              = "strimzi-kafka-operator"
-      chart                  = "strimzi-kafka-operator"
-      repository             = "https://strimzi.io/charts/"
       enabled                = false
       create_ns              = true
-      chart_version          = "0.21.0"
-      version                = "0.21.0"
       default_network_policy = true
     },
     var.strimzi-kafka-operator
   )
 
-  values_strimzi-kafka-operator = <<VALUES
-VALUES
+  values_strimzi-kafka-operator = <<-VALUES
+    watchAnyNamespace: true
+    VALUES
 }
 
 resource "kubernetes_namespace" "strimzi-kafka-operator" {

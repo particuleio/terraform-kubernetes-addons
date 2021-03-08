@@ -3,15 +3,14 @@ locals {
   ingress-nginx = merge(
     local.helm_defaults,
     {
-      name                   = "ingress-nginx"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].version
       namespace              = "ingress-nginx"
-      chart                  = "ingress-nginx"
-      repository             = "https://kubernetes.github.io/ingress-nginx"
       enabled                = false
       default_network_policy = true
       ingress_cidrs          = ["0.0.0.0/0"]
-      chart_version          = "3.8.0"
-      version                = "0.41.0"
       allowed_cidrs          = ["0.0.0.0/0"]
     },
     var.ingress-nginx
@@ -23,8 +22,6 @@ controller:
     enabled: ${local.kube-prometheus-stack["enabled"]}
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"]}
-  image:
-    tag: ${local.ingress-nginx["version"]}
   updateStrategy:
     type: RollingUpdate
   kind: "DaemonSet"

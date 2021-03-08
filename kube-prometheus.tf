@@ -2,12 +2,12 @@ locals {
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
-      name                   = "kube-prometheus-stack"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
       namespace              = "monitoring"
-      chart                  = "kube-prometheus-stack"
-      repository             = "https://prometheus-community.github.io/helm-charts"
       enabled                = false
-      chart_version          = "12.12.1"
       allowed_cidrs          = ["0.0.0.0/0"]
       default_network_policy = true
     },

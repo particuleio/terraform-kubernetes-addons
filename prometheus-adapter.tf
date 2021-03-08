@@ -2,13 +2,13 @@ locals {
   prometheus-adapter = merge(
     local.helm_defaults,
     {
-      name                   = "prometheus-adapter"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].version
       namespace              = "monitoring"
-      chart                  = "prometheus-adapter"
-      repository             = "https://prometheus-community.github.io/helm-charts"
       create_ns              = false
       enabled                = false
-      chart_version          = "2.11.1"
       default_network_policy = true
     },
     var.prometheus-adapter

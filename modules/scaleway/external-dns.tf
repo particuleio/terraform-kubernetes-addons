@@ -3,22 +3,19 @@ locals {
   external-dns = merge(
     local.helm_defaults,
     {
-      name                   = "external-dns"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].version
       namespace              = "external-dns"
-      chart                  = "external-dns"
-      repository             = "https://charts.bitnami.com/bitnami"
       service_account_name   = "external-dns"
       enabled                = false
-      chart_version          = "4.7.0"
-      version                = "0.7.6-debian-10-r25"
       default_network_policy = true
     },
     var.external-dns
   )
 
   values_external-dns = <<VALUES
-image:
-  tag: ${local.external-dns["version"]}
 provider: scaleway
 scaleway:
   scwAccessKey: ${local.scaleway["scw_access_key"]}

@@ -2,21 +2,18 @@ locals {
   aws-node-termination-handler = merge(
     local.helm_defaults,
     {
-      name                   = "aws-node-termination-handler"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].version
       namespace              = "aws-node-termination-handler"
-      chart                  = "aws-node-termination-handler"
-      repository             = "https://aws.github.io/eks-charts"
       enabled                = false
-      chart_version          = "0.12.0"
-      version                = "v1.10.0"
       default_network_policy = true
     },
     var.aws-node-termination-handler
   )
 
   values_aws-node-termination-handler = <<VALUES
-image:
-  tag: ${local.aws-node-termination-handler["version"]}
 priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 deleteLocalData: true
 VALUES

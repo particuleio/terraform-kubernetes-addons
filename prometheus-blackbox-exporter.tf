@@ -2,13 +2,13 @@ locals {
   prometheus-blackbox-exporter = merge(
     local.helm_defaults,
     {
-      name                   = "prometheus-blackbox-exporter"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].version
       namespace              = "monitoring"
-      chart                  = "prometheus-blackbox-exporter"
-      repository             = "https://prometheus-community.github.io/helm-charts"
       create_ns              = false
       enabled                = false
-      chart_version          = "4.10.2"
       default_network_policy = true
     },
     var.prometheus-blackbox-exporter

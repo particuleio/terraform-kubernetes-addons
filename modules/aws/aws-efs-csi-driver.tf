@@ -2,18 +2,17 @@ locals {
   aws-efs-csi-driver = merge(
     local.helm_defaults,
     {
-      name                      = "aws-efs-csi-driver"
+      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].version
       namespace                 = "kube-system"
-      chart                     = "aws-efs-csi-driver"
-      repository                = "https://kubernetes-sigs.github.io/aws-efs-csi-driver"
       create_ns                 = false
       create_iam_resources_irsa = true
       create_storage_class      = true
       storage_class_name        = "efs-sc"
       is_default_class          = false
       enabled                   = false
-      chart_version             = "1.1.0"
-      version                   = "v1.1.0"
       iam_policy_override       = null
       default_network_policy    = true
     },
@@ -21,8 +20,6 @@ locals {
   )
 
   values_aws-efs-csi-driver = <<VALUES
-image:
-  tag: "${local.aws-efs-csi-driver["version"]}"
 k8sTagClusterId: ${var.cluster-name}
 VALUES
 }

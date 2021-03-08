@@ -1,0 +1,47 @@
+{
+  "extends": [
+    ":separateMajorReleases",
+    ":combinePatchMinorReleases",
+    ":ignoreUnstable",
+    ":prImmediately",
+    ":updateNotScheduled",
+    ":automergeDisabled",
+    ":ignoreModulesAndTests",
+    ":autodetectPinVersions",
+    ":prHourlyLimit2",
+    ":prConcurrentLimit20",
+    ":gitSignOff",
+    "group:monorepos",
+    "group:recommended",
+    "helpers:disableTypesNodeMajor",
+    "workarounds:all"
+  ],
+  "enabledManagers": ["helmv3", "github-actions", "pre-commit"],
+  "semanticCommits": "enabled",
+  "prConcurrentLimit": 50,
+  "helmv3": {
+    "enabled": true,
+    "fileMatch": ["(^|/)helm-dependencies.yaml$"]
+  },
+  "reviewers": [
+    "team:team"
+  ],
+  "prHourlyLimit": 0,
+  "packageRules": [
+      {
+        "matchManagers": ["github-actions"],
+        "semanticCommitScope": "ci",
+        "semanticCommitType": "chore"
+      },
+      {
+        "matchManagers": ["pre-commit"],
+        "semanticCommitScope": "ci",
+        "semanticCommitType": "chore"
+      },
+      {
+        "matchManagers": ["helmv3"],
+        "semanticCommitScope": "charts",
+        "semanticCommitType": "feat"
+      }
+    ]
+}

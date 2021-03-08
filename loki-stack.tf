@@ -2,13 +2,13 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                   = "loki-stack"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].version
       namespace              = "monitoring"
-      chart                  = "loki-stack"
-      repository             = "https://grafana.github.io/helm-charts"
       create_ns              = false
       enabled                = false
-      chart_version          = "2.3.1"
       default_network_policy = true
     },
     var.loki-stack

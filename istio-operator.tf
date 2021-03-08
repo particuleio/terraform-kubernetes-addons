@@ -2,12 +2,12 @@ locals {
   istio-operator = merge(
     local.helm_defaults,
     {
-      name                   = "istio-operator"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].version
       namespace              = "istio-system"
-      chart                  = "istio-operator"
-      repository             = "https://clusterfrak-dynamics.github.io/istio/"
       enabled                = false
-      chart_version          = "1.7.0"
       version                = "1.7.4"
       default_network_policy = true
     },

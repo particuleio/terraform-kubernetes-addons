@@ -3,14 +3,13 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                      = "cert-manager"
+      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
       namespace                 = "cert-manager"
-      chart                     = "cert-manager"
-      repository                = "https://charts.jetstack.io"
       service_account_name      = "cert-manager"
       enabled                   = false
-      chart_version             = "v1.1.0"
-      version                   = "v1.1.0"
       default_network_policy    = true
       acme_email                = "contact@acme.com"
       acme_http01_enabled       = false
@@ -25,20 +24,17 @@ locals {
   cert-manager_scaleway_webhook_dns = merge(
     local.helm_defaults,
     {
-      name          = "scaleway-webhook-dns"
-      chart         = "scaleway-webhook"
-      repository    = "https://particuleio.github.io/charts"
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].version
       enabled       = local.cert-manager["acme_dns01_enabled"] && local.cert-manager["enabled"]
-      chart_version = "v0.0.1"
-      version       = "v0.0.1"
       secret_name   = "scaleway-credentials"
     },
     var.cert-manager_scaleway_webhook_dns
   )
 
   values_cert-manager = <<VALUES
-image:
-  tag: ${local.cert-manager["version"]}
 global:
   podSecurityPolicy:
     enabled: true
