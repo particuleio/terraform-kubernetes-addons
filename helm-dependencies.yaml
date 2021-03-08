@@ -15,7 +15,7 @@ dependencies:
     version: 1.1.2
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
-    version: 0.12.0
+    version: 0.14.1
     repository: https://aws.github.io/eks-charts
   - name: calico
     version: 0.3.4
