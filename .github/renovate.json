@@ -10,6 +10,7 @@
     ":autodetectPinVersions",
     ":prHourlyLimit2",
     ":prConcurrentLimit20",
+    ":gitSignOff",
     "group:monorepos",
     "group:recommended",
     "helpers:disableTypesNodeMajor",
