@@ -172,3 +172,8 @@ variable "thanos-memcached" {
   default     = {}
 }
 
+variable "vault" {
+  description = "Customize Hashicorp Vault chart, see `vault.tf` for supported values"
+  type        = any
+  default     = {}
+}

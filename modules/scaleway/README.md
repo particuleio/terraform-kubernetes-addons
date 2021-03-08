@@ -104,6 +104,7 @@ No Modules.
 | thanos-memcached | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | thanos-storegateway | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | thanos-tls-querier | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| vault | Customize Hashicorp Vault chart, see `vault.tf` for supported values | `any` | `{}` | no |
 
 ## Outputs
 
