@@ -16,6 +16,7 @@
     "helpers:disableTypesNodeMajor",
     "workarounds:all"
   ],
+  "groupName": "all",
   "enabledManagers": ["helmv3", "github-actions", "pre-commit"],
   "semanticCommits": "enabled",
   "prConcurrentLimit": 50,
