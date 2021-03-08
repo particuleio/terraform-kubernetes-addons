@@ -63,7 +63,7 @@ dependencies:
     version: 2.11.2
     repository: https://charts.helm.sh/stable
   - name: node-problem-detector
-    version: 1.8.0
+    version: 1.8.7
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
     version: 2.11.1
