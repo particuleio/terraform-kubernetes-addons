@@ -38,6 +38,7 @@
 | [thanos-memcached](https://thanos.io/tip/components/query-frontend.md/#memcached)                                             | Open source, highly available Prometheus setup with long term storage capabilities               | :x:                 | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
 | [thanos-storegateway](https://thanos.io/)                                                                                     | Additional storegateway to query multiple object stores                                          | :x:                 | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
 | [thanos-tls-querier](https://thanos.io/tip/operating/cross-cluster-tls-communication.md/)                                     | Thanos TLS querier for cross cluster collection                                                  | :x:                 | :heavy_check_mark:  | :construction:      | :x:                 | :x:                 |
+| [vault](https://www.vaultproject.io/)                                                                                         | A tool for secrets management, encryption as a service, and privileged access management         | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 
 ## Submodules
 
@@ -161,6 +162,7 @@ No Modules.
 | thanos-memcached | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | thanos-storegateway | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | thanos-tls-querier | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| vault | Customize Hashicorp Vault chart, see `vault.tf` for supported values | `any` | `{}` | no |
 
 ## Outputs
 
