@@ -16,6 +16,12 @@ variable "cluster-name" {
   type        = string
 }
 
+variable "cortex" {
+  description = "Customize thanos chart, see `cortex.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "external-dns" {
   description = "Map of map for external-dns configuration: see `external_dns.tf` for supported values"
   type        = any
@@ -171,4 +177,3 @@ variable "thanos-memcached" {
   type        = any
   default     = {}
 }
-
