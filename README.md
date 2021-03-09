@@ -7,6 +7,7 @@
 
 | Name                                                                                                                          | Description                                                                                      | Generic             | AWS                 | Scaleway            | GCP                 | Azure               |
 |------|-------------|:-------:|:---:|:--------:|:---:|:-----:|
+| [admiralty](https://admiralty.io/)                                                                                            | A system of Kubernetes controllers that intelligently schedules workloads across clusters        | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [aws-ebs-csi-driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)                                                   | Enable new feature and the use of `gp3` volumes                                                  | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
 | [aws-efs-csi-driver](https://github.com/kubernetes-sigs/aws-efs-csi-driver)                                                   | Enable EFS Support                                                                               | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
 | [aws-for-fluent-bit](https://github.com/aws/aws-for-fluent-bit)                                                               | Cloudwatch logging with fluent bit instead of fluentd                                            | N/A                 | :heavy_check_mark:  | N/A                 | N/A                 | N/A                 |
@@ -133,6 +134,7 @@ No Modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| admiralty | Customize admiralty chart, see `admiralty.tf` for supported values | `any` | `{}` | no |
 | cert-manager | Customize cert-manager chart, see `cert-manager.tf` for supported values | `any` | `{}` | no |
 | cluster-autoscaler | Customize cluster-autoscaler chart, see `cluster-autoscaler.tf` for supported values | `any` | `{}` | no |
 | cluster-name | Name of the Kubernetes cluster | `string` | `"sample-cluster"` | no |
