@@ -101,6 +101,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| admiralty | Customize admiralty chart, see `admiralty.tf` for supported values | `any` | `{}` | no |
 | aws | AWS provider customization | `any` | `{}` | no |
 | aws-ebs-csi-driver | Customize aws-ebs-csi-driver helm chart, see `aws-ebs-csi-driver.tf` | `any` | `{}` | no |
 | aws-efs-csi-driver | Customize aws-efs-csi-driver helm chart, see `aws-efs-csi-driver.tf` | `any` | `{}` | no |

@@ -72,6 +72,7 @@ No Modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| admiralty | Customize admiralty chart, see `admiralty.tf` for supported values | `any` | `{}` | no |
 | cert-manager | Customize cert-manager chart, see `cert-manager.tf` for supported values | `any` | `{}` | no |
 | cert-manager\_scaleway\_webhook\_dns | Scaleway webhook dns customization | `any` | `{}` | no |
 | cluster-autoscaler | Customize cluster-autoscaler chart, see `cluster-autoscaler.tf` for supported values | `any` | `{}` | no |
