@@ -46,6 +46,12 @@ variable "istio-operator" {
   default     = {}
 }
 
+variable "k8gb" {
+  description = "Customize k8gb chart, see `k8gb.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "karma" {
   description = "Customize karma chart, see `karma.tf` for supported values"
   type        = any

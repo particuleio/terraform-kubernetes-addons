@@ -20,6 +20,7 @@
 | [flux2](https://github.com/fluxcd/flux2)                                                                                      | Open and extensible continuous delivery solution for Kubernetes. Powered by GitOps Toolkit       | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [ingress-nginx](https://github.com/kubernetes/ingress-nginx)                                                                  | processes `Ingress` object and acts as a HTTP/HTTPS proxy (compatible with cert-manager)         | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
 | [istio-operator](https://istio.io)                                                                                            | Service mesh for Kubernetes                                                                      | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
+| [k8gb](https://www.k8gb.io/)                                                                                                  | A cloud native Kubernetes Global Balancer                                                        | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [karma](https://github.com/prymitive/karma)                                                                                   | An alertmanager dashboard                                                                        | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [keycloak](https://www.keycloak.org/)                                                                                         | Identity and access management                                                                   | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  |
 | [kong](https://konghq.com/kong)                                                                                               | API Gateway ingress controller                                                                   | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark:  | :x:                 | :x:                 |
@@ -142,6 +143,7 @@ No Modules.
 | helm\_defaults | Customize default Helm behavior | `any` | `{}` | no |
 | ingress-nginx | Customize ingress-nginx chart, see `nginx-ingress.tf` for supported values | `any` | `{}` | no |
 | istio-operator | Customize istio operator deployment, see `istio_operator.tf` for supported values | `any` | `{}` | no |
+| k8gb | Customize k8gb chart, see `k8gb.tf` for supported values | `any` | `{}` | no |
 | karma | Customize karma chart, see `karma.tf` for supported values | `any` | `{}` | no |
 | keycloak | Customize keycloak chart, see `keycloak.tf` for supported values | `any` | `{}` | no |
 | kong | Customize kong-ingress chart, see `kong.tf` for supported values | `any` | `{}` | no |
