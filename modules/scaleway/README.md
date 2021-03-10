@@ -83,6 +83,7 @@ No Modules.
 | helm\_defaults | Customize default Helm behavior | `any` | `{}` | no |
 | ingress-nginx | Customize ingress-nginx chart, see `nginx-ingress.tf` for supported values | `any` | `{}` | no |
 | istio-operator | Customize istio operator deployment, see `istio_operator.tf` for supported values | `any` | `{}` | no |
+| k8gb | Customize k8gb chart, see `k8gb.tf` for supported values | `any` | `{}` | no |
 | kapsule | Kapsule cluster inputs | `any` | `{}` | no |
 | karma | Customize karma chart, see `karma.tf` for supported values | `any` | `{}` | no |
 | keycloak | Customize keycloak chart, see `keycloak.tf` for supported values | `any` | `{}` | no |
