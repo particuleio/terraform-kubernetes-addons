@@ -224,7 +224,7 @@ module "iam_assumable_role_thanos" {
 
 
 resource "aws_iam_policy" "thanos" {
-  count  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0
+  count  = local.thanos["enabled"] && local.thanos["create_bucket"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0
   name   = "${var.cluster-name}-${local.thanos["name"]}-thanos"
   policy = local.thanos["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos.json : local.thanos["iam_policy_override"]
 }
