@@ -240,7 +240,7 @@ grafana:
       thanos-rule:
         url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/rule.json
       thanos-replicate:
-        url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/bucket-replicate.json
+        url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/bucket_replicate.json
 VALUES
 
   thanos_store_config_default = <<VALUES
