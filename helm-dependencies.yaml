@@ -90,7 +90,7 @@ dependencies:
     version: 0.21.1
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 3.11.5
+    version: 3.13.1
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
     version: 5.7.0
