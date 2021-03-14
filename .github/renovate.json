@@ -16,7 +16,7 @@
     "helpers:disableTypesNodeMajor",
     "workarounds:all"
   ],
-  "baseBranches": ["next"],
+  "baseBranches": ["main"],
   "enabledManagers": ["helmv3", "github-actions", "pre-commit"],
   "semanticCommits": "enabled",
   "prConcurrentLimit": 50,
