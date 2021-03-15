@@ -16,7 +16,7 @@ locals {
 
   values_prometheus-adapter = <<VALUES
 prometheus:
-  url: http://"${local.kube-prometheus-stack["name"]}-prometheus:9090".${local.kube-prometheus-stack["namespace"]}.svc
+  url: http://${local.kube-prometheus-stack["name"]}-prometheus.${local.kube-prometheus-stack["namespace"]}.svc:9090
 VALUES
 
 }
