@@ -120,6 +120,7 @@ locals {
           filename: /run/promtail/positions.yaml
         scrape_configs:
           {{- tpl .Values.config.snippets.scrapeConfigs $ | nindent 2 }}
+          {{- tpl .Values.config.snippets.extraScrapeConfigs . | nindent 2 }}
     VALUES
 }
 
