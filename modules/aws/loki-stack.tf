@@ -82,11 +82,23 @@ locals {
       - -client.external-labels=cluster=${var.cluster-name}
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"]}
-    extraVolumes:
+    defaultVolumes:
+      - name: containers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: pods
+        hostPath:
+          path: /var/log/pods
       - name: tls
         secret:
           secretName: ${local.promtail["name"]}-tls
-    extraVolumeMounts:
+    defaultVolumeMounts:
+      - name: containers
+        mountPath: /var/lib/docker/containers
+        readOnly: true
+      - name: pods
+        mountPath: /var/log/pods
+        readOnly: true
       - name: tls
         mountPath: /tls
         readOnly: true
