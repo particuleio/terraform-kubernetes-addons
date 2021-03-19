@@ -121,6 +121,13 @@ locals {
         scrape_configs:
           {{- tpl .Values.config.snippets.scrapeConfigs $ | nindent 2 }}
           {{- tpl .Values.config.snippets.extraScrapeConfigs . | nindent 2 }}
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
     VALUES
 }
 
@@ -236,7 +243,9 @@ resource "helm_release" "promtail" {
   namespace = local.promtail["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    helm_release.kube-prometheus-stack,
+    kubernetes_secret.loki-stack-ca,
+    kubernetes_secret.promtail-tls
   ]
 }
 
