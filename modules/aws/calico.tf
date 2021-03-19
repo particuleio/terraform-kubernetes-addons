@@ -3,10 +3,10 @@ locals {
   calico = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "calico")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].version
       namespace              = "kube-system"
       enabled                = false
       default_network_policy = true
