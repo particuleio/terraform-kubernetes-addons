@@ -32,12 +32,40 @@
       {
         "matchManagers": ["github-actions"],
         "semanticCommitScope": "ci",
+        "semanticCommitType": "chore",
+        "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+        "automerge": true
+      },
+      {
+        "matchManagers": ["github-actions"],
+        "semanticCommitScope": "ci",
         "semanticCommitType": "chore"
       },
       {
         "matchManagers": ["pre-commit"],
         "semanticCommitScope": "ci",
+        "semanticCommitType": "chore",
+        "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+        "automerge": true
+      },
+      {
+        "matchManagers": ["pre-commit"],
+        "semanticCommitScope": "ci",
         "semanticCommitType": "chore"
+      },
+      {
+        "matchManagers": ["helmv3"],
+        "semanticCommitScope": "charts",
+        "semanticCommitType": "fix",
+        "matchUpdateTypes": ["patch"],
+        "automerge": true
+      },
+      {
+        "matchManagers": ["helmv3"],
+        "semanticCommitScope": "charts",
+        "semanticCommitType": "feat",
+        "matchUpdateTypes": ["minor"],
+        "automerge": true
       },
       {
         "matchManagers": ["helmv3"],
