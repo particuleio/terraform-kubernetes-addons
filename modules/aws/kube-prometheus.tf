@@ -199,7 +199,7 @@ prometheus:
     externalLabels:
       cluster: ${var.cluster-name}
     thanos:
-      version: v0.17.2
+      version: "${local.kube-prometheus-stack["thanos_version"]}"
       objectStorageConfig:
         key: thanos.yaml
         name: "${local.kube-prometheus-stack["thanos_bucket"]}-config"
