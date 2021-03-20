@@ -39,7 +39,8 @@
       {
         "matchManagers": ["github-actions"],
         "semanticCommitScope": "ci",
-        "semanticCommitType": "chore"
+        "semanticCommitType": "chore",
+        "matchUpdateTypes": ["major"]
       },
       {
         "matchManagers": ["pre-commit"],
@@ -51,7 +52,8 @@
       {
         "matchManagers": ["pre-commit"],
         "semanticCommitScope": "ci",
-        "semanticCommitType": "chore"
+        "semanticCommitType": "chore",
+        "matchUpdateTypes": ["major"]
       },
       {
         "matchManagers": ["helmv3"],
@@ -70,7 +72,8 @@
       {
         "matchManagers": ["helmv3"],
         "semanticCommitScope": "charts",
-        "semanticCommitType": "feat"
+        "semanticCommitType": "feat",
+        "matchUpdateTypes": ["major"]
       }
     ]
 }
