@@ -20,6 +20,8 @@
   "baseBranches": ["main"],
   "enabledManagers": ["helmv3", "github-actions", "pre-commit"],
   "semanticCommits": "enabled",
+  "automergeType": "pr-comment",
+  "automergeComment": "renovate:merge",
   "helmv3": {
     "enabled": true,
     "fileMatch": ["(^|/)helm-dependencies.yaml$"]
