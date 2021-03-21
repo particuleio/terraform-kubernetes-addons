@@ -18,7 +18,7 @@
     ":automergeMinor"
   ],
   "baseBranches": ["main"],
-  "enabledManagers": ["helmv3", "github-actions", "pre-commit"],
+  "enabledManagers": ["helmv3", "github-actions", "pre-commit", "terraform"],
   "semanticCommits": "enabled",
   "automergeType": "pr-comment",
   "automergeComment": "renovate:merge",
@@ -52,6 +52,12 @@
         "semanticCommitScope": "charts",
         "semanticCommitType": "feat",
         "matchUpdateTypes": ["major", "minor"]
+      },
+      {
+        "matchManagers": ["terraform"],
+        "semanticCommitScope": "tf",
+        "semanticCommitType": "feat",
+        "automerge": false
       }
     ]
 }
