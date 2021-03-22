@@ -48,6 +48,7 @@ grafana:
       kong-dash:
         gnetId: 7424
         revision: 6
+        datasource: Prometheus
 VALUES
 
   values_dashboard_ingress-nginx = <<VALUES
@@ -65,6 +66,21 @@ grafana:
       cert-manager:
         gnetId: 11001
         revision: 1
+        datasource: Prometheus
+VALUES
+
+  values_dashboard_node_exporter = <<VALUES
+grafana:
+  dashboards:
+    default:
+      node-exporter-full:
+        gnetId: 1860
+        revision: 21
+        datasource: Prometheus
+      node-exporter:
+        gnetId: 11074
+        revision: 9
+        datasource: Prometheus
 VALUES
 }
 
@@ -114,7 +130,8 @@ resource "helm_release" "kube-prometheus-stack" {
     local.kube-prometheus-stack["extra_values"],
     local.kong["enabled"] ? local.values_dashboard_kong : null,
     local.cert-manager["enabled"] ? local.values_dashboard_cert-manager : null,
-    local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null
+    local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
+    local.values_dashboard_node_exporter
   ])
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
 }
