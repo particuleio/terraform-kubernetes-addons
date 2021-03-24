@@ -547,7 +547,7 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
 
     ingress {
       ports {
-        port     = "8443"
+        port     = "10250"
         protocol = "TCP"
       }
 
