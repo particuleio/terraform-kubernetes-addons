@@ -70,9 +70,6 @@ jobs:
     if: github.ref == 'refs/heads/release'
     name: 'terraform:release'
     runs-on: ubuntu-20.04
-    needs:
-      - renovate-config-check
-      - terraform-pre-commit
     steps:
     - name: Checkout
       uses: actions/checkout@v2
