@@ -1,25 +1,27 @@
 {
   "extends": [
     ":separateMajorReleases",
-    ":combinePatchMinorReleases",
     ":ignoreUnstable",
     ":prImmediately",
     ":updateNotScheduled",
     ":automergeDisabled",
+    ":disableRateLimiting",
     ":ignoreModulesAndTests",
     ":autodetectPinVersions",
-    ":prHourlyLimit2",
-    ":prConcurrentLimit20",
     ":gitSignOff",
     "group:monorepos",
     "group:recommended",
     "helpers:disableTypesNodeMajor",
-    "workarounds:all"
+    "workarounds:all",
+    ":automergeDigest",
+    ":automergePatch",
+    ":automergeMinor"
   ],
   "baseBranches": ["main"],
-  "enabledManagers": ["helmv3", "github-actions", "pre-commit"],
+  "enabledManagers": ["helmv3", "github-actions", "pre-commit", "terraform"],
   "semanticCommits": "enabled",
-  "prConcurrentLimit": 50,
+  "automergeType": "pr-comment",
+  "automergeComment": "renovate:merge",
   "helmv3": {
     "enabled": true,
     "fileMatch": ["(^|/)helm-dependencies.yaml$"]
@@ -42,7 +44,20 @@
       {
         "matchManagers": ["helmv3"],
         "semanticCommitScope": "charts",
-        "semanticCommitType": "feat"
+        "semanticCommitType": "fix",
+        "matchUpdateTypes": ["patch", "digest"]
+      },
+      {
+        "matchManagers": ["helmv3"],
+        "semanticCommitScope": "charts",
+        "semanticCommitType": "feat",
+        "matchUpdateTypes": ["major", "minor"]
+      },
+      {
+        "matchManagers": ["terraform"],
+        "semanticCommitScope": "tf",
+        "semanticCommitType": "feat",
+        "automerge": false
       }
     ]
 }

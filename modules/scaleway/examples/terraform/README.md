@@ -3,21 +3,21 @@
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.13 |
-| helm | ~> 2.0 |
-| kubectl | ~> 1.0 |
-| kubernetes | ~> 2.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
+| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 1.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0 |
 
 ## Providers
 
-No provider.
+No providers.
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| kapsule | particuleio/kapsule/scaleway |  |
-| kapsule-addons | ../.. |  |
+| <a name="module_kapsule"></a> [kapsule](#module\_kapsule) | particuleio/kapsule/scaleway |  |
+| <a name="module_kapsule-addons"></a> [kapsule-addons](#module\_kapsule-addons) | ../.. |  |
 
 ## Resources
 
@@ -27,10 +27,10 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| cluster-name | n/a | `string` | `"cluster"` | no |
-| scaleway | n/a | `any` | `{}` | no |
+| <a name="input_cluster-name"></a> [cluster-name](#input\_cluster-name) | n/a | `string` | `"cluster"` | no |
+| <a name="input_scaleway"></a> [scaleway](#input\_scaleway) | n/a | `any` | `{}` | no |
 
 ## Outputs
 
-No output.
+No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

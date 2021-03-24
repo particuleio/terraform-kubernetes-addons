@@ -9,7 +9,7 @@ dependencies:
     version: 0.9.14
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 1.2.1
+    version: 1.2.2
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.6
@@ -27,22 +27,22 @@ dependencies:
     version: v1.2.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.7.0
+    version: 9.9.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 4.9.0
+    version: 4.9.3
     repository: https://charts.bitnami.com/bitnami
   - name: flux
-    version: 1.6.2
+    version: 1.7.0
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 3.24.0
+    version: 3.25.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
     repository: https://clusterfrak-dynamics.github.io/istio/
   - name: k8gb
-    version: v0.7.6
+    version: v0.7.7
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
@@ -87,13 +87,13 @@ dependencies:
     version: 1.13.2
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
-    version: 0.21.1
+    version: 0.22.1
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 3.13.2
+    version: 3.14.0
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
-    version: 5.7.0
+    version: 5.8.0
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.9.1

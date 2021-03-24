@@ -34,6 +34,7 @@ image:
   tag: ${local.cluster-autoscaler["version"]}
 extraArgs:
   balance-similar-node-groups: true
+  skip-nodes-with-local-storage: true
 serviceMonitor:
   enabled: ${local.kube-prometheus-stack["enabled"]}
   namespace: ${local.cluster-autoscaler["namespace"]}
