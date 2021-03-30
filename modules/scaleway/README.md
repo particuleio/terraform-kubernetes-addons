@@ -169,6 +169,7 @@ No modules.
 | <a name="input_cert-manager_scaleway_webhook_dns"></a> [cert-manager\_scaleway\_webhook\_dns](#input\_cert-manager\_scaleway\_webhook\_dns) | Scaleway webhook dns customization | `any` | `{}` | no |
 | <a name="input_cluster-autoscaler"></a> [cluster-autoscaler](#input\_cluster-autoscaler) | Customize cluster-autoscaler chart, see `cluster-autoscaler.tf` for supported values | `any` | `{}` | no |
 | <a name="input_cluster-name"></a> [cluster-name](#input\_cluster-name) | Name of the Kubernetes cluster | `string` | `"sample-cluster"` | no |
+| <a name="input_concourse"></a> [concourse](#input\_concourse) | Customize Concourse-CI chart, see `concourse.tf` for supported values | `any` | `{}` | no |
 | <a name="input_external-dns"></a> [external-dns](#input\_external-dns) | Map of map for external-dns configuration: see `external_dns.tf` for supported values | `any` | `{}` | no |
 | <a name="input_flux"></a> [flux](#input\_flux) | Customize Flux chart, see `flux.tf` for supported values | `any` | `{}` | no |
 | <a name="input_flux2"></a> [flux2](#input\_flux2) | Customize Flux chart, see `flux2.tf` for supported values | `any` | `{}` | no |

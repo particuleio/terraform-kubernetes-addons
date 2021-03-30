@@ -98,3 +98,6 @@ dependencies:
   - name: vault
     version: 0.10.0
     repository: https://helm.releases.hashicorp.com
+  - name: concourse
+    version: 15.0.1
+    repository: https://concourse-charts.storage.googleapis.com/

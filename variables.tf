@@ -189,3 +189,9 @@ variable "vault" {
   type        = any
   default     = {}
 }
+
+variable "concourse" {
+  description = "Customize Concourse-CI chart, see `concourse.tf` for supported values"
+  type        = any
+  default     = {}
+}
