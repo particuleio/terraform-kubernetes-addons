@@ -9,11 +9,13 @@ on:
     branches:
       - main
       - release
+  workflow_dispatch:
 
 jobs:
   renovate-config-check:
     name: 'renovate:config'
     runs-on: ubuntu-20.04
+    if: github.ref != 'refs/heads/release'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -32,6 +34,7 @@ jobs:
   terraform-pre-commit:
     name: 'terraform:pre-commit'
     runs-on: ubuntu-20.04
+    if: github.ref != 'refs/heads/release'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -67,9 +70,6 @@ jobs:
     if: github.ref == 'refs/heads/release'
     name: 'terraform:release'
     runs-on: ubuntu-20.04
-    needs:
-      - renovate-config-check
-      - terraform-pre-commit
     steps:
     - name: Checkout
       uses: actions/checkout@v2
