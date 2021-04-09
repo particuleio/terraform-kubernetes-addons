@@ -2,29 +2,36 @@ locals {
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
-      name                              = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
-      chart                             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
-      repository                        = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].repository
-      chart_version                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
-      namespace                         = "monitoring"
-      grafana_service_account_name      = "kube-prometheus-stack-grafana"
-      prometheus_service_account_name   = "kube-prometheus-stack-prometheus"
-      grafana_create_iam_resources_irsa = false
-      grafana_iam_policy_override       = null
-      thanos_create_iam_resources_irsa  = true
-      thanos_iam_policy_override        = null
-      thanos_sidecar_enabled            = false
-      thanos_create_bucket              = true
-      thanos_bucket                     = "thanos-store-${var.cluster-name}"
-      thanos_bucket_force_destroy       = false
-      thanos_store_config               = null
-      thanos_version                    = "v0.21.1"
-      enabled                           = false
-      allowed_cidrs                     = ["0.0.0.0/0"]
-      default_network_policy            = true
-      default_global_requests           = false
-      default_global_limits             = false
-      manage_crds                       = true
+      name                                         = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      chart                                        = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      repository                                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].repository
+      chart_version                                = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
+      namespace                                    = "monitoring"
+      grafana_service_account_name                 = "kube-prometheus-stack-grafana"
+      prometheus_service_account_name              = "kube-prometheus-stack-prometheus"
+      grafana_create_iam_resources_irsa            = false
+      grafana_iam_policy_override                  = null
+      thanos_create_iam_resources_irsa             = true
+      thanos_iam_policy_override                   = null
+      thanos_sidecar_enabled                       = false
+      thanos_create_bucket                         = true
+      thanos_bucket                                = "thanos-store-${var.cluster-name}"
+      thanos_bucket_force_destroy                  = false
+      thanos_store_config                          = null
+      thanos_version                               = "v0.21.1"
+      enabled                                      = false
+      allowed_cidrs                                = ["0.0.0.0/0"]
+      default_network_policy                       = true
+      default_global_requests                      = false
+      default_global_limits                        = false
+      manage_crds                                  = true
+      use_managed_prometheus                       = false
+      create_managed_prometheus                    = true
+      existing_managed_prometheus_arn              = null
+      existing_managed_prometheus_url              = null
+      managed_prometheus_alias                     = var.cluster-name
+      managed_prometheus_create_iam_resources_irsa = true
+      managed_prometheus_iam_policy_override       = null
     },
     var.kube-prometheus-stack
   )
@@ -37,9 +44,11 @@ kubeControllerManager:
 kubeEtcd:
   enabled: false
 grafana:
+  image:
+    tag: 7.5.3
   sidecar:
     dashboards:
-      multicluster: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
+      multicluster: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] || local.kube-prometheus-stack["use_managed_prometheus"] ? "true" : "false"}
   rbac:
     pspUseAppArmor: false
   serviceAccount:
@@ -217,7 +226,7 @@ grafana:
     editable: false
     orgId: 1
     type: prometheus
-    url: http://${local.thanos["enabled"] ? "${local.thanos["name"]}-query-frontend:9090" : "${local.kube-prometheus-stack["name"]}-prometheus:9090"}
+    url:  ${local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["existing_managed_prometheus_url"] != null ? local.kube-prometheus-stack["existing_managed_prometheus_url"] : local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["existing_managed_prometheus_url"] == null ? aws_prometheus_workspace.kube-prometheus-stack[0].prometheus_endpoint : local.thanos["enabled"] ? "http://${local.thanos["name"]}-query-frontend:9090" : "http://${local.kube-prometheus-stack["name"]}-prometheus:9090"}
     version: 1
     isDefault: true
 VALUES
@@ -244,6 +253,41 @@ grafana:
         url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/bucket_replicate.json
 VALUES
 
+  values_managed_prometheus = <<VALUES
+grafana:
+  grafana.ini:
+    auth:
+      sigv4_auth_enabled: true
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.this_iam_role_arn : ""}"
+prometheus:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_managed.this_iam_role_arn : ""}"
+  prometheusSpec:
+    externalLabels:
+      cluster: ${var.cluster-name}
+    replicaExternalLabelName: "__replica__"
+    remoteWrite:
+    - url: http://localhost:8005/workspaces/${local.kube-prometheus-stack["use_managed_prometheus"] ? local.kube-prometheus-stack["create_managed_prometheus"] ? aws_prometheus_workspace.kube-prometheus-stack[0].id : local.kube-prometheus-stack["existing_managed_prometheus_arn"] : ""}/api/v1/remote_write
+    containers:
+      - name: aws-sigv4-proxy-sidecar
+        image: public.ecr.aws/aws-observability/aws-sigv4-proxy:1.0
+        args:
+          - --name
+          - aps
+          - --region
+          - ${data.aws_region.current.name}
+          - --host
+          - aps-workspaces.${data.aws_region.current.name}.amazonaws.com
+          - --port
+          - :8005
+        ports:
+          - name: aws-sigv4-proxy
+            containerPort: 8005
+VALUES
+
   thanos_store_config_default = <<VALUES
 type: S3
 config:
@@ -261,10 +305,10 @@ VALUES
 module "iam_assumable_role_kube-prometheus-stack_grafana" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
-  create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"]
+  create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] && (local.kube-prometheus-stack["grafana_cloudwatch_access"] || local.kube-prometheus-stack["use_managed_prometheus"])
   role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-grafana-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack_grafana[0].arn] : []
+  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] && (local.kube-prometheus-stack["grafana_cloudwatch_access"] || local.kube-prometheus-stack["use_managed_prometheus"]) ? [aws_iam_policy.kube-prometheus-stack_grafana[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["grafana_service_account_name"]}"]
   tags                          = local.tags
@@ -276,16 +320,16 @@ module "iam_assumable_role_kube-prometheus-stack_thanos" {
   create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"]
   role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-thanos-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack_thanos[0].arn] : []
+  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? [aws_iam_policy.kube-prometheus-stack_thanos[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["prometheus_service_account_name"]}"]
   tags                          = local.tags
 }
 
 resource "aws_iam_policy" "kube-prometheus-stack_grafana" {
-  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? 1 : 0
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] && (local.kube-prometheus-stack["grafana_cloudwatch_access"] || local.kube-prometheus-stack["use_managed_prometheus"]) ? 1 : 0
   name   = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-grafana"
-  policy = local.kube-prometheus-stack["grafana_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack_grafana.json : local.kube-prometheus-stack["grafana_iam_policy_override"]
+  policy = local.kube-prometheus-stack["grafana_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack_grafana[0].json : local.kube-prometheus-stack["grafana_iam_policy_override"]
 }
 
 resource "aws_iam_policy" "kube-prometheus-stack_thanos" {
@@ -306,7 +350,7 @@ resource "kubernetes_secret" "kube-prometheus-stack_thanos" {
   }
 }
 
-data "aws_iam_policy_document" "kube-prometheus-stack_grafana" {
+data "aws_iam_policy_document" "kube-prometheus-stack_grafana_cloudwatch" {
   statement {
     effect = "Allow"
 
@@ -459,9 +503,10 @@ resource "helm_release" "kube-prometheus-stack" {
     local.thanos["enabled"] ? local.values_dashboard_thanos : null,
     local.values_dashboard_node_exporter,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
-    local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_grafana_ds : null,
+    local.values_grafana_ds,
     local.kube-prometheus-stack["default_global_requests"] ? local.values_kps_global_requests : null,
     local.kube-prometheus-stack["default_global_limits"] ? local.values_kps_global_limits : null,
+    local.kube-prometheus-stack["use_managed_prometheus"] ? local.values_managed_prometheus : null,
     local.kube-prometheus-stack["extra_values"]
   ])
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
@@ -571,7 +616,74 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
   }
 }
 
+resource "aws_prometheus_workspace" "kube-prometheus-stack" {
+  count = local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["create_managed_prometheus"] ? 1 : 0
+  alias = local.kube-prometheus-stack["managed_prometheus_alias"]
+}
+
+module "iam_assumable_role_kube-prometheus-stack_managed" {
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "~> 3.0"
+  create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"]
+  role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-managed-irsa"
+  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
+  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack_managed[0].arn] : []
+  number_of_role_policy_arns    = 1
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["prometheus_service_account_name"]}"]
+  tags                          = local.tags
+}
+
+resource "aws_iam_policy" "kube-prometheus-stack_managed" {
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] ? 1 : 0
+  name   = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-managed"
+  policy = local.kube-prometheus-stack["managed_prometheus_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack_managed[0].json : local.kube-prometheus-stack["managed_prometheus_iam_policy_override"]
+}
+
+data "aws_iam_policy_document" "kube-prometheus-stack_managed" {
+  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"] ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "aps:RemoteWrite",
+      "aps:GetSeries",
+      "aps:GetLabels",
+      "aps:GetMetricMetadata"
+    ]
+
+    resources = [local.kube-prometheus-stack["create_managed_prometheus"] ? aws_prometheus_workspace.kube-prometheus-stack[0].arn : local.kube-prometheus-stack["existing_managed_prometheus_arn"]]
+  }
+}
+
+data "aws_iam_policy_document" "kube-prometheus-stack_grafana_amp" {
+  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"] ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "aps:QueryMetrics",
+      "aps:GetSeries",
+      "aps:GetLabels",
+      "aps:GetMetricMetadata"
+    ]
+
+    resources = local.kube-prometheus-stack["create_managed_prometheus"] ? [aws_prometheus_workspace.kube-prometheus-stack[0].arn, "${aws_prometheus_workspace.kube-prometheus-stack[0].arn}/*"] : [local.kube-prometheus-stack["existing_managed_prometheus_arn"], "${local.kube-prometheus-stack["existing_managed_prometheus_arn"]}/*"]
+  }
+}
+
+data "aws_iam_policy_document" "kube-prometheus-stack_grafana" {
+  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] && (local.kube-prometheus-stack["grafana_cloudwatch_access"] || local.kube-prometheus-stack["use_managed_prometheus"]) ? 1 : 0
+  source_policy_documents = compact([
+    local.kube-prometheus-stack["grafana_cloudwatch_access"] ? data.aws_iam_policy_document.kube-prometheus-stack_grafana_cloudwatch.json : "",
+    local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"] ? data.aws_iam_policy_document.kube-prometheus-stack_grafana_amp[0].json : ""
+  ])
+}
+
 output "grafana_password" {
   value     = element(concat(random_string.grafana_password.*.result, [""]), 0)
   sensitive = true
+}
+
+output "prometheus_endpoint" {
+  value = element(concat(aws_prometheus_workspace.kube-prometheus-stack.*.prometheus_endpoint, list("")), 0)
 }
