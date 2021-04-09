@@ -52,7 +52,7 @@ jobs:
         echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
 
     - name: Check modules
-      uses: pre-commit/action@v2.0.0
+      uses: pre-commit/action@v2.0.2
       with:
         extra_args: --show-diff-on-failure --all-files
 
