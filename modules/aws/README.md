@@ -64,6 +64,41 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | <a name="module_kube-prometheus-stack_thanos_bucket"></a> [kube-prometheus-stack\_thanos\_bucket](#module\_kube-prometheus-stack\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 2.0 |
 | <a name="module_loki_bucket"></a> [loki\_bucket](#module\_loki\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 2.0 |
 | <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 2.0 |
+||||||| parent of f47d207 (chore: update docs)
+| <a name="module_iam_assumable_role_aws-ebs-csi-driver"></a> [iam\_assumable\_role\_aws-ebs-csi-driver](#module\_iam\_assumable\_role\_aws-ebs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_aws-for-fluent-bit"></a> [iam\_assumable\_role\_aws-for-fluent-bit](#module\_iam\_assumable\_role\_aws-for-fluent-bit) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_aws-load-balancer-controller"></a> [iam\_assumable\_role\_aws-load-balancer-controller](#module\_iam\_assumable\_role\_aws-load-balancer-controller) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_cert-manager"></a> [iam\_assumable\_role\_cert-manager](#module\_iam\_assumable\_role\_cert-manager) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_cluster-autoscaler"></a> [iam\_assumable\_role\_cluster-autoscaler](#module\_iam\_assumable\_role\_cluster-autoscaler) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_cni-metrics-helper"></a> [iam\_assumable\_role\_cni-metrics-helper](#module\_iam\_assumable\_role\_cni-metrics-helper) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_external-dns"></a> [iam\_assumable\_role\_external-dns](#module\_iam\_assumable\_role\_external-dns) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_kube-prometheus-stack_grafana"></a> [iam\_assumable\_role\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_role\_kube-prometheus-stack\_grafana) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_kube-prometheus-stack_thanos"></a> [iam\_assumable\_role\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_role\_kube-prometheus-stack\_thanos) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_loki-stack"></a> [iam\_assumable\_role\_loki-stack](#module\_iam\_assumable\_role\_loki-stack) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_prometheus-cloudwatch-exporter"></a> [iam\_assumable\_role\_prometheus-cloudwatch-exporter](#module\_iam\_assumable\_role\_prometheus-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_thanos"></a> [iam\_assumable\_role\_thanos](#module\_iam\_assumable\_role\_thanos) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_thanos-storegateway"></a> [iam\_assumable\_role\_thanos-storegateway](#module\_iam\_assumable\_role\_thanos-storegateway) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_kube-prometheus-stack_thanos_bucket"></a> [kube-prometheus-stack\_thanos\_bucket](#module\_kube-prometheus-stack\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+| <a name="module_loki_bucket"></a> [loki\_bucket](#module\_loki\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+| <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+=======
+| <a name="module_iam_assumable_role_aws-ebs-csi-driver"></a> [iam\_assumable\_role\_aws-ebs-csi-driver](#module\_iam\_assumable\_role\_aws-ebs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_aws-for-fluent-bit"></a> [iam\_assumable\_role\_aws-for-fluent-bit](#module\_iam\_assumable\_role\_aws-for-fluent-bit) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_aws-load-balancer-controller"></a> [iam\_assumable\_role\_aws-load-balancer-controller](#module\_iam\_assumable\_role\_aws-load-balancer-controller) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_cert-manager"></a> [iam\_assumable\_role\_cert-manager](#module\_iam\_assumable\_role\_cert-manager) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_cluster-autoscaler"></a> [iam\_assumable\_role\_cluster-autoscaler](#module\_iam\_assumable\_role\_cluster-autoscaler) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_cni-metrics-helper"></a> [iam\_assumable\_role\_cni-metrics-helper](#module\_iam\_assumable\_role\_cni-metrics-helper) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_external-dns"></a> [iam\_assumable\_role\_external-dns](#module\_iam\_assumable\_role\_external-dns) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_kube-prometheus-stack_grafana"></a> [iam\_assumable\_role\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_role\_kube-prometheus-stack\_grafana) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_kube-prometheus-stack_managed"></a> [iam\_assumable\_role\_kube-prometheus-stack\_managed](#module\_iam\_assumable\_role\_kube-prometheus-stack\_managed) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_kube-prometheus-stack_thanos"></a> [iam\_assumable\_role\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_role\_kube-prometheus-stack\_thanos) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_loki-stack"></a> [iam\_assumable\_role\_loki-stack](#module\_iam\_assumable\_role\_loki-stack) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_prometheus-cloudwatch-exporter"></a> [iam\_assumable\_role\_prometheus-cloudwatch-exporter](#module\_iam\_assumable\_role\_prometheus-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_thanos"></a> [iam\_assumable\_role\_thanos](#module\_iam\_assumable\_role\_thanos) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_thanos-storegateway"></a> [iam\_assumable\_role\_thanos-storegateway](#module\_iam\_assumable\_role\_thanos-storegateway) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_kube-prometheus-stack_thanos_bucket"></a> [kube-prometheus-stack\_thanos\_bucket](#module\_kube-prometheus-stack\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+| <a name="module_loki_bucket"></a> [loki\_bucket](#module\_loki\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
+| <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
 
 ## Resources
 
@@ -78,6 +113,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [aws_iam_policy.cni-metrics-helper](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.external-dns](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.kube-prometheus-stack_grafana](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_policy.kube-prometheus-stack_managed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.kube-prometheus-stack_thanos](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.loki-stack](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.prometheus-cloudwatch-exporter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
@@ -86,6 +122,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [aws_iam_policy.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_kms_alias.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
 | [aws_kms_key.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
+| [aws_prometheus_workspace.kube-prometheus-stack](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/prometheus_workspace) | resource |
 | [github_branch_default.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
 | [github_repository.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
 | [github_repository_deploy_key.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
@@ -274,6 +311,9 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [aws_iam_policy_document.cni-metrics-helper](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.external-dns](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.kube-prometheus-stack_grafana](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kube-prometheus-stack_grafana_amp](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kube-prometheus-stack_grafana_cloudwatch](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kube-prometheus-stack_managed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.kube-prometheus-stack_thanos](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.loki-stack](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.prometheus-cloudwatch-exporter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -348,6 +388,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 |------|-------------|
 | <a name="output_grafana_password"></a> [grafana\_password](#output\_grafana\_password) | n/a |
 | <a name="output_loki-stack-ca"></a> [loki-stack-ca](#output\_loki-stack-ca) | n/a |
+| <a name="output_prometheus_endpoint"></a> [prometheus\_endpoint](#output\_prometheus\_endpoint) | n/a |
 | <a name="output_promtail-cert"></a> [promtail-cert](#output\_promtail-cert) | n/a |
 | <a name="output_promtail-key"></a> [promtail-key](#output\_promtail-key) | n/a |
 | <a name="output_thanos_ca"></a> [thanos\_ca](#output\_thanos\_ca) | n/a |
