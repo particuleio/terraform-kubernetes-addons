@@ -14,6 +14,7 @@ locals {
       default_network_policy  = true
       default_global_requests = false
       default_global_limits   = false
+      create_bucket           = false
       bucket                  = "thanos-store-${var.cluster-name}"
       generate_ca             = false
       trusted_ca_content      = null
@@ -200,6 +201,12 @@ locals {
         limits:
           memory: 1Gi
     VALUES
+}
+
+resource "scaleway_object_bucket" "thanos_bucket" {
+  count = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
+  name  = local.thanos["bucket"]
+  acl   = "private"
 }
 
 resource "kubernetes_namespace" "thanos" {

@@ -8,6 +8,7 @@ locals {
       chart_version           = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
       namespace               = "monitoring"
       thanos_sidecar_enabled  = false
+      thanos_create_bucket    = true
       thanos_bucket           = "thanos-store-${var.cluster-name}"
       thanos_bucket_region    = local.scaleway["region"]
       thanos_store_config     = null
@@ -263,6 +264,12 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
 
     name = local.kube-prometheus-stack["namespace"]
   }
+}
+
+resource "scaleway_object_bucket" "kube-prometheus-stack_thanos_bucket" {
+  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
+  name  = local.kube-prometheus-stack["thanos_bucket"]
+  acl   = "private"
 }
 
 resource "random_string" "grafana_password" {
