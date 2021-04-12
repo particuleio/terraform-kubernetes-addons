@@ -6,13 +6,13 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: aws-ebs-csi-driver
-    version: 0.10.0
+    version: 0.9.15
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 1.2.2
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.1.7
+    version: 0.1.6
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
     version: 1.1.6
@@ -24,19 +24,19 @@ dependencies:
     version: 0.3.4
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.3.0
+    version: v1.2.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
     version: 9.9.2
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 4.10.0
+    version: 4.9.3
     repository: https://charts.bitnami.com/bitnami
   - name: flux
-    version: 1.8.0
+    version: 1.7.0
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 3.29.0
+    version: 3.25.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
@@ -48,7 +48,7 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: keycloak
-    version: 10.3.0
+    version: 10.1.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
     version: 1.15.1
@@ -78,7 +78,7 @@ dependencies:
     version: 0.14.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 4.10.4
+    version: 4.10.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
@@ -90,10 +90,10 @@ dependencies:
     version: 0.22.1
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 3.15.0
+    version: 3.14.1
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
-    version: 5.9.0
+    version: 5.8.1
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.10.0

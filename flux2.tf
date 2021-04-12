@@ -201,7 +201,7 @@ resource "kubernetes_network_policy" "flux2_allow_monitoring" {
 
     ingress {
       ports {
-        port     = "8080"
+        port     = "3030"
         protocol = "TCP"
       }
 
