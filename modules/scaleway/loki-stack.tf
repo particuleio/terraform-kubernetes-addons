@@ -10,6 +10,7 @@ locals {
       create_ns              = false
       enabled                = false
       default_network_policy = true
+      create_bucket          = true
       bucket                 = "loki-store-${var.cluster-name}"
       bucket_region          = local.scaleway["region"]
       generate_ca            = true
@@ -306,6 +307,12 @@ resource "kubernetes_secret" "loki-stack-ca" {
   data = {
     "ca.crt" = local.loki-stack["generate_ca"] ? tls_self_signed_cert.loki-stack-ca-cert[count.index].cert_pem : local.loki-stack["trusted_ca_content"]
   }
+}
+
+resource "scaleway_object_bucket" "loki_bucket" {
+  count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
+  name  = local.loki-stack["bucket"]
+  acl   = "private"
 }
 
 resource "tls_private_key" "promtail-key" {
