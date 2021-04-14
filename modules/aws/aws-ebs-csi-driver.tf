@@ -28,6 +28,7 @@ enableVolumeScheduling: true
 enableVolumeResizing: true
 enableVolumeSnapshot: true
 extraCreateMetadata: true
+tolerateAllTaints: true
 k8sTagClusterId: ${var.cluster-name}
 serviceAccount:
   controller:
