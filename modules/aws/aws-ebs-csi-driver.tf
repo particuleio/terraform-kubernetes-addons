@@ -28,7 +28,10 @@ enableVolumeScheduling: true
 enableVolumeResizing: true
 enableVolumeSnapshot: true
 extraCreateMetadata: true
-tolerateAllTaints: true
+priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+node:
+  tolerateAllTaints: true
+  priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 k8sTagClusterId: ${var.cluster-name}
 serviceAccount:
   controller:
