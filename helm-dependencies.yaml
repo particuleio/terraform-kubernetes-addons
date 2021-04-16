@@ -6,7 +6,7 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: aws-ebs-csi-driver
-    version: 0.10.0
+    version: 0.10.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 1.2.2
@@ -18,19 +18,19 @@ dependencies:
     version: 1.1.6
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
-    version: 0.14.2
+    version: 0.15.0
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
     version: 0.3.4
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.3.0
+    version: v1.3.1
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
     version: 9.9.2
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 4.10.0
+    version: 4.11.0
     repository: https://charts.bitnami.com/bitnami
   - name: flux
     version: 1.8.0
@@ -48,10 +48,10 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: keycloak
-    version: 10.1.0
+    version: 10.3.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 1.15.1
+    version: 1.15.2
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
     version: 13.13.1
@@ -93,8 +93,8 @@ dependencies:
     version: 3.15.0
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
-    version: 5.9.0
+    version: 5.10.0
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.10.0
+    version: 0.11.0
     repository: https://helm.releases.hashicorp.com
