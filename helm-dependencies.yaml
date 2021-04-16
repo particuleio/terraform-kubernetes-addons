@@ -57,7 +57,7 @@ dependencies:
     version: 13.13.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
-    version: v1.3.4
+    version: v1.3.5
     repository: https://kyverno.github.io/kyverno/
   - name: loki-stack
     version: 2.3.1
