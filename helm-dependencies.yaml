@@ -57,7 +57,7 @@ dependencies:
     version: 13.13.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
-    version: v1.3.4
+    version: v1.3.5
     repository: https://kyverno.github.io/kyverno/
   - name: loki-stack
     version: 2.3.1
@@ -90,11 +90,11 @@ dependencies:
     version: 0.22.1
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 3.15.0
+    version: 3.15.1
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
     version: 5.10.0
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.10.0
+    version: 0.11.0
     repository: https://helm.releases.hashicorp.com
