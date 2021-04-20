@@ -360,5 +360,5 @@ resource "kubernetes_secret" "thanos-ca" {
 }
 
 output "thanos_ca" {
-  value = element(concat(tls_self_signed_cert.thanos-tls-querier-ca-cert[*].cert_pem, list("")), 0)
+  value = element(concat(tls_self_signed_cert.thanos-tls-querier-ca-cert[*].cert_pem, [""]), 0)
 }

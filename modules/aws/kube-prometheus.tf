@@ -566,6 +566,6 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
 }
 
 output "grafana_password" {
-  value     = element(concat(random_string.grafana_password.*.result, list("")), 0)
+  value     = element(concat(random_string.grafana_password.*.result, [""]), 0)
   sensitive = true
 }
