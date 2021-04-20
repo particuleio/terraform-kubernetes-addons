@@ -1,4 +1,5 @@
 locals {
+
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
@@ -10,6 +11,7 @@ locals {
       enabled                = false
       allowed_cidrs          = ["0.0.0.0/0"]
       default_network_policy = true
+      manage_crds            = true
     },
     var.kube-prometheus-stack
   )
