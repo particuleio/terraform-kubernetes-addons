@@ -367,15 +367,15 @@ resource "kubernetes_secret" "promtail-tls" {
 }
 
 output "loki-stack-ca" {
-  value = element(concat(tls_self_signed_cert.loki-stack-ca-cert[*].cert_pem, list("")), 0)
+  value = element(concat(tls_self_signed_cert.loki-stack-ca-cert[*].cert_pem, [""]), 0)
 }
 
 output "promtail-key" {
-  value     = element(concat(tls_private_key.promtail-key[*].private_key_pem, list("")), 0)
+  value     = element(concat(tls_private_key.promtail-key[*].private_key_pem, [""]), 0)
   sensitive = true
 }
 
 output "promtail-cert" {
-  value     = element(concat(tls_locally_signed_cert.promtail-cert[*].cert_pem, list("")), 0)
+  value     = element(concat(tls_locally_signed_cert.promtail-cert[*].cert_pem, [""]), 0)
   sensitive = true
 }
