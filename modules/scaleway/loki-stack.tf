@@ -2,23 +2,20 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].version
-      namespace                 = "monitoring"
-      create_iam_resources_irsa = true
-      iam_policy_override       = null
-      create_ns                 = false
-      enabled                   = false
-      default_network_policy    = true
-      create_bucket             = true
-      bucket                    = "loki-store-${var.cluster-name}"
-      bucket_lifecycle_rule     = []
-      bucket_force_destroy      = false
-      generate_ca               = true
-      trusted_ca_content        = null
-      create_promtail_cert      = true
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].version
+      namespace              = "monitoring"
+      create_ns              = false
+      enabled                = false
+      default_network_policy = true
+      create_bucket          = true
+      bucket                 = "loki-store-${var.cluster-name}"
+      bucket_region          = local.scaleway["region"]
+      generate_ca            = true
+      trusted_ca_content     = null
+      create_promtail_cert   = true
     },
     var.loki-stack
   )
@@ -45,10 +42,6 @@ locals {
       serviceMonitor:
         enabled: ${local.kube-prometheus-stack["enabled"]}
       priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-      serviceAccount:
-        name: ${local.loki-stack["name"]}
-        annotations:
-          eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_assumable_role_loki-stack.this_iam_role_arn : ""}"
       persistence:
         enabled: true
       config:
@@ -63,7 +56,11 @@ locals {
                 period: 24h
         storage_config:
           aws:
-            s3: "s3://${data.aws_region.current.name}/${local.loki-stack["bucket"]}"
+            bucketnames: ${local.loki-stack["bucket"]}
+            endpoint: s3.${local.loki-stack["bucket_region"]}.scw.cloud
+            region: ${local.loki-stack["bucket_region"]}
+            access_key_id: ${local.scaleway["scw_access_key"]}
+            secret_access_key: ${local.scaleway["scw_secret_key"]}
           boltdb_shipper:
             shared_store: s3
         compactor:
@@ -129,46 +126,6 @@ locals {
       - effect: NoExecute
         operator: Exists
     VALUES
-}
-
-module "iam_assumable_role_loki-stack" {
-  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 3.0"
-  create_role                  = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"]
-  role_name                    = "${var.cluster-name}-${local.loki-stack["name"]}-loki-stack-irsa"
-  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns             = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? [aws_iam_policy.loki-stack[0].arn] : []
-  number_of_role_policy_arns   = 1
-  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.loki-stack["namespace"]}:${local.loki-stack["name"]}"]
-  tags                         = local.tags
-}
-
-resource "aws_iam_policy" "loki-stack" {
-  count  = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? 1 : 0
-  name   = "${var.cluster-name}-${local.loki-stack["name"]}-loki-stack"
-  policy = local.loki-stack["iam_policy_override"] == null ? data.aws_iam_policy_document.loki-stack.json : local.loki-stack["iam_policy_override"]
-}
-
-data "aws_iam_policy_document" "loki-stack" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:ListBucket"
-    ]
-
-    resources = ["arn:aws:s3:::${local.loki-stack["bucket"]}"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:*Object"
-    ]
-
-    resources = ["arn:aws:s3:::${local.loki-stack["bucket"]}/*"]
-  }
 }
 
 resource "kubernetes_namespace" "loki-stack" {
@@ -247,28 +204,6 @@ resource "helm_release" "promtail" {
     kubernetes_secret.loki-stack-ca,
     kubernetes_secret.promtail-tls
   ]
-}
-
-module "loki_bucket" {
-  create_bucket = local.loki-stack["enabled"] && local.loki-stack["create_bucket"]
-
-  source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 1.0"
-
-  force_destroy = local.loki-stack["bucket_force_destroy"]
-
-  bucket = local.loki-stack["bucket"]
-  acl    = "private"
-
-  server_side_encryption_configuration = {
-    rule = {
-      apply_server_side_encryption_by_default = {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  lifecycle_rule = local.loki-stack["bucket_lifecycle_rule"]
 }
 
 resource "tls_private_key" "loki-stack-ca-key" {
@@ -372,6 +307,12 @@ resource "kubernetes_secret" "loki-stack-ca" {
   data = {
     "ca.crt" = local.loki-stack["generate_ca"] ? tls_self_signed_cert.loki-stack-ca-cert[count.index].cert_pem : local.loki-stack["trusted_ca_content"]
   }
+}
+
+resource "scaleway_object_bucket" "loki_bucket" {
+  count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
+  name  = local.loki-stack["bucket"]
+  acl   = "private"
 }
 
 resource "tls_private_key" "promtail-key" {

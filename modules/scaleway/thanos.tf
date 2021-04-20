@@ -3,23 +3,21 @@ locals {
   thanos = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].version
-      namespace                 = "monitoring"
-      create_iam_resources_irsa = true
-      iam_policy_override       = null
-      create_ns                 = false
-      enabled                   = false
-      default_network_policy    = true
-      default_global_requests   = false
-      default_global_limits     = false
-      create_bucket             = false
-      bucket                    = "thanos-store-${var.cluster-name}"
-      bucket_force_destroy      = false
-      generate_ca               = false
-      trusted_ca_content        = null
+      name                    = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
+      chart                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
+      repository              = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].repository
+      chart_version           = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].version
+      namespace               = "monitoring"
+      iam_policy_override     = null
+      create_ns               = false
+      enabled                 = false
+      default_network_policy  = true
+      default_global_requests = false
+      default_global_limits   = false
+      create_bucket           = false
+      bucket                  = "thanos-store-${var.cluster-name}"
+      generate_ca             = false
+      trusted_ca_content      = null
     },
     var.thanos
   )
@@ -65,17 +63,11 @@ locals {
         - --deduplication.replica-label=rule_replica
       strategyType: Recreate
       enabled: true
-      serviceAccount:
-        annotations:
-          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.this_iam_role_arn : ""}"
     storegateway:
       extraFlags:
         - --ignore-deletion-marks-delay=24h
       replicaCount: 2
       enabled: true
-      serviceAccount:
-        annotations:
-          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.this_iam_role_arn : ""}"
       pdb:
         create: true
         minAvailable: 1
@@ -160,11 +152,12 @@ locals {
     objstoreConfig:
       type: S3
       config:
-        bucket: ${local.thanos["bucket"]}
-        region: ${data.aws_region.current.name}
-        endpoint: s3.${data.aws_region.current.name}.amazonaws.com
-        sse_config:
-          type: "SSE-S3"
+        bucket: ${local.kube-prometheus-stack["thanos_bucket"]}
+        region: ${local.kube-prometheus-stack["thanos_bucket_region"]}
+        endpoint: s3.${local.kube-prometheus-stack["thanos_bucket_region"]}.scw.cloud
+        access_key: ${local.scaleway["scw_access_key"]}
+        secret_key: ${local.scaleway["scw_secret_key"]}
+        signature_version2: false
     VALUES
 
   values_thanos_global_requests = <<-VALUES
@@ -210,67 +203,10 @@ locals {
     VALUES
 }
 
-module "iam_assumable_role_thanos" {
-  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 3.0"
-  create_role                  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"]
-  role_name                    = "${var.cluster-name}-${local.thanos["name"]}-thanos-irsa"
-  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns             = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? [aws_iam_policy.thanos[0].arn] : []
-  number_of_role_policy_arns   = 1
-  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.thanos["namespace"]}:${local.thanos["name"]}-*"]
-  tags                         = local.tags
-}
-
-
-resource "aws_iam_policy" "thanos" {
-  count  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0
-  name   = "${var.cluster-name}-${local.thanos["name"]}-thanos"
-  policy = local.thanos["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos.json : local.thanos["iam_policy_override"]
-}
-
-
-data "aws_iam_policy_document" "thanos" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:ListBucket"
-    ]
-
-    resources = ["arn:aws:s3:::${local.thanos["bucket"]}"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:*Object"
-    ]
-
-    resources = ["arn:aws:s3:::${local.thanos["bucket"]}/*"]
-  }
-}
-
-
-module "thanos_bucket" {
-  create_bucket = local.thanos["enabled"] && local.thanos["create_bucket"]
-
-  source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 1.0"
-
-  force_destroy = local.thanos["bucket_force_destroy"]
-
-  bucket = local.thanos["bucket"]
-  acl    = "private"
-
-  server_side_encryption_configuration = {
-    rule = {
-      apply_server_side_encryption_by_default = {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
+resource "scaleway_object_bucket" "thanos_bucket" {
+  count = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
+  name  = local.thanos["bucket"]
+  acl   = "private"
 }
 
 resource "kubernetes_namespace" "thanos" {

@@ -22,7 +22,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.0 |
-| <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 0.0 |
+| <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 0.1 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 4.5 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 1.0 |
@@ -33,7 +33,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
-| <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 0.0 |
+| <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 0.1 |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 4.5 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 1.0 |
@@ -59,6 +59,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | <a name="module_iam_assumable_role_prometheus-cloudwatch-exporter"></a> [iam\_assumable\_role\_prometheus-cloudwatch-exporter](#module\_iam\_assumable\_role\_prometheus-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | <a name="module_iam_assumable_role_thanos"></a> [iam\_assumable\_role\_thanos](#module\_iam\_assumable\_role\_thanos) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | <a name="module_iam_assumable_role_thanos-storegateway"></a> [iam\_assumable\_role\_thanos-storegateway](#module\_iam\_assumable\_role\_thanos-storegateway) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
+| <a name="module_iam_assumable_role_vault"></a> [iam\_assumable\_role\_vault](#module\_iam\_assumable\_role\_vault) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 3.0 |
 | <a name="module_kube-prometheus-stack_thanos_bucket"></a> [kube-prometheus-stack\_thanos\_bucket](#module\_kube-prometheus-stack\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
 | <a name="module_loki_bucket"></a> [loki\_bucket](#module\_loki\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
 | <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 1.0 |
@@ -81,6 +82,9 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [aws_iam_policy.prometheus-cloudwatch-exporter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.thanos](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.thanos-storegateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_policy.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_kms_alias.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
+| [aws_kms_key.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [github_branch_default.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
 | [github_repository.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
 | [github_repository_deploy_key.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
@@ -229,6 +233,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [kubernetes_network_policy.sealed-secrets_default_deny](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.strimzi-kafka-operator_allow_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.strimzi-kafka-operator_default_deny](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
+| [kubernetes_network_policy.vault_allow_control_plane](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.vault_allow_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.vault_default_deny](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_priority_class.kubernetes_addons](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) | resource |
@@ -267,6 +272,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [aws_iam_policy_document.prometheus-cloudwatch-exporter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.thanos](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.thanos-storegateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [flux_install.main](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/install) | data source |
 | [flux_sync.main](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/sync) | data source |
