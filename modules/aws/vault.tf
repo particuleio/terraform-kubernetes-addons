@@ -64,8 +64,8 @@ locals {
             }
             service_registration "kubernetes" {}
             seal "awskms" {
-              region     = "${local.vault.create_kms_key ? data.aws_region.current.name : element(split(":", local.vault.existing_kms_key_arn), 3)}"
-              kms_key_id = "${local.vault.create_kms_key ? aws_kms_key.vault.0.id : element(split("/", local.vault.existing_kms_key_arn), 1)}"
+              region     = "${local.vault.enabled ? local.vault.create_kms_key ? data.aws_region.current.name : element(split(":", local.vault.existing_kms_key_arn), 3) : ""}"
+              kms_key_id = "${local.vault.enabled ? local.vault.create_kms_key ? aws_kms_key.vault.0.id : element(split("/", local.vault.existing_kms_key_arn), 1) : ""}"
             }
     VALUES
 }
@@ -85,10 +85,12 @@ module "iam_assumable_role_vault" {
 resource "aws_iam_policy" "vault" {
   count  = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.vault["name"]}"
-  policy = local.vault["iam_policy_override"] == null ? data.aws_iam_policy_document.vault.json : local.vault["iam_policy_override"]
+  policy = local.vault["iam_policy_override"] == null ? data.aws_iam_policy_document.vault.0.json : local.vault["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "vault" {
+  count = local.vault.enabled ? 1 : 0
+
   statement {
     effect = "Allow"
 
