@@ -23,6 +23,11 @@ locals {
   )
 
   values_thanos = <<-VALUES
+    receive:
+      enabled: false
+      pdb:
+        create: true
+        minAvailable: 1
     metrics:
       enabled: true
       serviceMonitor:
