@@ -17,13 +17,23 @@ locals {
       override_kms_alias        = null
       allowed_cidrs             = ["0.0.0.0/0"]
       iam_policy_override       = null
+      use_kms                   = true
     },
     var.vault
   )
 
+  values_vault_no_kms = <<-VALUES
+    injector:
+      replicas: 2
+      metrics:
+        enabled: ${local.kube-prometheus-stack.enabled}
+      failurePolicy: Fail
+      priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+  VALUES
+
   values_vault = <<-VALUES
     injector:
-      replicas: 3
+      replicas: 2
       metrics:
         enabled: ${local.kube-prometheus-stack.enabled}
       failurePolicy: Fail
@@ -64,8 +74,8 @@ locals {
             }
             service_registration "kubernetes" {}
             seal "awskms" {
-              region     = "${local.vault.create_kms_key ? data.aws_region.current.name : element(split(":", local.vault.existing_kms_key_arn), 3)}"
-              kms_key_id = "${local.vault.create_kms_key ? aws_kms_key.vault.0.id : element(split("/", local.vault.existing_kms_key_arn), 1)}"
+              region     = "${local.vault.enabled && local.vault.use_kms ? local.vault.create_kms_key ? data.aws_region.current.name : element(split(":", local.vault.existing_kms_key_arn), 3) : ""}"
+              kms_key_id = "${local.vault.enabled && local.vault.use_kms ? local.vault.create_kms_key ? aws_kms_key.vault.0.id : element(split("/", local.vault.existing_kms_key_arn), 1) : ""}"
             }
     VALUES
 }
@@ -73,22 +83,24 @@ locals {
 module "iam_assumable_role_vault" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 3.0"
-  create_role                   = local.vault["enabled"] && local.vault["create_iam_resources_irsa"]
+  create_role                   = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault["use_kms"]
   role_name                     = "tf-${var.cluster-name}-${local.vault["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] ? [aws_iam_policy.vault[0].arn] : []
+  role_policy_arns              = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault.use_kms ? [aws_iam_policy.vault[0].arn] : []
   number_of_role_policy_arns    = 1
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.vault["namespace"]}:${local.vault["service_account_name"]}"]
   tags                          = local.tags
 }
 
 resource "aws_iam_policy" "vault" {
-  count  = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] ? 1 : 0
+  count  = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault.use_kms ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.vault["name"]}"
-  policy = local.vault["iam_policy_override"] == null ? data.aws_iam_policy_document.vault.json : local.vault["iam_policy_override"]
+  policy = local.vault["iam_policy_override"] == null ? data.aws_iam_policy_document.vault.0.json : local.vault["iam_policy_override"]
 }
 
 data "aws_iam_policy_document" "vault" {
+  count = local.vault.enabled && local.vault["create_iam_resources_irsa"] && local.vault.use_kms ? 1 : 0
+
   statement {
     effect = "Allow"
 
@@ -103,11 +115,11 @@ data "aws_iam_policy_document" "vault" {
 }
 
 resource "aws_kms_key" "vault" {
-  count = local.vault.enabled && local.vault.create_kms_key ? 1 : 0
+  count = local.vault.enabled && local.vault.use_kms && local.vault.create_kms_key ? 1 : 0
 }
 
 resource "aws_kms_alias" "vault" {
-  count         = local.vault.enabled && local.vault.create_kms_key ? 1 : 0
+  count         = local.vault.enabled && local.vault.use_kms && local.vault.create_kms_key ? 1 : 0
   name          = "alias/vault-${local.vault.override_kms_alias != null ? local.vault.override_kms_alias : var.cluster-name}"
   target_key_id = aws_kms_key.vault.0.id
 }
@@ -145,10 +157,10 @@ resource "helm_release" "vault" {
   reuse_values          = local.vault["reuse_values"]
   skip_crds             = local.vault["skip_crds"]
   verify                = local.vault["verify"]
-  values = [
-    local.values_vault,
+  values = compact([
+    local.vault.use_kms ? local.values_vault : local.values_vault_no_kms,
     local.vault["extra_values"]
-  ]
+  ])
   namespace = local.vault["create_ns"] ? kubernetes_namespace.vault.*.metadata.0.name[count.index] : local.vault["namespace"]
 }
 
