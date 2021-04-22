@@ -57,7 +57,7 @@ jobs:
         terraform -version
 
     - name: Check modules
-      uses: pre-commit/action@v2.0.2
+      uses: pre-commit/action@v2.0.3
       with:
         extra_args: --show-diff-on-failure --all-files
 

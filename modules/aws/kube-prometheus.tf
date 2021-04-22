@@ -24,6 +24,7 @@ locals {
       default_network_policy            = true
       default_global_requests           = false
       default_global_limits             = false
+      manage_crds                       = true
     },
     var.kube-prometheus-stack
   )
