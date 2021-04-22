@@ -11,6 +11,7 @@ locals {
       enabled                = false
       default_network_policy = true
       ingress_cidrs          = ["0.0.0.0/0"]
+      manage_crds            = true
     },
     var.kong
   )
