@@ -15,6 +15,9 @@ locals {
 
   prometheus-operator_chart = "https://raw.githubusercontent.com/prometheus-community/helm-charts/kube-prometheus-stack-${local.kube-prometheus-stack.chart_version}/charts/kube-prometheus-stack/Chart.yaml"
 
+  prometheus-operator_crds_apply = local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds ? { for k, v in data.http.prometheus-operator_crds : lower(join("/", compact([yamldecode(v.body).apiVersion, yamldecode(v.body).kind, lookup(yamldecode(v.body).metadata, "namespace", ""), yamldecode(v.body).metadata.name]))) => v.body
+  } : null
+
 }
 
 data "http" "prometheus-operator_version" {
@@ -28,6 +31,6 @@ data "http" "prometheus-operator_crds" {
 }
 
 resource "kubectl_manifest" "prometheus-operator_crds" {
-  for_each  = local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds ? data.http.prometheus-operator_crds : []
-  yaml_body = each.value.body
+  for_each  = local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds ? local.prometheus-operator_crds_apply : {}
+  yaml_body = each.value
 }
