@@ -253,7 +253,7 @@ module "loki_bucket" {
   create_bucket = local.loki-stack["enabled"] && local.loki-stack["create_bucket"]
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   force_destroy = local.loki-stack["bucket_force_destroy"]
 
