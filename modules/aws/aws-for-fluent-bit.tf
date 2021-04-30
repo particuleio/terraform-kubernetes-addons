@@ -42,7 +42,7 @@ VALUES
 
 module "iam_assumable_role_aws-for-fluent-bit" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${local.aws-for-fluent-bit["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")

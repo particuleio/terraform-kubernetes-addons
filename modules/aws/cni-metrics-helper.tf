@@ -12,7 +12,7 @@ locals {
 
 module "iam_assumable_role_cni-metrics-helper" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = local.cni-metrics-helper["enabled"] && local.cni-metrics-helper["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-cni-metrics-helper-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
