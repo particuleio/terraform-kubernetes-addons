@@ -47,7 +47,7 @@ grafana:
     name: ${local.kube-prometheus-stack["grafana_service_account_name"]}
     nameTest: ${local.kube-prometheus-stack["grafana_service_account_name"]}-test
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.iam_role_arn : ""}"
   adminPassword: ${join(",", random_string.grafana_password.*.result)}
   dashboardProviders:
     dashboardproviders.yaml:
@@ -70,7 +70,7 @@ prometheus:
     create: true
     name: ${local.kube-prometheus-stack["prometheus_service_account_name"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_thanos.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_thanos.iam_role_arn : ""}"
   prometheusSpec:
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 alertmanager:

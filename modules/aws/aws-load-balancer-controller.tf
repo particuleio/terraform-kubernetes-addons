@@ -22,7 +22,7 @@ clusterName: ${var.cluster-name}
 serviceAccount:
   name: "${local.aws-load-balancer-controller["service_account_name"]}"
   annotations:
-    eks.amazonaws.com/role-arn: "${local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-load-balancer-controller.this_iam_role_arn : ""}"
+    eks.amazonaws.com/role-arn: "${local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-load-balancer-controller.iam_role_arn : ""}"
 VALUES
 }
 

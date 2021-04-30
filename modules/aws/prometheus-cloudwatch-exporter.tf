@@ -21,11 +21,11 @@ locals {
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"]}
     aws:
-      role: "${local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["create_iam_resources_irsa"] ? module.iam_assumable_role_prometheus-cloudwatch-exporter.this_iam_role_arn : ""}"
+      role: "${local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["create_iam_resources_irsa"] ? module.iam_assumable_role_prometheus-cloudwatch-exporter.iam_role_arn : ""}"
     serviceAccount:
       name: ${local.prometheus-cloudwatch-exporter["service_account_name"]}
       annotations:
-        eks.amazonaws.com/role-arn: "${local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["create_iam_resources_irsa"] ? module.iam_assumable_role_prometheus-cloudwatch-exporter.this_iam_role_arn : ""}"
+        eks.amazonaws.com/role-arn: "${local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["create_iam_resources_irsa"] ? module.iam_assumable_role_prometheus-cloudwatch-exporter.iam_role_arn : ""}"
     VALUES
 }
 

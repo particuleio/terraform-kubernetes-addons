@@ -30,7 +30,7 @@ locals {
         serviceAccount:
           name: ${v["service_account_name"]}
           annotations:
-            eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].this_iam_role_arn : ""}"
+            eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].iam_role_arn : ""}"
         metrics:
           enabled: ${local.kube-prometheus-stack["enabled"]}
           serviceMonitor:

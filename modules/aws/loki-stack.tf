@@ -48,7 +48,7 @@ locals {
       serviceAccount:
         name: ${local.loki-stack["name"]}
         annotations:
-          eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_assumable_role_loki-stack.this_iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_assumable_role_loki-stack.iam_role_arn : ""}"
       persistence:
         enabled: true
       config:

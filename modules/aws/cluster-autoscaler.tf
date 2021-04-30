@@ -28,7 +28,7 @@ rbac:
   serviceAccount:
     name: ${local.cluster-autoscaler["service_account_name"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? module.iam_assumable_role_cluster-autoscaler.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? module.iam_assumable_role_cluster-autoscaler.iam_role_arn : ""}"
 image:
   repository: k8s.gcr.io/autoscaling/cluster-autoscaler
   tag: ${local.cluster-autoscaler["version"]}

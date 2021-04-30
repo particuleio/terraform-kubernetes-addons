@@ -32,7 +32,7 @@ global:
 serviceAccount:
   name: ${local.cert-manager["service_account_name"]}
   annotations:
-    eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.this_iam_role_arn : ""}"
+    eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.iam_role_arn : ""}"
 prometheus:
   servicemonitor:
     enabled: ${local.kube-prometheus-stack["enabled"]}

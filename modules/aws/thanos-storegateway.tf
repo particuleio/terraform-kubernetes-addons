@@ -46,7 +46,7 @@ locals {
           enabled: true
           serviceAccount:
             annotations:
-              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].this_iam_role_arn : ""}"
+              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].iam_role_arn : ""}"
           pdb:
             create: true
             minAvailable: 1

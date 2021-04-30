@@ -44,7 +44,7 @@ locals {
       serviceAccount:
         name: ${local.vault["service_account_name"]}
         annotations:
-          eks.amazonaws.com/role-arn: "${local.vault["enabled"] && local.vault["create_iam_resources_irsa"] ? module.iam_assumable_role_vault.this_iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.vault["enabled"] && local.vault["create_iam_resources_irsa"] ? module.iam_assumable_role_vault.iam_role_arn : ""}"
         updateStrategyType: "RollingUpdate"
       priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
       ha:

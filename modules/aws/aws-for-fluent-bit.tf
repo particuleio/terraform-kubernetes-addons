@@ -33,7 +33,7 @@ cloudWatch:
 serviceAccount:
   name: ${local.aws-for-fluent-bit["service_account_name"]}
   annotations:
-    eks.amazonaws.com/role-arn: "${local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-for-fluent-bit.this_iam_role_arn : ""}"
+    eks.amazonaws.com/role-arn: "${local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-for-fluent-bit.iam_role_arn : ""}"
 tolerations:
 - operator: Exists
 priorityClassName: "${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}"
