@@ -47,7 +47,7 @@ grafana:
     name: ${local.kube-prometheus-stack["grafana_service_account_name"]}
     nameTest: ${local.kube-prometheus-stack["grafana_service_account_name"]}-test
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.iam_role_arn : ""}"
   adminPassword: ${join(",", random_string.grafana_password.*.result)}
   dashboardProviders:
     dashboardproviders.yaml:
@@ -70,7 +70,7 @@ prometheus:
     create: true
     name: ${local.kube-prometheus-stack["prometheus_service_account_name"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_thanos.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_thanos.iam_role_arn : ""}"
   prometheusSpec:
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 alertmanager:
@@ -260,7 +260,7 @@ VALUES
 
 module "iam_assumable_role_kube-prometheus-stack_grafana" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"]
   role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-grafana-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
@@ -272,7 +272,7 @@ module "iam_assumable_role_kube-prometheus-stack_grafana" {
 
 module "iam_assumable_role_kube-prometheus-stack_thanos" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"]
   role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-thanos-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
