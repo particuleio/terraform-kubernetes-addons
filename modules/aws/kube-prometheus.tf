@@ -389,7 +389,7 @@ module "kube-prometheus-stack_thanos_bucket" {
   create_bucket = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] && local.kube-prometheus-stack["thanos_create_bucket"]
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   force_destroy = local.kube-prometheus-stack["thanos_bucket_force_destroy"]
 

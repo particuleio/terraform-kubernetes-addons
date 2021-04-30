@@ -265,7 +265,7 @@ module "thanos_bucket" {
   create_bucket = local.thanos["enabled"] && local.thanos["create_bucket"]
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   force_destroy = local.thanos["bucket_force_destroy"]
 
