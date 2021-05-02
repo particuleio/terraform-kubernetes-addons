@@ -32,7 +32,7 @@ global:
 serviceAccount:
   name: ${local.cert-manager["service_account_name"]}
   annotations:
-    eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.this_iam_role_arn : ""}"
+    eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.iam_role_arn : ""}"
 prometheus:
   servicemonitor:
     enabled: ${local.kube-prometheus-stack["enabled"]}
@@ -45,7 +45,7 @@ VALUES
 
 module "iam_assumable_role_cert-manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${local.cert-manager["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")

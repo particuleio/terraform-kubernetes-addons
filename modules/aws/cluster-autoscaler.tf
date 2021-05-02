@@ -28,7 +28,7 @@ rbac:
   serviceAccount:
     name: ${local.cluster-autoscaler["service_account_name"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? module.iam_assumable_role_cluster-autoscaler.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? module.iam_assumable_role_cluster-autoscaler.iam_role_arn : ""}"
 image:
   repository: k8s.gcr.io/autoscaling/cluster-autoscaler
   tag: ${local.cluster-autoscaler["version"]}
@@ -44,7 +44,7 @@ VALUES
 
 module "iam_assumable_role_cluster-autoscaler" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${local.cluster-autoscaler["name"]}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")

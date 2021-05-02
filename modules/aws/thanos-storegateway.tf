@@ -46,7 +46,7 @@ locals {
           enabled: true
           serviceAccount:
             annotations:
-              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].this_iam_role_arn : ""}"
+              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].iam_role_arn : ""}"
           pdb:
             create: true
             minAvailable: 1
@@ -59,7 +59,7 @@ locals {
 module "iam_assumable_role_thanos-storegateway" {
   for_each                     = local.thanos-storegateway
   source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 3.0"
+  version                      = "~> 4.0"
   create_role                  = each.value["enabled"] && each.value["create_iam_resources_irsa"]
   role_name                    = "${var.cluster-name}-${each.value["name"]}-irsa"
   provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")

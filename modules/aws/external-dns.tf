@@ -30,7 +30,7 @@ locals {
         serviceAccount:
           name: ${v["service_account_name"]}
           annotations:
-            eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].this_iam_role_arn : ""}"
+            eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].iam_role_arn : ""}"
         metrics:
           enabled: ${local.kube-prometheus-stack["enabled"]}
           serviceMonitor:
@@ -45,7 +45,7 @@ locals {
 module "iam_assumable_role_external-dns" {
   for_each                      = local.external-dns
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = each.value["enabled"] && each.value["create_iam_resources_irsa"]
   role_name                     = "tf-${var.cluster-name}-${each.key}-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
