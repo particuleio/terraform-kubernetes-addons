@@ -63,13 +63,13 @@ locals {
             storage "raft" {
               path       = "/vault/data"
               retry_join = {
-                leader_api_addr = "http://vault-0.vault-internal:8200"
+                leader_api_addr = "http://${local.vault.name}-0.${local.vault.name}-internal:8200"
               }
               retry_join = {
-                leader_api_addr = "http://vault-1.vault-internal:8200"
+                leader_api_addr = "http://${local.vault.name}-1.${local.vault.name}-internal:8200"
               }
               retry_join = {
-                leader_api_addr = "http://vault-2.vault-internal:8200"
+                leader_api_addr = "http://${local.vault.name}-2.${local.vault.name}-internal:8200"
               }
             }
             service_registration "kubernetes" {}
