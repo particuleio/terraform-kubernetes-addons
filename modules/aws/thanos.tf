@@ -267,6 +267,11 @@ module "thanos_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 2.0"
 
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
+
   force_destroy = local.thanos["bucket_force_destroy"]
 
   bucket = local.thanos["bucket"]
