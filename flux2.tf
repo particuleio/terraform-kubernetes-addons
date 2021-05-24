@@ -17,8 +17,8 @@ locals {
       github_token             = ""
       repository               = "gitops"
       repository_visibility    = "public"
-      branch                   = "flux-system"
-      flux_sync_branch         = "main"
+      branch                   = "main"
+      flux_sync_branch         = ""
       default_components       = ["source-controller", "kustomize-controller", "helm-controller", "notification-controller"]
       components               = []
       provider                 = "github"
@@ -96,7 +96,7 @@ data "flux_sync" "main" {
   count       = local.flux2["enabled"] ? 1 : 0
   target_path = local.flux2["target_path"]
   url         = local.flux2["github_url"]
-  branch      = local.flux2["flux_sync_branch"] ? local.flux2["flux_sync_branch"] : local.flux2["branch"]
+  branch      = local.flux2["flux_sync_branch"] != "" ? local.flux2["flux_sync_branch"] : local.flux2["branch"]
   namespace   = local.flux2["namespace"]
 }
 
