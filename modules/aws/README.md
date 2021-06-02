@@ -32,16 +32,16 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.37.0 |
-| <a name="provider_flux"></a> [flux](#provider\_flux) | 0.1.3 |
-| <a name="provider_github"></a> [github](#provider\_github) | 4.9.2 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.1.1 |
-| <a name="provider_http"></a> [http](#provider\_http) | 2.1.0 |
-| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | 1.10.0 |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.1.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
-| <a name="provider_time"></a> [time](#provider\_time) | 0.7.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.0 |
+| <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 0.1 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 4.5 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
+| <a name="provider_http"></a> [http](#provider\_http) | n/a |
+| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 1.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_time"></a> [time](#provider\_time) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
 
 ## Modules
 
