@@ -47,6 +47,9 @@ dependencies:
   - name: karma
     version: 1.7.2
     repository: https://charts.helm.sh/stable
+  - name: keda
+    version: 2.3.2
+    repository: https://kedacore.github.io/charts
   - name: keycloak
     version: 11.0.0
     repository: https://codecentric.github.io/helm-charts
