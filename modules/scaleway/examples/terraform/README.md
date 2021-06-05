@@ -16,8 +16,8 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kapsule"></a> [kapsule](#module\_kapsule) | particuleio/kapsule/scaleway | n/a |
-| <a name="module_kapsule-addons"></a> [kapsule-addons](#module\_kapsule-addons) | ../.. | n/a |
+| <a name="module_kapsule"></a> [kapsule](#module\_kapsule) | particuleio/kapsule/scaleway |  |
+| <a name="module_kapsule-addons"></a> [kapsule-addons](#module\_kapsule-addons) | ../.. |  |
 
 ## Resources
 
