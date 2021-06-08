@@ -6,10 +6,10 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: aws-ebs-csi-driver
-    version: 1.2.0
+    version: 1.2.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.0.0
+    version: 2.0.1
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.11
@@ -30,13 +30,13 @@ dependencies:
     version: 9.9.2
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.0.2
+    version: 5.0.3
     repository: https://charts.bitnami.com/bitnami
   - name: flux
     version: 1.9.0
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 3.32.0
+    version: 3.33.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
@@ -54,7 +54,7 @@ dependencies:
     version: 2.1.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 16.1.2
+    version: 16.4.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v1.3.6
@@ -63,7 +63,7 @@ dependencies:
     version: 2.4.1
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 3.5.1
+    version: 3.6.0
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 2.11.4
@@ -72,7 +72,7 @@ dependencies:
     version: 2.0.2
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 2.13.0
+    version: 2.14.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.16.0
@@ -90,7 +90,7 @@ dependencies:
     version: 0.23.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 3.17.6
+    version: 3.17.8
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
     version: 5.12.2
