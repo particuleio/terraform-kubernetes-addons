@@ -9,8 +9,9 @@ locals {
       namespace                                    = "monitoring"
       grafana_service_account_name                 = "kube-prometheus-stack-grafana"
       prometheus_service_account_name              = "kube-prometheus-stack-prometheus"
-      grafana_create_iam_resources_irsa            = false
+      grafana_create_iam_resources_irsa            = true
       grafana_iam_policy_override                  = null
+      grafana_cloudwatch_access                    = false
       thanos_create_iam_resources_irsa             = true
       thanos_iam_policy_override                   = null
       thanos_sidecar_enabled                       = false
@@ -260,11 +261,11 @@ grafana:
       sigv4_auth_enabled: true
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.iam_role_arn : ""}"
 prometheus:
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_managed.this_iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_managed.iam_role_arn : ""}"
   prometheusSpec:
     externalLabels:
       cluster: ${var.cluster-name}
@@ -623,7 +624,7 @@ resource "aws_prometheus_workspace" "kube-prometheus-stack" {
 
 module "iam_assumable_role_kube-prometheus-stack_managed" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 3.0"
+  version                       = "~> 4.0"
   create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["use_managed_prometheus"] && local.kube-prometheus-stack["managed_prometheus_create_iam_resources_irsa"]
   role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-managed-irsa"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
@@ -685,5 +686,5 @@ output "grafana_password" {
 }
 
 output "prometheus_endpoint" {
-  value = element(concat(aws_prometheus_workspace.kube-prometheus-stack.*.prometheus_endpoint, list("")), 0)
+  value = element(concat(aws_prometheus_workspace.kube-prometheus-stack.*.prometheus_endpoint, [""]), 0)
 }
