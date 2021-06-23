@@ -146,11 +146,11 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
 
     ingress {
       ports {
-        port     = "http"
+        port     = "80"
         protocol = "TCP"
       }
       ports {
-        port     = "https"
+        port     = "443"
         protocol = "TCP"
       }
 
@@ -218,7 +218,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
 
     ingress {
       ports {
-        port     = "webhook"
+        port     = "8443"
         protocol = "TCP"
       }
 
