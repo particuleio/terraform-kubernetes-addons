@@ -21,7 +21,7 @@ dependencies:
     version: 0.15.1
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
-    version: 0.3.5
+    version: 0.3.6
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
     version: v1.4.0
