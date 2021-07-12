@@ -19,6 +19,7 @@ locals {
 
   values_aws-load-balancer-controller = <<VALUES
 clusterName: ${var.cluster-name}
+region: ${data.aws_region.current.name}
 serviceAccount:
   name: "${local.aws-load-balancer-controller["service_account_name"]}"
   annotations:
