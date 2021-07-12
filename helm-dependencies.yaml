@@ -6,58 +6,61 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: aws-ebs-csi-driver
-    version: 1.2.1
+    version: 1.2.4
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.0.1
+    version: 2.1.3
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.11
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.2.0
+    version: 1.2.3
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
-    version: 0.15.0
+    version: 0.15.1
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
-    version: 0.3.5
+    version: 0.3.6
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.3.1
+    version: v1.4.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
     version: 9.9.2
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.0.3
+    version: 5.1.4
     repository: https://charts.bitnami.com/bitnami
   - name: flux
-    version: 1.9.0
+    version: 1.10.0
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 3.33.0
+    version: 3.34.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
     repository: https://clusterfrak-dynamics.github.io/istio/
   - name: k8gb
-    version: v0.8.0
+    version: v0.8.1
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
     repository: https://charts.helm.sh/stable
+  - name: keda
+    version: 2.3.2
+    repository: https://kedacore.github.io/charts
   - name: keycloak
-    version: 11.0.0
+    version: 11.0.1
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.1.0
+    version: 2.2.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 16.4.1
+    version: 16.12.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
-    version: v1.3.6
+    version: v1.4.1
     repository: https://kyverno.github.io/kyverno/
   - name: loki-stack
     version: 2.4.1
@@ -72,13 +75,13 @@ dependencies:
     version: 2.0.2
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 2.14.0
+    version: 2.15.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.16.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 4.13.0
+    version: 4.15.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
@@ -87,14 +90,14 @@ dependencies:
     version: 1.16.1
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
-    version: 0.23.0
+    version: 0.24.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 3.17.8
+    version: 5.1.0
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
-    version: 5.12.2
+    version: 5.13.4
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.12.0
+    version: 0.13.0
     repository: https://helm.releases.hashicorp.com

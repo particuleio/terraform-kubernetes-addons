@@ -64,6 +64,12 @@ variable "karma" {
   default     = {}
 }
 
+variable "keda" {
+  description = "Customize keda chart, see `keda.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "keycloak" {
   description = "Customize keycloak chart, see `keycloak.tf` for supported values"
   type        = any
