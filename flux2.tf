@@ -23,6 +23,7 @@ locals {
       components               = []
       provider                 = "github"
       auto_image_update        = false
+      custom_kustomize         = ""
 
       known_hosts = [
         "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==",
@@ -183,7 +184,7 @@ resource "github_repository_file" "kustomize" {
   count               = local.flux2["enabled"] && (local.flux2["provider"] == "github") ? 1 : 0
   repository          = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
   file                = data.flux_sync.main[0].kustomize_path
-  content             = data.flux_sync.main[0].kustomize_content
+  content             = local.flux2.custom_kustomize == "" ? data.flux_sync.main[0].kustomize_content : local.flux2.custom_kustomize
   branch              = local.flux2["branch"]
   overwrite_on_create = true
 }
