@@ -57,7 +57,7 @@ dependencies:
     version: 2.2.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 16.12.2
+    version: 16.13.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v1.4.1
@@ -72,7 +72,7 @@ dependencies:
     version: 2.11.4
     repository: https://charts.helm.sh/stable
   - name: node-problem-detector
-    version: 2.0.2
+    version: 2.0.3
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
     version: 2.15.0
