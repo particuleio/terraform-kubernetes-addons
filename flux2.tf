@@ -24,6 +24,8 @@ locals {
       provider                 = "github"
       auto_image_update        = false
       custom_kustomize         = ""
+      ignore_fields_apply      = []
+      ignore_fields_sync       = []
 
       known_hosts = [
         "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==",
@@ -58,6 +60,7 @@ resource "kubernetes_namespace" "flux2" {
   }
   lifecycle {
     ignore_changes = [
+      metadata[0].annotations,
       metadata[0].labels,
     ]
   }
@@ -87,9 +90,10 @@ data "kubectl_file_documents" "apply" {
 
 # Apply manifests on the cluster
 resource "kubectl_manifest" "apply" {
-  for_each   = local.flux2["enabled"] ? { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-  depends_on = [kubernetes_namespace.flux2]
-  yaml_body  = each.value
+  for_each      = local.flux2["enabled"] ? { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
+  depends_on    = [kubernetes_namespace.flux2]
+  yaml_body     = each.value
+  ignore_fields = local.flux2.ignore_fields_apply
 }
 
 # Generate manifests
@@ -115,7 +119,8 @@ resource "kubectl_manifest" "sync" {
     kubernetes_namespace.flux2,
     kubectl_manifest.apply
   ]
-  yaml_body = each.value
+  yaml_body     = each.value
+  ignore_fields = local.flux2.ignore_fields_sync
 }
 
 # Generate a Kubernetes secret with the Git credentials
