@@ -4,6 +4,12 @@ variable "admiralty" {
   default     = {}
 }
 
+variable "arn-partition" {
+  description = "ARN partition"
+  default     = "aws"
+  type        = string
+}
+
 variable "cert-manager" {
   description = "Customize cert-manager chart, see `cert-manager.tf` for supported values"
   type        = any

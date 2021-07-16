@@ -246,7 +246,7 @@ data "aws_iam_policy_document" "thanos" {
       "s3:ListBucket"
     ]
 
-    resources = ["arn:aws:s3:::${local.thanos["bucket"]}"]
+    resources = ["arn:${var.arn-partition}:s3:::${local.thanos["bucket"]}"]
   }
 
   statement {
@@ -256,7 +256,7 @@ data "aws_iam_policy_document" "thanos" {
       "s3:*Object"
     ]
 
-    resources = ["arn:aws:s3:::${local.thanos["bucket"]}/*"]
+    resources = ["arn:${var.arn-partition}:s3:::${local.thanos["bucket"]}/*"]
   }
 }
 
