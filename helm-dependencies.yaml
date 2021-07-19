@@ -96,7 +96,7 @@ dependencies:
     version: 5.1.1
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
-    version: 5.13.4
+    version: 5.13.5
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.13.0
