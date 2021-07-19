@@ -1,3 +1,9 @@
+variable "arn-partition" {
+  description = "ARN partition"
+  default     = "aws"
+  type        = string
+}
+
 variable "aws" {
   description = "AWS provider customization"
   type        = any
