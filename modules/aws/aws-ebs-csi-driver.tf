@@ -55,7 +55,7 @@ module "iam_assumable_role_aws-ebs-csi-driver" {
   number_of_role_policy_arns = 1
   oidc_fully_qualified_subjects = [
     "system:serviceaccount:${local.aws-ebs-csi-driver["namespace"]}:${local.aws-ebs-csi-driver["service_account_names"]["controller"]}",
-    "system:serviceaccount:${local.aws-ebs-csi-driver["namespace"]}:${local.aws-ebs-csi-driver["service_account_names"]["snapshot"]}"
+    "system:serviceaccount:${local.aws-ebs-csi-driver["namespace"]}:${local.aws-ebs-csi-driver["service_account_names"]["node"]}"
   ]
   tags = local.tags
 }
