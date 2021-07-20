@@ -86,7 +86,7 @@ data "aws_iam_policy_document" "thanos-storegateway" {
       "s3:ListBucket"
     ]
 
-    resources = ["arn:aws:s3:::${each.value["bucket"]}"]
+    resources = ["arn:${var.arn-partition}:s3:::${each.value["bucket"]}"]
   }
 
   statement {
@@ -96,7 +96,7 @@ data "aws_iam_policy_document" "thanos-storegateway" {
       "s3:*Object"
     ]
 
-    resources = ["arn:aws:s3:::${each.value["bucket"]}/*"]
+    resources = ["arn:${var.arn-partition}:s3:::${each.value["bucket"]}/*"]
   }
 }
 
