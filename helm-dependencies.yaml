@@ -51,13 +51,13 @@ dependencies:
     version: 2.3.2
     repository: https://kedacore.github.io/charts
   - name: keycloak
-    version: 14.0.0
+    version: 14.0.1
     repository: https://codecentric.github.io/helm-charts
   - name: kong
     version: 2.2.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 16.14.1
+    version: 16.15.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v1.4.1
