@@ -114,7 +114,7 @@ resource "kubernetes_network_policy" "metrics-server_allow_control_plane" {
   spec {
     pod_selector {
       match_expressions {
-        key      = "app"
+        key      = "app.kubernetes.io/name"
         operator = "In"
         values   = ["metrics-server"]
       }
