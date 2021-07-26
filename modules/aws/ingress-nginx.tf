@@ -10,7 +10,7 @@ locals {
       namespace              = "ingress-nginx"
       use_nlb                = false
       use_nlb_ip             = false
-      use_nlb_local_ip       = false
+      use_nlb_internal_ip       = false
       use_l7                 = false
       enabled                = false
       default_network_policy = true
@@ -174,7 +174,7 @@ resource "helm_release" "ingress-nginx" {
   skip_crds             = local.ingress-nginx["skip_crds"]
   verify                = local.ingress-nginx["verify"]
   values = [
-    local.ingress-nginx["use_nlb_ip"] ? local.values_ingress-nginx_nlb_ip : local.ingress-nginx["use_nlb"] ? local.values_ingress-nginx_nlb : local.ingress-nginx["use_l7"] ? local.values_ingress-nginx_l7 : local.values_ingress-nginx_l4,
+    local.ingress-nginx["use_nlb_internal_ip"] ? local.values_ingress-nginx_nlb_internal_ip : local.ingress-nginx["use_nlb_ip"] ? local.values_ingress-nginx_nlb_ip : local.ingress-nginx["use_nlb"] ? local.values_ingress-nginx_nlb : local.ingress-nginx["use_l7"] ? local.values_ingress-nginx_l7 : local.values_ingress-nginx_l4,
     local.ingress-nginx["extra_values"],
   ]
   namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
