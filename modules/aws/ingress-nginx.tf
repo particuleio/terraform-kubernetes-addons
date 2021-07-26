@@ -10,6 +10,7 @@ locals {
       namespace              = "ingress-nginx"
       use_nlb                = false
       use_nlb_ip             = false
+      use_nlb_local_ip       = false
       use_l7                 = false
       enabled                = false
       default_network_policy = true
@@ -64,6 +65,28 @@ podSecurityPolicy:
 VALUES
 
   values_ingress-nginx_nlb_ip = <<VALUES
+controller:
+  metrics:
+    enabled: ${local.kube-prometheus-stack["enabled"]}
+    serviceMonitor:
+      enabled: ${local.kube-prometheus-stack["enabled"]}
+  updateStrategy:
+    type: RollingUpdate
+  kind: "DaemonSet"
+  service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  publishService:
+    enabled: true
+  priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
+podSecurityPolicy:
+  enabled: true
+VALUES
+
+  values_ingress-nginx_nlb_internal_ip = <<VALUES
 controller:
   metrics:
     enabled: ${local.kube-prometheus-stack["enabled"]}
