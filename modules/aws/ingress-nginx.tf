@@ -10,7 +10,7 @@ locals {
       namespace              = "ingress-nginx"
       use_nlb                = false
       use_nlb_ip             = false
-      use_nlb_internal_ip       = false
+      use_nlb_internal_ip    = false
       use_l7                 = false
       enabled                = false
       default_network_policy = true
