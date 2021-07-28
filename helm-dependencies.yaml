@@ -99,5 +99,5 @@ dependencies:
     version: 5.13.7
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.13.0
+    version: 0.14.0
     repository: https://helm.releases.hashicorp.com
