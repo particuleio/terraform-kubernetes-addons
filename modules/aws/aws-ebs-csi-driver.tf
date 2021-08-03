@@ -63,7 +63,7 @@ module "iam_assumable_role_aws-ebs-csi-driver" {
 resource "aws_iam_policy" "aws-ebs-csi-driver" {
   count  = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.aws-ebs-csi-driver["name"]}"
-  policy = local.aws-ebs-csi-driver["iam_policy_override"] == null ? file("${path.module}/iam/aws-ebs-csi-driver.json") : local.aws-ebs-csi-driver["iam_policy_override"]
+  policy = local.aws-ebs-csi-driver["iam_policy_override"] == null ? templatefile("${path.module}/iam/aws-ebs-csi-driver.json", { arn-partition = var.arn-partition }) : local.aws-ebs-csi-driver["iam_policy_override"]
 }
 
 resource "kubernetes_namespace" "aws-ebs-csi-driver" {
