@@ -6,7 +6,7 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: aws-ebs-csi-driver
-    version: 2.0.0
+    version: 2.0.4
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 2.1.4
@@ -15,28 +15,28 @@ dependencies:
     version: 0.1.11
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.2.3
+    version: 1.2.5
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
-    version: 0.15.1
+    version: 0.15.2
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
     version: 0.3.6
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.4.0
+    version: v1.4.2
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.9.2
+    version: 9.10.3
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.2.1
+    version: 5.2.3
     repository: https://charts.bitnami.com/bitnami
   - name: flux
-    version: 1.10.0
+    version: 1.10.1
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 3.34.0
+    version: 3.35.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
@@ -66,16 +66,16 @@ dependencies:
     version: 2.4.1
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 3.6.0
+    version: 3.6.1
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.9.0
+    version: 5.9.2
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
-    version: 2.0.3
+    version: 2.0.4
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 2.15.0
+    version: 2.15.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.16.0
@@ -93,11 +93,11 @@ dependencies:
     version: 0.24.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 5.2.1
+    version: 5.2.6
     repository: https://charts.bitnami.com/bitnami
   - name: memcached
-    version: 5.13.5
+    version: 5.13.7
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.13.0
+    version: 0.14.0
     repository: https://helm.releases.hashicorp.com
