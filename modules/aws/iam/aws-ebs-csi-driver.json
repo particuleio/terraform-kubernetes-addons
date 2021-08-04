@@ -23,8 +23,8 @@
         "ec2:CreateTags"
       ],
       "Resource": [
-        "arn:aws:ec2:*:*:volume/*",
-        "arn:aws:ec2:*:*:snapshot/*"
+        "arn:${arn-partition}:ec2:*:*:volume/*",
+        "arn:${arn-partition}:ec2:*:*:snapshot/*"
       ],
       "Condition": {
         "StringEquals": {
@@ -41,8 +41,8 @@
         "ec2:DeleteTags"
       ],
       "Resource": [
-        "arn:aws:ec2:*:*:volume/*",
-        "arn:aws:ec2:*:*:snapshot/*"
+        "arn:${arn-partition}:ec2:*:*:volume/*",
+        "arn:${arn-partition}:ec2:*:*:snapshot/*"
       ]
     },
     {
