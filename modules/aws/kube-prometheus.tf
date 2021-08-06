@@ -286,12 +286,14 @@ resource "aws_iam_policy" "kube-prometheus-stack_grafana" {
   count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? 1 : 0
   name   = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-grafana"
   policy = local.kube-prometheus-stack["grafana_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack_grafana.json : local.kube-prometheus-stack["grafana_iam_policy_override"]
+  tags   = local.tags
 }
 
 resource "aws_iam_policy" "kube-prometheus-stack_thanos" {
   count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
   name   = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-thanos"
   policy = local.kube-prometheus-stack["thanos_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack_thanos.json : local.kube-prometheus-stack["thanos_iam_policy_override"]
+  tags   = local.tags
 }
 
 resource "kubernetes_secret" "kube-prometheus-stack_thanos" {
@@ -408,6 +410,7 @@ module "kube-prometheus-stack_thanos_bucket" {
       }
     }
   }
+  tags = local.tags
 }
 
 resource "kubernetes_namespace" "kube-prometheus-stack" {

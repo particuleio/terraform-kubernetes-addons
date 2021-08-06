@@ -96,6 +96,7 @@ resource "aws_iam_policy" "vault" {
   count  = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault.use_kms ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.vault["name"]}"
   policy = local.vault["iam_policy_override"] == null ? data.aws_iam_policy_document.vault.0.json : local.vault["iam_policy_override"]
+  tags   = local.tags
 }
 
 data "aws_iam_policy_document" "vault" {
@@ -116,6 +117,7 @@ data "aws_iam_policy_document" "vault" {
 
 resource "aws_kms_key" "vault" {
   count = local.vault.enabled && local.vault.use_kms && local.vault.create_kms_key ? 1 : 0
+  tags  = local.tags
 }
 
 resource "aws_kms_alias" "vault" {

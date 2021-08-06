@@ -43,6 +43,7 @@ resource "aws_iam_policy" "aws-load-balancer-controller" {
   count  = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.aws-load-balancer-controller["name"]}"
   policy = local.aws-load-balancer-controller["iam_policy_override"] == null ? templatefile("${path.module}/iam/aws-load-balancer-controller.json", { arn-partition = var.arn-partition }) : local.aws-load-balancer-controller["iam_policy_override"]
+  tags   = local.tags
 }
 
 resource "kubernetes_namespace" "aws-load-balancer-controller" {
