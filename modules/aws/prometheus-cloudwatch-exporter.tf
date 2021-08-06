@@ -45,6 +45,7 @@ resource "aws_iam_policy" "prometheus-cloudwatch-exporter" {
   count  = local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.prometheus-cloudwatch-exporter["name"]}"
   policy = local.prometheus-cloudwatch-exporter["iam_policy_override"] == null ? data.aws_iam_policy_document.prometheus-cloudwatch-exporter.json : local.prometheus-cloudwatch-exporter["iam_policy_override"]
+  tags   = local.tags
 }
 
 data "aws_iam_policy_document" "prometheus-cloudwatch-exporter" {

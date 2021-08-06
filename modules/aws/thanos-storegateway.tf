@@ -73,6 +73,7 @@ resource "aws_iam_policy" "thanos-storegateway" {
   for_each = { for k, v in local.thanos-storegateway : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
   name     = "${var.cluster-name}-${each.value["name"]}"
   policy   = each.value["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos-storegateway[each.key].json : each.value["iam_policy_override"]
+  tags     = local.tags
 }
 
 data "aws_iam_policy_document" "thanos-storegateway" {

@@ -56,6 +56,7 @@ resource "aws_iam_policy" "aws-for-fluent-bit" {
   count  = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.aws-for-fluent-bit["name"]}"
   policy = local.aws-for-fluent-bit["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-for-fluent-bit.json : local.aws-for-fluent-bit["iam_policy_override"]
+  tags   = local.tags
 }
 
 data "aws_iam_policy_document" "aws-for-fluent-bit" {
