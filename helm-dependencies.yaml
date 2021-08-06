@@ -9,7 +9,7 @@ dependencies:
     version: 2.0.4
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.1.4
+    version: 2.1.5
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.11
@@ -30,7 +30,7 @@ dependencies:
     version: 9.10.3
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.2.3
+    version: 5.3.0
     repository: https://charts.bitnami.com/bitnami
   - name: flux
     version: 1.10.2
@@ -48,13 +48,13 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: keda
-    version: 2.3.2
+    version: 2.4.0
     repository: https://kedacore.github.io/charts
   - name: keycloak
     version: 14.0.1
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.2.0
+    version: 2.3.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
     version: 16.15.0
