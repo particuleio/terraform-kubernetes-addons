@@ -58,6 +58,7 @@ resource "aws_iam_policy" "cluster-autoscaler" {
   count  = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.cluster-autoscaler["name"]}"
   policy = local.cluster-autoscaler["iam_policy_override"] == null ? data.aws_iam_policy_document.cluster-autoscaler.json : local.cluster-autoscaler["iam_policy_override"]
+  tags   = local.tags
 }
 
 data "aws_iam_policy_document" "cluster-autoscaler" {

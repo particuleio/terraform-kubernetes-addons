@@ -59,6 +59,7 @@ resource "aws_iam_policy" "external-dns" {
   for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
   name     = "tf-${var.cluster-name}-${each.key}"
   policy   = each.value["iam_policy_override"] == null ? data.aws_iam_policy_document.external-dns.json : each.value["iam_policy_override"]
+  tags     = local.tags
 }
 
 data "aws_iam_policy_document" "external-dns" {

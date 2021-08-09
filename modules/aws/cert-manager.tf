@@ -59,6 +59,7 @@ resource "aws_iam_policy" "cert-manager" {
   count  = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? 1 : 0
   name   = "tf-${var.cluster-name}-${local.cert-manager["name"]}"
   policy = local.cert-manager["iam_policy_override"] == null ? data.aws_iam_policy_document.cert-manager.json : local.cert-manager["iam_policy_override"]
+  tags   = local.tags
 }
 
 data "aws_iam_policy_document" "cert-manager" {

@@ -235,6 +235,7 @@ resource "aws_iam_policy" "thanos" {
   count  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0
   name   = "${var.cluster-name}-${local.thanos["name"]}-thanos"
   policy = local.thanos["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos.json : local.thanos["iam_policy_override"]
+  tags   = local.tags
 }
 
 
@@ -284,6 +285,7 @@ module "thanos_bucket" {
       }
     }
   }
+  tags = local.tags
 }
 
 resource "kubernetes_namespace" "thanos" {
