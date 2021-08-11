@@ -25,6 +25,7 @@ locals {
       use_kms                   = false
       use_encryption            = false
       extra_sc_parameters       = {}
+      kms_enable_key_rotation   = true
     },
     var.aws-ebs-csi-driver
   )
@@ -187,8 +188,9 @@ resource "kubernetes_network_policy" "aws-ebs-csi-driver_allow_namespace" {
 }
 
 resource "aws_kms_key" "aws-ebs-csi-driver" {
-  count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.create_kms_key ? 1 : 0
-  tags  = local.tags
+  count               = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.create_kms_key ? 1 : 0
+  tags                = local.tags
+  enable_key_rotation = local.aws-ebs-csi-driver.kms_enable_key_rotation
 }
 
 resource "aws_kms_alias" "aws-ebs-csi-driver" {

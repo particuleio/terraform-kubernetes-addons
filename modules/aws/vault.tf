@@ -18,6 +18,7 @@ locals {
       allowed_cidrs             = ["0.0.0.0/0"]
       iam_policy_override       = null
       use_kms                   = true
+      kms_enable_key_rotation   = true
     },
     var.vault
   )
@@ -116,8 +117,9 @@ data "aws_iam_policy_document" "vault" {
 }
 
 resource "aws_kms_key" "vault" {
-  count = local.vault.enabled && local.vault.use_kms && local.vault.create_kms_key ? 1 : 0
-  tags  = local.tags
+  count               = local.vault.enabled && local.vault.use_kms && local.vault.create_kms_key ? 1 : 0
+  tags                = local.tags
+  enable_key_rotation = local.vault.kms_enable_key_rotation
 }
 
 resource "aws_kms_alias" "vault" {
