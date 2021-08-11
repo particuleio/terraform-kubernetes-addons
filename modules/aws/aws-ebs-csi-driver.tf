@@ -38,10 +38,6 @@ controller:
 node:
   tolerateAllTaints: true
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-  serviceAccount:
-    name: ${local.aws-ebs-csi-driver["service_account_names"]["node"]}
-    annotations:
-      eks.amazonaws.com/role-arn: "${local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-ebs-csi-driver.iam_role_arn : ""}"
 VALUES
 }
 
