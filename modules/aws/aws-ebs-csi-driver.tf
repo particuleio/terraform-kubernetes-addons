@@ -19,17 +19,20 @@ locals {
       enabled                   = false
       iam_policy_override       = null
       default_network_policy    = true
+      create_kms_key            = true
+      existing_kms_key_arn      = null
+      override_kms_alias        = null
+      use_kms                   = false
+      use_encryption            = false
+      extra_sc_parameters       = {}
     },
     var.aws-ebs-csi-driver
   )
 
   values_aws-ebs-csi-driver = <<VALUES
-enableVolumeScheduling: true
-enableVolumeResizing: true
-enableVolumeSnapshot: true
-extraCreateMetadata: true
-k8sTagClusterId: ${var.cluster-name}
 controller:
+  k8sTagClusterId: ${var.cluster-name}
+  extraCreateMetadata: true
   priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
   serviceAccount:
     name: ${local.aws-ebs-csi-driver["service_account_names"]["controller"]}
@@ -54,6 +57,24 @@ module "iam_assumable_role_aws-ebs-csi-driver" {
     "system:serviceaccount:${local.aws-ebs-csi-driver["namespace"]}:${local.aws-ebs-csi-driver["service_account_names"]["node"]}"
   ]
   tags = local.tags
+}
+
+data "aws_iam_policy_document" "aws-ebs-csi-driver" {
+  count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.create_iam_resources_irsa ? 1 : 0
+  source_policy_documents = [
+    data.aws_iam_policy_document.aws-ebs-csi-driver_default.0.json,
+    local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? data.aws_iam_policy_document.aws-ebs-csi-driver_kms.0.json : jsonencode({})
+  ]
+}
+
+data "aws_iam_policy_document" "aws-ebs-csi-driver_kms" {
+  count       = local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? 1 : 0
+  source_json = templatefile("${path.module}/iam/aws-ebs-csi-driver_kms.json", { kmsKeyId = local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver.0.arn : local.aws-ebs-csi-driver.existing_kms_key_arn })
+}
+
+data "aws_iam_policy_document" "aws-ebs-csi-driver_default" {
+  count       = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.create_iam_resources_irsa ? 1 : 0
+  source_json = templatefile("${path.module}/iam/aws-ebs-csi-driver.json", { arn-partition = var.arn-partition })
 }
 
 resource "aws_iam_policy" "aws-ebs-csi-driver" {
@@ -114,6 +135,14 @@ resource "kubernetes_storage_class" "aws-ebs-csi-driver" {
   storage_provisioner    = "ebs.csi.aws.com"
   volume_binding_mode    = "WaitForFirstConsumer"
   allow_volume_expansion = true
+
+  parameters = merge(
+    {
+      encrypted = local.aws-ebs-csi-driver.use_encryption
+      kmsKeyId  = local.aws-ebs-csi-driver.use_encryption ? local.aws-ebs-csi-driver.use_kms ? local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver.0.arn : local.aws-ebs-csi-driver.existing_kms_key_arn : "" : ""
+    },
+    local.aws-ebs-csi-driver.extra_sc_parameters
+  )
 }
 
 resource "kubernetes_network_policy" "aws-ebs-csi-driver_default_deny" {
@@ -155,4 +184,15 @@ resource "kubernetes_network_policy" "aws-ebs-csi-driver_allow_namespace" {
 
     policy_types = ["Ingress"]
   }
+}
+
+resource "aws_kms_key" "aws-ebs-csi-driver" {
+  count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.create_kms_key ? 1 : 0
+  tags  = local.tags
+}
+
+resource "aws_kms_alias" "aws-ebs-csi-driver" {
+  count         = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.create_kms_key ? 1 : 0
+  name          = "alias/aws-ebs-csi-driver-${local.aws-ebs-csi-driver.override_kms_alias != null ? local.aws-ebs-csi-driver.override_kms_alias : var.cluster-name}"
+  target_key_id = aws_kms_key.aws-ebs-csi-driver.0.id
 }
