@@ -190,6 +190,12 @@ variable "thanos-memcached" {
   default     = {}
 }
 
+variable "tigera-operator" {
+  description = "Customize tigera-operator chart, see `tigera-operator.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "vault" {
   description = "Customize Hashicorp Vault chart, see `vault.tf` for supported values"
   type        = any
