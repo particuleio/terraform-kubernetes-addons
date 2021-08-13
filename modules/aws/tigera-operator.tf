@@ -6,7 +6,7 @@ locals {
       chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].name
       repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].repository
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].version
-      namespace              = "tigera-operator"
+      namespace              = "tigera" #https://github.com/projectcalico/calico/issues/4812
       create_ns              = true
       enabled                = false
       default_network_policy = true
@@ -16,7 +16,7 @@ locals {
 
   values_tigera-operator = <<-VALUES
     installation:
-      provider: EKS
+      kubernetesProvider: EKS
     VALUES
 }
 
