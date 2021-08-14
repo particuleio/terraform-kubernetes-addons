@@ -6,7 +6,7 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: aws-ebs-csi-driver
-    version: 2.0.4
+    version: 2.1.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 2.1.5
@@ -93,8 +93,11 @@ dependencies:
     version: 0.25.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 5.2.7
+    version: 5.3.1
     repository: https://charts.bitnami.com/bitnami
+  - name: tigera-operator
+    version: v3.20.0
+    repository: https://docs.projectcalico.org/charts
   - name: memcached
     version: 5.13.7
     repository: https://charts.bitnami.com/bitnami
