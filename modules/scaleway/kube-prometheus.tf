@@ -33,7 +33,9 @@ kubeEtcd:
 grafana:
   sidecar:
     dashboards:
-      multicluster: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
+      multicluster:
+        global:
+          enabled: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
   rbac:
     pspUseAppArmor: false
   adminPassword: ${join(",", random_string.grafana_password.*.result)}
