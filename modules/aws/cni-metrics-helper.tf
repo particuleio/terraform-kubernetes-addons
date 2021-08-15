@@ -3,7 +3,7 @@ locals {
     {
       create_iam_resources_irsa = true
       enabled                   = false
-      version                   = "v1.7.5"
+      version                   = "v1.9.0"
       iam_policy_override       = null
     },
     var.cni-metrics-helper
