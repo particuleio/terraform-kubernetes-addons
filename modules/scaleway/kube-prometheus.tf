@@ -12,7 +12,7 @@ locals {
       thanos_bucket           = "thanos-store-${var.cluster-name}"
       thanos_bucket_region    = local.scaleway["region"]
       thanos_store_config     = null
-      thanos_version          = "v0.21.1"
+      thanos_version          = "v0.22.0"
       enabled                 = false
       allowed_cidrs           = ["0.0.0.0/0"]
       default_network_policy  = true
@@ -33,7 +33,9 @@ kubeEtcd:
 grafana:
   sidecar:
     dashboards:
-      multicluster: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
+      multicluster:
+        global:
+          enabled: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
   rbac:
     pspUseAppArmor: false
   adminPassword: ${join(",", random_string.grafana_password.*.result)}

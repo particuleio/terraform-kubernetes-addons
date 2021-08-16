@@ -18,7 +18,7 @@ locals {
       thanos_bucket                     = "thanos-store-${var.cluster-name}"
       thanos_bucket_force_destroy       = false
       thanos_store_config               = null
-      thanos_version                    = "v0.21.1"
+      thanos_version                    = "v0.22.0"
       enabled                           = false
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true
@@ -39,7 +39,9 @@ kubeEtcd:
 grafana:
   sidecar:
     dashboards:
-      multicluster: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
+      multicluster:
+        global:
+          enabled: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
   rbac:
     pspUseAppArmor: false
   serviceAccount:
@@ -468,6 +470,10 @@ resource "helm_release" "kube-prometheus-stack" {
     local.kube-prometheus-stack["extra_values"]
   ])
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+
+  depends_on = [
+    helm_release.ingress-nginx
+  ]
 }
 
 resource "kubernetes_network_policy" "kube-prometheus-stack_default_deny" {
