@@ -160,6 +160,12 @@ variable "sealed-secrets" {
   default     = {}
 }
 
+variable "secrets-store-csi-driver" {
+  description = "Customize secrets-store-csi-driver chart, see `secrets-store-csi-driver.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "strimzi-kafka-operator" {
   description = "Customize strimzi-kafka-operator chart, see `strimzi-kafka-operator.tf` for supported values"
   type        = any
