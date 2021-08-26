@@ -36,7 +36,7 @@ dependencies:
     version: 1.11.0
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 3.36.0
+    version: 4.0.1
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
