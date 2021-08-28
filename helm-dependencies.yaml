@@ -18,7 +18,7 @@ dependencies:
     version: 0.1.11
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.2.6
+    version: 1.2.7
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.15.3
@@ -33,7 +33,7 @@ dependencies:
     version: 9.10.5
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.4.2
+    version: 5.4.4
     repository: https://charts.bitnami.com/bitnami
   - name: flux
     version: 1.11.0

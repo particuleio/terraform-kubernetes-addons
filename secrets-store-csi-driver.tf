@@ -7,6 +7,7 @@ locals {
       repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "secrets-store-csi-driver")].repository
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "secrets-store-csi-driver")].version
       namespace              = "kube-system"
+      enabled                = false
       create_ns              = false
       default_network_policy = true
     },
