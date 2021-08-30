@@ -68,6 +68,9 @@ dependencies:
   - name: loki-stack
     version: 2.4.1
     repository: https://grafana.github.io/helm-charts
+  - name: loki
+    version: 2.6.0
+    repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 3.8.1
     repository: https://grafana.github.io/helm-charts
