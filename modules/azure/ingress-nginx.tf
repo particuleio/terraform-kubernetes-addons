@@ -26,7 +26,7 @@ resource "kubernetes_namespace" "ingress-nginx" {
   }
 }
 
-resource "helm_release" "nginx-ingress" {
+resource "helm_release" "ingress-nginx" {
   count                 = local.ingress-nginx["enabled"] ? 1 : 0
   repository            = local.ingress-nginx["repository"]
   name                  = local.ingress-nginx["name"]

@@ -1,0 +1,1 @@
+../../strimzi-kafka-operator.tf
