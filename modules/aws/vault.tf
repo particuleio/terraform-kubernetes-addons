@@ -138,6 +138,13 @@ resource "kubernetes_namespace" "vault" {
 
     name = local.vault["namespace"]
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+      metadata[0].labels,
+    ]
+  }
 }
 
 resource "helm_release" "vault" {
