@@ -8,7 +8,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with Azure
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 2.66.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 2.66.0 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 0.3 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 4.5 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
