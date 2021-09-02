@@ -54,19 +54,22 @@ dependencies:
     version: 2.4.0
     repository: https://kedacore.github.io/charts
   - name: keycloak
-    version: 14.0.1
+    version: 15.0.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
     version: 2.3.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 18.0.1
+    version: 18.0.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v1.4.2
     repository: https://kyverno.github.io/kyverno/
   - name: loki-stack
     version: 2.4.1
+    repository: https://grafana.github.io/helm-charts
+  - name: loki
+    version: 2.6.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 3.8.1
@@ -75,7 +78,7 @@ dependencies:
     version: 5.9.3
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
-    version: 2.0.5
+    version: 2.0.6
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
     version: 2.16.0

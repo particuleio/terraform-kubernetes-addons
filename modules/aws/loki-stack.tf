@@ -2,10 +2,10 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].version
       namespace                 = "monitoring"
       create_iam_resources_irsa = true
       iam_policy_override       = null
@@ -19,25 +19,9 @@ locals {
       generate_ca               = true
       trusted_ca_content        = null
       create_promtail_cert      = true
+      create_grafana_ds_cm      = true
     },
     var.loki-stack
-  )
-
-  promtail = merge(
-    local.helm_defaults,
-    {
-      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].version
-      namespace     = local.loki-stack["namespace"]
-      create_ns     = false
-      enabled       = false
-      loki_address  = ""
-      tls_crt       = null
-      tls_key       = null
-    },
-    var.promtail
   )
 
   values_loki-stack = <<-VALUES
@@ -68,66 +52,6 @@ locals {
             shared_store: s3
         compactor:
           shared_store: s3
-    promtail:
-      serviceMonitor:
-        enabled: ${local.kube-prometheus-stack["enabled"]}
-      extraCommandlineArgs:
-        - -client.external-labels=cluster=${var.cluster-name}
-      priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-    VALUES
-
-  values_promtail = <<-VALUES
-    priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-    extraArgs:
-      - -client.external-labels=cluster=${var.cluster-name}
-    serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
-    defaultVolumes:
-      - name: containers
-        hostPath:
-          path: /var/lib/docker/containers
-      - name: pods
-        hostPath:
-          path: /var/log/pods
-      - name: tls
-        secret:
-          secretName: ${local.promtail["name"]}-tls
-    defaultVolumeMounts:
-      - name: containers
-        mountPath: /var/lib/docker/containers
-        readOnly: true
-      - name: pods
-        mountPath: /var/log/pods
-        readOnly: true
-      - name: tls
-        mountPath: /tls
-        readOnly: true
-    config:
-      lokiAddress: ${local.promtail["loki_address"]}
-      snippets:
-        tls_config:
-          cert_file: /tls/tls.crt
-          key_file: /tls/tls.key
-      file: |
-        server:
-          log_level: info
-          http_listen_port: {{ .Values.config.serverPort }}
-        client:
-          url: {{ .Values.config.lokiAddress }}
-          tls_config:
-            {{- toYaml .Values.config.snippets.tls_config | nindent 4 }}
-        positions:
-          filename: /run/promtail/positions.yaml
-        scrape_configs:
-          {{- tpl .Values.config.snippets.scrapeConfigs $ | nindent 2 }}
-          {{- tpl .Values.config.snippets.extraScrapeConfigs . | nindent 2 }}
-    tolerations:
-      - effect: NoSchedule
-        operator: Exists
-      - key: CriticalAddonsOnly
-        operator: Exists
-      - effect: NoExecute
-        operator: Exists
     VALUES
 }
 
@@ -184,6 +108,31 @@ resource "kubernetes_namespace" "loki-stack" {
   }
 }
 
+resource "kubernetes_config_map" "loki-stack_grafana_ds" {
+  count = local.loki-stack["enabled"] && local.loki-stack["create_grafana_ds_cm"] ? 1 : 0
+  metadata {
+    name      = "${local.loki-stack["name"]}-grafana-ds"
+    namespace = local.loki-stack["namespace"]
+    labels = {
+      grafana_datasource = "1"
+    }
+  }
+
+  data = {
+    "datasource.yml" = <<-VALUES
+      datasources:
+      - access: proxy
+        editable: true
+        isDefault: false
+        name: Loki
+        orgId: 1
+        type: loki
+        url: http://${local.loki-stack["name"]}:3100
+        version: 1
+      VALUES
+  }
+}
+
 resource "helm_release" "loki-stack" {
   count                 = local.loki-stack["enabled"] ? 1 : 0
   repository            = local.loki-stack["repository"]
@@ -213,39 +162,6 @@ resource "helm_release" "loki-stack" {
 
   depends_on = [
     helm_release.kube-prometheus-stack
-  ]
-}
-resource "helm_release" "promtail" {
-  count                 = local.promtail["enabled"] ? 1 : 0
-  repository            = local.promtail["repository"]
-  name                  = local.promtail["name"]
-  chart                 = local.promtail["chart"]
-  version               = local.promtail["chart_version"]
-  timeout               = local.promtail["timeout"]
-  force_update          = local.promtail["force_update"]
-  recreate_pods         = local.promtail["recreate_pods"]
-  wait                  = local.promtail["wait"]
-  atomic                = local.promtail["atomic"]
-  cleanup_on_fail       = local.promtail["cleanup_on_fail"]
-  dependency_update     = local.promtail["dependency_update"]
-  disable_crd_hooks     = local.promtail["disable_crd_hooks"]
-  disable_webhooks      = local.promtail["disable_webhooks"]
-  render_subchart_notes = local.promtail["render_subchart_notes"]
-  replace               = local.promtail["replace"]
-  reset_values          = local.promtail["reset_values"]
-  reuse_values          = local.promtail["reuse_values"]
-  skip_crds             = local.promtail["skip_crds"]
-  verify                = local.promtail["verify"]
-  values = [
-    local.values_promtail,
-    local.promtail["extra_values"]
-  ]
-  namespace = local.promtail["namespace"]
-
-  depends_on = [
-    helm_release.kube-prometheus-stack,
-    kubernetes_secret.loki-stack-ca,
-    kubernetes_secret.promtail-tls
   ]
 }
 
@@ -413,21 +329,6 @@ resource "tls_locally_signed_cert" "promtail-cert" {
     "digital_signature",
     "client_auth"
   ]
-}
-
-resource "kubernetes_secret" "promtail-tls" {
-  count = local.promtail["enabled"] ? 1 : 0
-  metadata {
-    name      = "${local.promtail["name"]}-tls"
-    namespace = local.promtail["namespace"]
-  }
-
-  type = "kubernetes.io/tls"
-
-  data = {
-    "tls.crt" = local.promtail["tls_crt"]
-    "tls.key" = local.promtail["tls_key"]
-  }
 }
 
 output "loki-stack-ca" {
