@@ -82,7 +82,7 @@ resource "helm_release" "ingress-nginx" {
   namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 
