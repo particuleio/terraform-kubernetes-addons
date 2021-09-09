@@ -78,7 +78,7 @@ dependencies:
     version: 5.9.3
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
-    version: 2.0.7
+    version: 2.0.8
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
     version: 2.17.0
