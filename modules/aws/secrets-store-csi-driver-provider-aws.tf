@@ -1,9 +1,12 @@
 locals {
 
-  secrets-store-csi-driver-provider-aws = {
-    enabled = local.secrets-store-csi-driver.enabled
-    url     = "https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml"
-  }
+  secrets-store-csi-driver-provider-aws = merge(
+    {
+      enabled = local.secrets-store-csi-driver.enabled
+      url     = "https://raw.githubusercontent.com/aws/secrets-store-csi-driver-provider-aws/main/deployment/aws-provider-installer.yaml"
+    },
+    var.secrets-store-csi-driver-provider-aws
+  )
 
   secrets-store-csi-driver-provider-aws_apply = local.secrets-store-csi-driver-provider-aws.enabled ? [for v in data.kubectl_file_documents.secrets-store-csi-driver-provider-aws.0.documents : {
     data : yamldecode(v)

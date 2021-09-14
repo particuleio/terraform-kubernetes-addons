@@ -1,0 +1,1 @@
+../../../templates/cert-manager-csi-driver.yaml.tpl

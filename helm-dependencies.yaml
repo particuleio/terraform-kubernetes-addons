@@ -9,7 +9,7 @@ dependencies:
     version: 0.2.0
     repository: https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
   - name: aws-ebs-csi-driver
-    version: 2.1.0
+    version: 2.1.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 2.1.5
@@ -30,13 +30,13 @@ dependencies:
     version: v1.5.3
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.10.5
+    version: 9.10.7
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.4.4
+    version: 5.4.7
     repository: https://charts.bitnami.com/bitnami
   - name: flux
-    version: 1.11.0
+    version: 1.11.2
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
     version: 4.0.1
@@ -54,13 +54,13 @@ dependencies:
     version: 2.4.0
     repository: https://kedacore.github.io/charts
   - name: keycloak
-    version: 15.0.0
+    version: 15.0.2
     repository: https://codecentric.github.io/helm-charts
   - name: kong
     version: 2.3.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 18.0.2
+    version: 18.0.7
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v1.4.2
@@ -75,13 +75,13 @@ dependencies:
     version: 3.8.1
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.9.3
+    version: 5.10.0
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
-    version: 2.0.6
+    version: 2.0.8
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 2.16.0
+    version: 2.17.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.16.0
@@ -99,7 +99,7 @@ dependencies:
     version: 0.25.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 5.3.2
+    version: 6.0.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.20.0

@@ -64,6 +64,12 @@ variable "prometheus-cloudwatch-exporter" {
   default     = {}
 }
 
+variable "secrets-store-csi-driver-provider-aws" {
+  description = "Enable secrets-store-csi-driver-provider-aws"
+  type        = any
+  default     = {}
+}
+
 variable "tags" {
   description = "Map of tags for AWS resources"
   type        = map(any)

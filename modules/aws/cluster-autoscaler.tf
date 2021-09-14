@@ -35,6 +35,12 @@ image:
 extraArgs:
   balance-similar-node-groups: true
   skip-nodes-with-local-storage: false
+  balancing-ignore-label: topology.ebs.csi.aws.com/zone
+  balancing-ignore-label: eks.amazonaws.com/nodegroup
+  balancing-ignore-label: eks.amazonaws.com/nodegroup-image
+  balancing-ignore-label: eks.amazonaws.com/sourceLaunchTemplateId
+  balancing-ignore-label: eks.amazonaws.com/sourceLaunchTemplateVersion
+
 serviceMonitor:
   enabled: ${local.kube-prometheus-stack["enabled"]}
   namespace: ${local.cluster-autoscaler["namespace"]}
