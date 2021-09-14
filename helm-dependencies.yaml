@@ -60,7 +60,7 @@ dependencies:
     version: 2.3.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 18.0.6
+    version: 18.0.7
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v1.4.2
