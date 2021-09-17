@@ -9,10 +9,10 @@ dependencies:
     version: 0.2.0
     repository: https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
   - name: aws-ebs-csi-driver
-    version: 2.1.1
+    version: 2.2.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.1.5
+    version: 2.1.6
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.11
@@ -24,7 +24,7 @@ dependencies:
     version: 0.15.3
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
-    version: 0.3.7
+    version: 0.3.8
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
     version: v1.5.3
@@ -60,7 +60,7 @@ dependencies:
     version: 2.3.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 18.0.7
+    version: 18.0.10
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v1.4.2
@@ -75,7 +75,7 @@ dependencies:
     version: 3.8.1
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.10.0
+    version: 5.10.1
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
     version: 2.0.8
@@ -99,14 +99,14 @@ dependencies:
     version: 0.25.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 6.0.0
+    version: 6.0.1
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.20.0
+    version: v3.20.1
     repository: https://docs.projectcalico.org/charts
   - name: memcached
-    version: 5.14.2
+    version: 5.15.1
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.15.0
+    version: 0.16.0
     repository: https://helm.releases.hashicorp.com
