@@ -16,6 +16,20 @@ locals {
 
   values_kyverno = <<VALUES
 VALUES
+
+  kyverno-crds = merge(
+    local.helm_defaults,
+    {
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].version
+      namespace              = "kyverno"
+      create_ns              = false
+      enabled                = local.kyverno["enabled"] && !local.kyverno["skip_crds"]
+      default_network_policy = true
+    },
+  )
 }
 
 resource "kubernetes_namespace" "kyverno" {
@@ -37,6 +51,39 @@ resource "helm_release" "kyverno" {
   name                  = local.kyverno["name"]
   chart                 = local.kyverno["chart"]
   version               = local.kyverno["chart_version"]
+  timeout               = local.kyverno["timeout"]
+  force_update          = local.kyverno["force_update"]
+  recreate_pods         = local.kyverno["recreate_pods"]
+  wait                  = local.kyverno["wait"]
+  atomic                = local.kyverno["atomic"]
+  cleanup_on_fail       = local.kyverno["cleanup_on_fail"]
+  dependency_update     = local.kyverno["dependency_update"]
+  disable_crd_hooks     = local.kyverno["disable_crd_hooks"]
+  disable_webhooks      = local.kyverno["disable_webhooks"]
+  render_subchart_notes = local.kyverno["render_subchart_notes"]
+  replace               = local.kyverno["replace"]
+  reset_values          = local.kyverno["reset_values"]
+  reuse_values          = local.kyverno["reuse_values"]
+  skip_crds             = local.kyverno["skip_crds"]
+  verify                = local.kyverno["verify"]
+  values = [
+    local.values_kyverno,
+    local.kyverno["extra_values"]
+  ]
+  namespace = local.kyverno["create_ns"] ? kubernetes_namespace.kyverno.*.metadata.0.name[count.index] : local.kyverno["namespace"]
+
+  depends_on = [
+    helm_release.kube-prometheus-stack,
+    helm_release.kyverno-crds
+  ]
+}
+
+resource "helm_release" "kyverno-crds" {
+  count                 = local.kyverno["enabled"] && !local.kyverno["skip_crds"] ? 1 : 0
+  repository            = local.kyverno["repository"]
+  name                  = local.kyverno-crds["name"]
+  chart                 = local.kyverno-crds["chart"]
+  version               = local.kyverno-crds["chart_version"]
   timeout               = local.kyverno["timeout"]
   force_update          = local.kyverno["force_update"]
   recreate_pods         = local.kyverno["recreate_pods"]
