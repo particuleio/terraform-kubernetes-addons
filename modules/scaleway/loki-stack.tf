@@ -22,33 +22,32 @@ locals {
   )
 
   values_loki-stack = <<-VALUES
-    loki:
-      serviceMonitor:
-        enabled: ${local.kube-prometheus-stack["enabled"]}
-      priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-      persistence:
-        enabled: true
-      config:
-        schema_config:
-          configs:
-            - from: 2020-10-24
-              store: boltdb-shipper
-              object_store: s3
-              schema: v11
-              index:
-                prefix: loki_index_
-                period: 24h
-        storage_config:
-          aws:
-            bucketnames: ${local.loki-stack["bucket"]}
-            endpoint: s3.${local.loki-stack["bucket_region"]}.scw.cloud
-            region: ${local.loki-stack["bucket_region"]}
-            access_key_id: ${local.scaleway["scw_access_key"]}
-            secret_access_key: ${local.scaleway["scw_secret_key"]}
-          boltdb_shipper:
-            shared_store: s3
-        compactor:
+    serviceMonitor:
+      enabled: ${local.kube-prometheus-stack["enabled"]}
+    priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+    persistence:
+      enabled: true
+    config:
+      schema_config:
+        configs:
+          - from: 2020-10-24
+            store: boltdb-shipper
+            object_store: s3
+            schema: v11
+            index:
+              prefix: loki_index_
+              period: 24h
+      storage_config:
+        aws:
+          bucketnames: ${local.loki-stack["bucket"]}
+          endpoint: s3.${local.loki-stack["bucket_region"]}.scw.cloud
+          region: ${local.loki-stack["bucket_region"]}
+          access_key_id: ${local.scaleway["scw_access_key"]}
+          secret_access_key: ${local.scaleway["scw_secret_key"]}
+        boltdb_shipper:
           shared_store: s3
+      compactor:
+        shared_store: s3
     VALUES
 }
 
