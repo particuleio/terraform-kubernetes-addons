@@ -25,33 +25,32 @@ locals {
   )
 
   values_loki-stack = <<-VALUES
-    loki:
-      serviceMonitor:
-        enabled: ${local.kube-prometheus-stack["enabled"]}
-      priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-      serviceAccount:
-        name: ${local.loki-stack["name"]}
-        annotations:
-          eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_assumable_role_loki-stack.iam_role_arn : ""}"
-      persistence:
-        enabled: true
-      config:
-        schema_config:
-          configs:
-            - from: 2020-10-24
-              store: boltdb-shipper
-              object_store: s3
-              schema: v11
-              index:
-                prefix: loki_index_
-                period: 24h
-        storage_config:
-          aws:
-            s3: "s3://${data.aws_region.current.name}/${local.loki-stack["bucket"]}"
-          boltdb_shipper:
-            shared_store: s3
-        compactor:
+    serviceMonitor:
+      enabled: ${local.kube-prometheus-stack["enabled"]}
+    priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+    serviceAccount:
+      name: ${local.loki-stack["name"]}
+      annotations:
+        eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_assumable_role_loki-stack.iam_role_arn : ""}"
+    persistence:
+      enabled: true
+    config:
+      schema_config:
+        configs:
+          - from: 2020-10-24
+            store: boltdb-shipper
+            object_store: s3
+            schema: v11
+            index:
+              prefix: loki_index_
+              period: 24h
+      storage_config:
+        aws:
+          s3: "s3://${data.aws_region.current.name}/${local.loki-stack["bucket"]}"
+        boltdb_shipper:
           shared_store: s3
+      compactor:
+        shared_store: s3
     VALUES
 }
 
