@@ -19,9 +19,9 @@ locals {
   values_ingress-nginx = <<VALUES
 controller:
   metrics:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   updateStrategy:
     type: RollingUpdate
   kind: "DaemonSet"

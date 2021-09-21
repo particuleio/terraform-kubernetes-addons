@@ -32,9 +32,9 @@ locals {
           annotations:
             eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].iam_role_arn : ""}"
         metrics:
-          enabled: ${local.kube-prometheus-stack["enabled"]}
+          enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
           serviceMonitor:
-            enabled: ${local.kube-prometheus-stack["enabled"]}
+            enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
         priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
       VALUES
     },

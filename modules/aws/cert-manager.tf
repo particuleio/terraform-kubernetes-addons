@@ -35,7 +35,7 @@ serviceAccount:
     eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.iam_role_arn : ""}"
 prometheus:
   servicemonitor:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 securityContext:
   fsGroup: 1001
 installCRDs: true

@@ -20,6 +20,8 @@ locals {
 
   values_loki-stack = <<VALUES
 priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+serviceMonitor:
+  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 VALUES
 }
 
