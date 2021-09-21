@@ -73,7 +73,7 @@ resource "helm_release" "kyverno" {
   namespace = local.kyverno["create_ns"] ? kubernetes_namespace.kyverno.*.metadata.0.name[count.index] : local.kyverno["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack,
+    kubectl_manifest.prometheus-operator_crds,
     helm_release.kyverno-crds
   ]
 }
@@ -104,10 +104,6 @@ resource "helm_release" "kyverno-crds" {
     local.kyverno["extra_values"]
   ]
   namespace = local.kyverno["create_ns"] ? kubernetes_namespace.kyverno.*.metadata.0.name[count.index] : local.kyverno["namespace"]
-
-  depends_on = [
-    helm_release.kube-prometheus-stack
-  ]
 }
 
 resource "kubernetes_network_policy" "kyverno_default_deny" {
