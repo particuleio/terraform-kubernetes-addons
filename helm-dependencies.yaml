@@ -9,7 +9,7 @@ dependencies:
     version: 0.2.0
     repository: https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
   - name: aws-ebs-csi-driver
-    version: 2.2.0
+    version: 2.2.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 2.2.0
@@ -113,3 +113,6 @@ dependencies:
   - name: vault
     version: 0.16.0
     repository: https://helm.releases.hashicorp.com
+  - name: victoria-metrics-k8s-stack
+    version: 0.4.5
+    repository: https://victoriametrics.github.io/helm-charts/

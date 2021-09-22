@@ -207,3 +207,9 @@ variable "vault" {
   type        = any
   default     = {}
 }
+
+variable "victoria-metrics-k8s-stack" {
+  description = "Customize Victoria Metrics chart, see `victoria-metrics-k8s-stack.tf` for supported values"
+  type        = any
+  default     = {}
+}

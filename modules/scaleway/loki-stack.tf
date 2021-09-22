@@ -23,7 +23,7 @@ locals {
 
   values_loki-stack = <<-VALUES
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
     persistence:
       enabled: true

@@ -42,7 +42,7 @@ extraArgs:
   balancing-ignore-label: eks.amazonaws.com/sourceLaunchTemplateVersion
 
 serviceMonitor:
-  enabled: ${local.kube-prometheus-stack["enabled"]}
+  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   namespace: ${local.cluster-autoscaler["namespace"]}
 priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 VALUES

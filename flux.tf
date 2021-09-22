@@ -23,9 +23,9 @@ syncGarbageCollection:
   enabled: true
   dry: false
 prometheus:
-  enabled: ${local.kube-prometheus-stack["enabled"]}
+  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   serviceMonitor:
-    create: ${local.kube-prometheus-stack["enabled"]}
+    create: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 VALUES
 }
 
