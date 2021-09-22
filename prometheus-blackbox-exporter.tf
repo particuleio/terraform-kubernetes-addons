@@ -16,7 +16,7 @@ locals {
 
   values_prometheus-blackbox-exporter = <<VALUES
 serviceMonitor:
-  enabled: ${local.kube-prometheus-stack["enabled"]}
+  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 VALUES
 
 }

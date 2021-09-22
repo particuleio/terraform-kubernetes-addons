@@ -22,9 +22,9 @@ locals {
   values_ingress-nginx_l4 = <<VALUES
 controller:
   metrics:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   updateStrategy:
     type: RollingUpdate
   kind: "DaemonSet"
@@ -44,9 +44,9 @@ VALUES
   values_ingress-nginx_nlb = <<VALUES
 controller:
   metrics:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   updateStrategy:
     type: RollingUpdate
   kind: "DaemonSet"
@@ -66,9 +66,9 @@ VALUES
   values_ingress-nginx_nlb_ip = <<VALUES
 controller:
   metrics:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   updateStrategy:
     type: RollingUpdate
   kind: "DaemonSet"
@@ -88,9 +88,9 @@ VALUES
   values_ingress-nginx_l7 = <<VALUES
 controller:
   metrics:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   updateStrategy:
     type: RollingUpdate
   kind: "DaemonSet"
