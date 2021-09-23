@@ -35,11 +35,11 @@ image:
 extraArgs:
   balance-similar-node-groups: true
   skip-nodes-with-local-storage: false
-  balancing-ignore-label: topology.ebs.csi.aws.com/zone
-  balancing-ignore-label: eks.amazonaws.com/nodegroup
-  balancing-ignore-label: eks.amazonaws.com/nodegroup-image
-  balancing-ignore-label: eks.amazonaws.com/sourceLaunchTemplateId
-  balancing-ignore-label: eks.amazonaws.com/sourceLaunchTemplateVersion
+  balancing-ignore-label_1: topology.ebs.csi.aws.com/zone
+  balancing-ignore-label_2: eks.amazonaws.com/nodegroup
+  balancing-ignore-label_3: eks.amazonaws.com/nodegroup-image
+  balancing-ignore-label_4: eks.amazonaws.com/sourceLaunchTemplateId
+  balancing-ignore-label_5: eks.amazonaws.com/sourceLaunchTemplateVersion
 
 serviceMonitor:
   enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
