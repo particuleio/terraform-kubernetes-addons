@@ -13,7 +13,7 @@ terraform {
     }
     github = {
       source  = "integrations/github"
-      version = "~> 4.5"
+      version = "< 4.15"
     }
     scaleway = {
       source  = "scaleway/scaleway"
