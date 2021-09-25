@@ -114,5 +114,5 @@ dependencies:
     version: 0.16.0
     repository: https://helm.releases.hashicorp.com
   - name: victoria-metrics-k8s-stack
-    version: 0.4.6
+    version: 0.5.0
     repository: https://victoriametrics.github.io/helm-charts/
