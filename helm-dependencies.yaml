@@ -60,7 +60,7 @@ dependencies:
     version: 2.3.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 18.1.0
+    version: 19.0.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v2.0.3
@@ -78,7 +78,7 @@ dependencies:
     version: 3.8.1
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.10.3
+    version: 5.10.4
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
     version: 2.0.8
@@ -90,7 +90,7 @@ dependencies:
     version: 0.16.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 5.0.3
+    version: 5.1.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
@@ -102,17 +102,17 @@ dependencies:
     version: 0.25.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 6.0.2
+    version: 6.0.3
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.20.1
     repository: https://docs.projectcalico.org/charts
   - name: memcached
-    version: 5.15.2
+    version: 5.15.3
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.16.0
     repository: https://helm.releases.hashicorp.com
   - name: victoria-metrics-k8s-stack
-    version: 0.5.0
+    version: 0.5.2
     repository: https://victoriametrics.github.io/helm-charts/
