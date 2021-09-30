@@ -111,7 +111,7 @@ dependencies:
     version: 5.15.3
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.16.0
+    version: 0.16.1
     repository: https://helm.releases.hashicorp.com
   - name: victoria-metrics-k8s-stack
     version: 0.5.3
