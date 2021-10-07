@@ -108,7 +108,7 @@ dependencies:
     version: v3.20.2
     repository: https://docs.projectcalico.org/charts
   - name: memcached
-    version: 5.15.4
+    version: 5.15.5
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.16.1
