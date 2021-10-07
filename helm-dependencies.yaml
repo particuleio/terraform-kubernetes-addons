@@ -33,7 +33,7 @@ dependencies:
     version: 9.10.7
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.4.9
+    version: 5.4.10
     repository: https://charts.bitnami.com/bitnami
   - name: flux
     version: 1.11.2
