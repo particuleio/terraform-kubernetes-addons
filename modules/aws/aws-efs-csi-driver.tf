@@ -27,7 +27,7 @@ locals {
     controller:
       serviceAccount:
         annotations:
-          eks.amazonaws.com/role-arn = "${local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-efs-csi-driver.iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-efs-csi-driver.iam_role_arn : ""}"
     VALUES
 
 }
@@ -77,6 +77,42 @@ resource "kubernetes_namespace" "aws-efs-csi-driver" {
   }
 }
 
+resource "aws_efs_file_system" "aws-efs-csi-driver" {
+  count                           = local.aws-efs-csi-driver["enabled"] && lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? 1 : 0
+  creation_token                  = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  encrypted                       = lookup(local.aws-efs-csi-driver, "encrypted", "true")
+  performance_mode                = lookup(local.aws-efs-csi-driver, "performance_mode", "generalPurpose")
+  provisioned_throughput_in_mibps = lookup(local.aws-efs-csi-driver, "provisioned_throughput_in_mibps", 0)
+  throughput_mode                 = lookup(local.aws-efs-csi-driver, "provisioned_throughput_in_mibps", 0) == 0 ? "bursting" : "provisioned"
+  dynamic "lifecycle_policy" {
+    for_each = lookup(local.aws-efs-csi-driver, "lifecycle_policy", [])
+    content {
+      transition_to_ia = lookup(lifecycle_policy.value, "transition_to_ia", null)
+    }
+  }
+  tags = merge(local.tags, { "Name" : "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}" })
+}
+
+
+resource "aws_efs_mount_target" "aws-efs-csi-driver" {
+  count           = local.aws-efs-csi-driver["enabled"] ? length(local.aws-efs-csi-driver["subnets"]) : 0
+  file_system_id  = lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
+  subnet_id       = element(local.aws-efs-csi-driver["subnets"], count.index)
+  security_groups = [module.security-group-efs-csi-driver.security_group_id]
+}
+
+module "security-group-efs-csi-driver" {
+  source                  = "terraform-aws-modules/security-group/aws//modules/nfs"
+  version                 = "~> 4.0"
+  name                    = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  description             = "NFS access to tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  vpc_id                  = local.aws-efs-csi-driver["vpc_id"]
+  ingress_cidr_blocks     = local.aws-efs-csi-driver["ingress_cidrs"]
+  egress_ipv6_cidr_blocks = lookup(local.aws-efs-csi-driver, "egress_ipv6_cidr_blocks", [])
+  auto_ingress_with_self  = lookup(local.aws-efs-csi-driver, "auto_ingress_with_self", [])
+  tags                    = local.tags
+}
+
 resource "helm_release" "aws-efs-csi-driver" {
   count                 = local.aws-efs-csi-driver["enabled"] ? 1 : 0
   repository            = local.aws-efs-csi-driver["repository"]
@@ -114,6 +150,11 @@ resource "kubernetes_storage_class" "aws-efs-csi-driver" {
     }
   }
   storage_provisioner = "efs.csi.aws.com"
+  parameters = {
+    provisioningMode : "efs-ap"
+    fileSystemId : lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
+    directoryPerms : "700"
+  }
 }
 
 resource "kubernetes_network_policy" "aws-efs-csi-driver_default_deny" {
