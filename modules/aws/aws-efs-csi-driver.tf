@@ -12,13 +12,19 @@ locals {
         controller = "efs-csi-controller-sa"
         node       = "efs-csi-node-sa"
       }
-      create_iam_resources_irsa = true
-      create_storage_class      = true
-      storage_class_name        = "efs-sc"
-      is_default_class          = false
-      enabled                   = false
-      iam_policy_override       = null
-      default_network_policy    = true
+      create_iam_resources_irsa                      = true
+      create_storage_class                           = true
+      storage_class_name                             = "efs-sc"
+      is_default_class                               = false
+      enabled                                        = false
+      iam_policy_override                            = null
+      default_network_policy                         = true
+      ingress_cidrs                                  = ["0.0.0.0/0"]
+      sg_vpc_id                                      = null
+      sg_ingress_cidr_blocks                         = null
+      sg_egress_ipv6_cidr_blocks                     = null
+      sg_auto_ingress_with_self                      = null
+      sg_input_ingress_with_source_security_group_id = null
     },
     var.aws-efs-csi-driver
   )
@@ -98,19 +104,21 @@ resource "aws_efs_mount_target" "aws-efs-csi-driver" {
   count           = local.aws-efs-csi-driver["enabled"] ? length(local.aws-efs-csi-driver["subnets"]) : 0
   file_system_id  = lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
   subnet_id       = element(local.aws-efs-csi-driver["subnets"], count.index)
-  security_groups = [module.security-group-efs-csi-driver.security_group_id]
+  security_groups = [module.security-group-efs-csi-driver.0.security_group_id]
 }
 
 module "security-group-efs-csi-driver" {
-  source                  = "terraform-aws-modules/security-group/aws//modules/nfs"
-  version                 = "~> 4.0"
-  name                    = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
-  description             = "NFS access to tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
-  vpc_id                  = local.aws-efs-csi-driver["vpc_id"]
-  ingress_cidr_blocks     = local.aws-efs-csi-driver["ingress_cidrs"]
-  egress_ipv6_cidr_blocks = lookup(local.aws-efs-csi-driver, "egress_ipv6_cidr_blocks", [])
-  auto_ingress_with_self  = lookup(local.aws-efs-csi-driver, "auto_ingress_with_self", [])
-  tags                    = local.tags
+  count                                 = local.aws-efs-csi-driver["enabled"] ? 1 : 0
+  source                                = "terraform-aws-modules/security-group/aws//modules/nfs"
+  version                               = "~> 4.0"
+  name                                  = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  description                           = "NFS access to tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  vpc_id                                = local.aws-efs-csi-driver["sg_vpc_id"]
+  ingress_cidr_blocks                   = local.aws-efs-csi-driver["sg_vpc_ingress_cidrs"]
+  egress_ipv6_cidr_blocks               = local.aws-efs-csi-driver["sg_egress_ipv6_cidr_blocks"]
+  auto_ingress_with_self                = local.aws-efs-csi-driver["sg_auto_ingress_with_self"]
+  ingress_with_source_security_group_id = local.aws-efs-csi-driver["sg_ingress_with_source_security_group_id"]
+  tags                                  = local.tags
 }
 
 resource "helm_release" "aws-efs-csi-driver" {
