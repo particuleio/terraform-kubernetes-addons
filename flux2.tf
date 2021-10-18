@@ -11,7 +11,7 @@ locals {
       namespace                = "flux-system"
       target_path              = "production"
       default_network_policy   = true
-      version                  = "v0.17.0"
+      version                  = "v0.18.3"
       github_url               = "ssh://git@<host>/<org>/<repository>"
       create_github_repository = false
       github_token             = ""
@@ -121,6 +121,9 @@ resource "kubectl_manifest" "sync" {
   ]
   yaml_body     = each.value
   ignore_fields = local.flux2.ignore_fields_sync
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 # Generate a Kubernetes secret with the Git credentials
