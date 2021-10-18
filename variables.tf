@@ -154,6 +154,12 @@ variable "promtail" {
   default     = {}
 }
 
+variable "rabbitmq-operator" {
+  description = "Customize rabbitmq-operator chart, see `rabbitmq-operator.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "sealed-secrets" {
   description = "Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values"
   type        = any
