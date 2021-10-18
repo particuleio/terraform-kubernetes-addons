@@ -19,9 +19,9 @@ locals {
   values_ingress-nginx_l4 = <<VALUES
 controller:
   metrics:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   updateStrategy:
     type: RollingUpdate
   kind: "DaemonSet"
@@ -82,7 +82,7 @@ resource "helm_release" "ingress-nginx" {
   namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

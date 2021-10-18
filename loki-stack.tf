@@ -2,23 +2,26 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki-stack")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].version
       namespace              = "monitoring"
       create_ns              = false
       enabled                = false
       default_network_policy = true
+      generate_ca            = true
+      trusted_ca_content     = null
+      create_promtail_cert   = true
+      create_grafana_ds_cm   = true
     },
     var.loki-stack
   )
 
   values_loki-stack = <<VALUES
-loki:
-  priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-promtail:
-    priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
+priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+serviceMonitor:
+  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 VALUES
 }
 
@@ -32,6 +35,31 @@ resource "kubernetes_namespace" "loki-stack" {
     }
 
     name = local.loki-stack["namespace"]
+  }
+}
+
+resource "kubernetes_config_map" "loki-stack_grafana_ds" {
+  count = local.loki-stack["enabled"] && local.loki-stack["create_grafana_ds_cm"] ? 1 : 0
+  metadata {
+    name      = "${local.loki-stack["name"]}-grafana-ds"
+    namespace = local.loki-stack["namespace"]
+    labels = {
+      grafana_datasource = "1"
+    }
+  }
+
+  data = {
+    "datasource.yml" = <<-VALUES
+      datasources:
+      - access: proxy
+        editable: true
+        isDefault: false
+        name: Loki
+        orgId: 1
+        type: loki
+        url: http://${local.loki-stack["name"]}:3100
+        version: 1
+      VALUES
   }
 }
 
@@ -64,6 +92,30 @@ resource "helm_release" "loki-stack" {
 
   depends_on = [
     helm_release.kube-prometheus-stack
+  ]
+}
+
+resource "tls_private_key" "loki-stack-ca-key" {
+  count       = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] ? 1 : 0
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P384"
+}
+
+resource "tls_self_signed_cert" "loki-stack-ca-cert" {
+  count             = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] ? 1 : 0
+  key_algorithm     = "ECDSA"
+  private_key_pem   = tls_private_key.loki-stack-ca-key[0].private_key_pem
+  is_ca_certificate = true
+
+  subject {
+    common_name  = var.cluster-name
+    organization = var.cluster-name
+  }
+
+  validity_period_hours = 87600
+
+  allowed_uses = [
+    "cert_signing"
   ]
 }
 
@@ -132,4 +184,66 @@ resource "kubernetes_network_policy" "loki-stack_allow_ingress" {
 
     policy_types = ["Ingress"]
   }
+}
+
+resource "kubernetes_secret" "loki-stack-ca" {
+  count = local.loki-stack["enabled"] && (local.loki-stack["generate_ca"] || local.loki-stack["trusted_ca_content"] != null) ? 1 : 0
+  metadata {
+    name      = "${local.loki-stack["name"]}-ca"
+    namespace = local.loki-stack["create_ns"] ? kubernetes_namespace.loki-stack.*.metadata.0.name[count.index] : local.loki-stack["namespace"]
+  }
+
+  data = {
+    "ca.crt" = local.loki-stack["generate_ca"] ? tls_self_signed_cert.loki-stack-ca-cert[count.index].cert_pem : local.loki-stack["trusted_ca_content"]
+  }
+}
+
+resource "tls_private_key" "promtail-key" {
+  count       = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] && local.loki-stack["create_promtail_cert"] ? 1 : 0
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P384"
+}
+
+resource "tls_cert_request" "promtail-csr" {
+  count           = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] && local.loki-stack["create_promtail_cert"] ? 1 : 0
+  key_algorithm   = "ECDSA"
+  private_key_pem = tls_private_key.promtail-key[count.index].private_key_pem
+
+  subject {
+    common_name = "promtail"
+  }
+
+  dns_names = [
+    "promtail"
+  ]
+}
+
+resource "tls_locally_signed_cert" "promtail-cert" {
+  count              = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] && local.loki-stack["create_promtail_cert"] ? 1 : 0
+  cert_request_pem   = tls_cert_request.promtail-csr[count.index].cert_request_pem
+  ca_key_algorithm   = "ECDSA"
+  ca_private_key_pem = tls_private_key.loki-stack-ca-key[count.index].private_key_pem
+  ca_cert_pem        = tls_self_signed_cert.loki-stack-ca-cert[count.index].cert_pem
+
+  validity_period_hours = 8760
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "client_auth"
+  ]
+}
+
+output "loki-stack-ca" {
+  value = element(concat(tls_self_signed_cert.loki-stack-ca-cert[*].cert_pem, [""]), 0)
+}
+
+output "promtail-key" {
+  value     = element(concat(tls_private_key.promtail-key[*].private_key_pem, [""]), 0)
+  sensitive = true
+}
+
+output "promtail-cert" {
+  value     = element(concat(tls_locally_signed_cert.promtail-cert[*].cert_pem, [""]), 0)
+  sensitive = true
 }

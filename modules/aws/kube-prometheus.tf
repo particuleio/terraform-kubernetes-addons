@@ -151,7 +151,7 @@ grafana:
       kong-dash:
         gnetId: 7424
         revision: 6
-        datasource: Prometheus
+        datasource: ${local.kube-prometheus-stack.enabled ? "Prometheus" : local.victoria-metrics-k8s-stack.enabled ? "VictoriaMetrics" : ""}
 VALUES
 
   values_dashboard_ingress-nginx = <<VALUES
@@ -169,7 +169,7 @@ grafana:
       cluster-autoscaler:
         gnetId: 3831
         revision: 1
-        datasource: Prometheus
+        datasource: ${local.kube-prometheus-stack.enabled ? "Prometheus" : local.victoria-metrics-k8s-stack.enabled ? "VictoriaMetrics" : ""}
 VALUES
 
   values_dashboard_cert-manager = <<VALUES
@@ -179,7 +179,7 @@ grafana:
       cert-manager:
         gnetId: 11001
         revision: 1
-        datasource: Prometheus
+        datasource: ${local.kube-prometheus-stack.enabled ? "Prometheus" : local.victoria-metrics-k8s-stack.enabled ? "VictoriaMetrics" : ""}
 VALUES
 
   values_dashboard_node_exporter = <<VALUES
@@ -189,11 +189,11 @@ grafana:
       node-exporter-full:
         gnetId: 1860
         revision: 21
-        datasource: Prometheus
+        datasource: ${local.kube-prometheus-stack.enabled ? "Prometheus" : local.victoria-metrics-k8s-stack.enabled ? "VictoriaMetrics" : ""}
       node-exporter:
         gnetId: 11074
         revision: 9
-        datasource: Prometheus
+        datasource: ${local.kube-prometheus-stack.enabled ? "Prometheus" : local.victoria-metrics-k8s-stack.enabled ? "VictoriaMetrics" : ""}
 VALUES
 
   values_thanos_sidecar = <<VALUES
@@ -429,7 +429,7 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
 }
 
 resource "random_string" "grafana_password" {
-  count   = local.kube-prometheus-stack["enabled"] ? 1 : 0
+  count   = local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"] ? 1 : 0
   length  = 16
   special = false
 }
@@ -472,7 +472,8 @@ resource "helm_release" "kube-prometheus-stack" {
   namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.ingress-nginx
+    helm_release.ingress-nginx,
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

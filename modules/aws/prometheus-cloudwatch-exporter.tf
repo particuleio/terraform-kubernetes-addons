@@ -19,7 +19,7 @@ locals {
 
   values_prometheus-cloudwatch-exporter = <<-VALUES
     serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"]}
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     aws:
       role: "${local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["create_iam_resources_irsa"] ? module.iam_assumable_role_prometheus-cloudwatch-exporter.iam_role_arn : ""}"
     serviceAccount:

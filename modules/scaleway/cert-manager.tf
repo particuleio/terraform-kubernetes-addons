@@ -44,7 +44,7 @@ serviceAccount:
   name: ${local.cert-manager["service_account_name"]}
 prometheus:
   servicemonitor:
-    enabled: ${local.kube-prometheus-stack["enabled"]}
+    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 securityContext:
   fsGroup: 1001
 installCRDs: true

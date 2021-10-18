@@ -36,7 +36,7 @@ autoscaling:
   enabled: true
 replicaCount: 2
 serviceMonitor:
-  enabled: ${local.kube-prometheus-stack["enabled"]}
+  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 resources:
   requests:
     cpu: 100m

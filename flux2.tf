@@ -11,7 +11,7 @@ locals {
       namespace                = "flux-system"
       target_path              = "production"
       default_network_policy   = true
-      version                  = "v0.16.1"
+      version                  = "v0.18.3"
       github_url               = "ssh://git@<host>/<org>/<repository>"
       create_github_repository = false
       github_token             = ""
