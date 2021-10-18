@@ -92,7 +92,7 @@ dependencies:
   - name: prometheus-blackbox-exporter
     version: 5.2.0
     repository: https://prometheus-community.github.io/helm-charts
-  - name: rabbitmq
+  - name: rabbitmq-cluster-operator
     version: 0.1.7
     repository: https://charts.bitnami.com/bitnami
   - name: scaleway-webhook
