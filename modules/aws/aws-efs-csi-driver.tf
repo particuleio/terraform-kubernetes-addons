@@ -2,12 +2,16 @@ locals {
   aws-efs-csi-driver = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].version
-      namespace                 = "kube-system"
-      create_ns                 = false
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-efs-csi-driver")].version
+      namespace     = "kube-system"
+      create_ns     = false
+      service_account_names = {
+        controller = "efs-csi-controller-sa"
+        node       = "efs-csi-node-sa"
+      }
       create_iam_resources_irsa = true
       create_storage_class      = true
       storage_class_name        = "efs-sc"
@@ -19,9 +23,46 @@ locals {
     var.aws-efs-csi-driver
   )
 
-  values_aws-efs-csi-driver = <<VALUES
-k8sTagClusterId: ${var.cluster-name}
-VALUES
+  values_aws-efs-csi-driver = <<-VALUES
+    controller:
+      serviceAccount:
+        annotations:
+          eks.amazonaws.com/role-arn = "${local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-efs-csi-driver.iam_role_arn : ""}"
+    VALUES
+
+}
+
+module "iam_assumable_role_aws-efs-csi-driver" {
+  source                     = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                    = "~> 4.0"
+  create_role                = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"]
+  role_name                  = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}-irsa"
+  provider_url               = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
+  role_policy_arns           = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? [aws_iam_policy.aws-efs-csi-driver[0].arn] : []
+  number_of_role_policy_arns = 1
+  oidc_fully_qualified_subjects = [
+    "system:serviceaccount:${local.aws-efs-csi-driver["namespace"]}:${local.aws-efs-csi-driver["service_account_names"]["controller"]}",
+  ]
+  tags = local.tags
+}
+
+data "aws_iam_policy_document" "aws-efs-csi-driver" {
+  count = local.aws-efs-csi-driver.enabled && local.aws-efs-csi-driver.create_iam_resources_irsa ? 1 : 0
+  source_policy_documents = [
+    data.aws_iam_policy_document.aws-efs-csi-driver_default.0.json
+  ]
+}
+
+data "aws_iam_policy_document" "aws-efs-csi-driver_default" {
+  count       = local.aws-efs-csi-driver.enabled && local.aws-efs-csi-driver.create_iam_resources_irsa ? 1 : 0
+  source_json = templatefile("${path.module}/iam/aws-efs-csi-driver.json", { arn-partition = var.arn-partition })
+}
+
+resource "aws_iam_policy" "aws-efs-csi-driver" {
+  count  = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? 1 : 0
+  name   = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  policy = local.aws-efs-csi-driver["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-efs-csi-driver.0.json : local.aws-efs-csi-driver["iam_policy_override"]
+  tags   = local.tags
 }
 
 resource "kubernetes_namespace" "aws-efs-csi-driver" {
