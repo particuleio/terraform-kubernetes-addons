@@ -9,7 +9,7 @@ dependencies:
     version: 0.2.0
     repository: https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
   - name: aws-ebs-csi-driver
-    version: 2.3.0
+    version: 2.4.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 2.2.0
@@ -24,7 +24,7 @@ dependencies:
     version: 0.15.3
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
-    version: 0.3.8
+    version: 0.3.10
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
     version: v1.5.4
@@ -33,13 +33,13 @@ dependencies:
     version: 9.10.7
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.4.10
+    version: 5.4.11
     repository: https://charts.bitnami.com/bitnami
   - name: flux
     version: 1.11.2
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 4.0.5
+    version: 4.0.6
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
@@ -60,7 +60,7 @@ dependencies:
     version: 2.4.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 19.0.2
+    version: 19.1.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v2.1.0
@@ -90,7 +90,7 @@ dependencies:
     version: 0.16.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 5.1.0
+    version: 5.2.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
@@ -99,10 +99,10 @@ dependencies:
     version: 1.16.1
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
-    version: 0.25.0
+    version: 0.26.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 6.0.12
+    version: 6.0.13
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.20.2
