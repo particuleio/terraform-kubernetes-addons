@@ -21,7 +21,7 @@ dependencies:
     version: 1.2.7
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
-    version: 0.15.3
+    version: 0.15.4
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
     version: 0.3.10
@@ -45,7 +45,7 @@ dependencies:
     version: 1.7.0
     repository: https://clusterfrak-dynamics.github.io/istio/
   - name: k8gb
-    version: v0.8.2
+    version: v0.8.3
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
@@ -60,7 +60,7 @@ dependencies:
     version: 2.4.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 19.1.0
+    version: 19.2.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v2.1.0
@@ -75,7 +75,7 @@ dependencies:
     version: 2.6.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 3.8.1
+    version: 3.8.2
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 5.10.4
@@ -84,7 +84,7 @@ dependencies:
     version: 2.0.9
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 2.17.0
+    version: 2.17.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.16.0
@@ -93,7 +93,7 @@ dependencies:
     version: 5.2.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: rabbitmq-cluster-operator
-    version: 0.1.7
+    version: 1.0.0
     repository: https://charts.bitnami.com/bitnami
   - name: scaleway-webhook
     version: v0.0.1

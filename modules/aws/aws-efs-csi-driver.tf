@@ -19,12 +19,12 @@ locals {
       enabled                                        = false
       iam_policy_override                            = null
       default_network_policy                         = true
-      ingress_cidrs                                  = ["0.0.0.0/0"]
+      sg_vpc_ingress_cidrs                           = ["0.0.0.0/0"]
       sg_vpc_id                                      = null
       sg_ingress_cidr_blocks                         = null
       sg_egress_ipv6_cidr_blocks                     = null
-      sg_auto_ingress_with_self                      = null
-      sg_input_ingress_with_source_security_group_id = null
+      sg_auto_ingress_with_self                      = []
+      sg_input_ingress_with_source_security_group_id = []
     },
     var.aws-efs-csi-driver
   )
@@ -117,7 +117,7 @@ module "security-group-efs-csi-driver" {
   ingress_cidr_blocks                   = local.aws-efs-csi-driver["sg_vpc_ingress_cidrs"]
   egress_ipv6_cidr_blocks               = local.aws-efs-csi-driver["sg_egress_ipv6_cidr_blocks"]
   auto_ingress_with_self                = local.aws-efs-csi-driver["sg_auto_ingress_with_self"]
-  ingress_with_source_security_group_id = local.aws-efs-csi-driver["sg_ingress_with_source_security_group_id"]
+  ingress_with_source_security_group_id = local.aws-efs-csi-driver["sg_input_ingress_with_source_security_group_id"]
   tags                                  = local.tags
 }
 
