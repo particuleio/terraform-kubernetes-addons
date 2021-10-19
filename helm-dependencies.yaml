@@ -21,7 +21,7 @@ dependencies:
     version: 1.2.7
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
-    version: 0.15.3
+    version: 0.15.4
     repository: https://aws.github.io/eks-charts
   - name: aws-calico
     version: 0.3.10
@@ -84,7 +84,7 @@ dependencies:
     version: 2.0.9
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 2.17.0
+    version: 2.17.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.16.0
