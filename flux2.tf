@@ -121,9 +121,6 @@ resource "kubectl_manifest" "sync" {
   ]
   yaml_body     = each.value
   ignore_fields = local.flux2.ignore_fields_sync
-  lifecycle {
-    ignore_changes = all
-  }
 }
 
 # Generate a Kubernetes secret with the Git credentials
