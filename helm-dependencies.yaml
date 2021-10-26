@@ -27,7 +27,7 @@ dependencies:
     version: 0.3.10
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.5.4
+    version: v1.6.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
     version: 9.10.7
