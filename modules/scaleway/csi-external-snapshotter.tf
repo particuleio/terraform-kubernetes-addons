@@ -1,1 +1,0 @@
-../../csi-external-snapshotter.tf

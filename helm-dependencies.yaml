@@ -116,9 +116,6 @@ dependencies:
   - name: vault
     version: 0.17.1
     repository: https://helm.releases.hashicorp.com
-  - name: velero
-    version: 2.24.0
-    repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
     version: 0.5.4
     repository: https://victoriametrics.github.io/helm-charts/

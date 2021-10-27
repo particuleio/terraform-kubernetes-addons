@@ -22,12 +22,6 @@ variable "cluster-name" {
   type        = string
 }
 
-variable "csi-external-snapshotter" {
-  description = "Customize csi-external-snapshotter, see `csi-external-snapshotter.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
 variable "external-dns" {
   description = "Map of map for external-dns configuration: see `external_dns.tf` for supported values"
   type        = any
