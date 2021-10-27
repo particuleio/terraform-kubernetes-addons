@@ -1,9 +1,12 @@
 locals {
 
-  csi-external-snapshotter = {
-    enabled = false
-    version = "v4.2.1"
-  }
+  csi-external-snapshotter = merge(
+    {
+      enabled = false
+      version = "v4.2.1"
+    },
+    var.csi-external-snapshotter
+  )
 
   csi-external-snapshotter_yaml_files = [
     "https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/${local.csi-external-snapshotter.version}/client/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml",
