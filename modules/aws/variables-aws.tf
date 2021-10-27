@@ -75,3 +75,9 @@ variable "tags" {
   type        = map(any)
   default     = {}
 }
+
+variable "velero" {
+  description = "Customize velero chart, see `velero.tf` for supported values"
+  type        = any
+  default     = {}
+}

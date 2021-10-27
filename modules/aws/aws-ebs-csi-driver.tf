@@ -26,6 +26,16 @@ locals {
       use_encryption            = false
       extra_sc_parameters       = {}
       kms_enable_key_rotation   = true
+      volume_snapshot_class     = <<-VOLUME_SNAPSHOT_CLASS
+          apiVersion: snapshot.storage.k8s.io/v1
+          kind: VolumeSnapshotClass
+          metadata:
+            name: csi-aws-vsc
+            labels:
+              velero.io/csi-volumesnapshot-class: "true"
+          driver: ebs.csi.aws.com
+          deletionPolicy: Delete
+        VOLUME_SNAPSHOT_CLASS
     },
     var.aws-ebs-csi-driver
   )
@@ -122,6 +132,10 @@ resource "helm_release" "aws-ebs-csi-driver" {
     local.aws-ebs-csi-driver["extra_values"]
   ]
   namespace = local.aws-ebs-csi-driver["create_ns"] ? kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index] : local.aws-ebs-csi-driver["namespace"]
+
+  depends_on = [
+    kubectl_manifest.csi-external-snapshotter
+  ]
 }
 
 resource "kubernetes_storage_class" "aws-ebs-csi-driver" {
@@ -196,4 +210,9 @@ resource "aws_kms_alias" "aws-ebs-csi-driver" {
   count         = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.create_kms_key ? 1 : 0
   name          = "alias/aws-ebs-csi-driver-${local.aws-ebs-csi-driver.override_kms_alias != null ? local.aws-ebs-csi-driver.override_kms_alias : var.cluster-name}"
   target_key_id = aws_kms_key.aws-ebs-csi-driver.0.id
+}
+
+resource "kubernetes_manifest" "aws-ebs-csi-driver_vsc" {
+  count    = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.volume_snapshot_class != null ? 1 : 0
+  manifest = yamldecode(local.aws-ebs-csi-driver.volume_snapshot_class)
 }
