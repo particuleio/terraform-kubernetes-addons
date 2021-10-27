@@ -215,4 +215,8 @@ resource "aws_kms_alias" "aws-ebs-csi-driver" {
 resource "kubernetes_manifest" "aws-ebs-csi-driver_vsc" {
   count    = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.volume_snapshot_class != null ? 1 : 0
   manifest = yamldecode(local.aws-ebs-csi-driver.volume_snapshot_class)
+
+  depends_on = [
+    kubectl_manifest.csi-external-snapshotter
+  ]
 }
