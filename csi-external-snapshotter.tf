@@ -1,7 +1,7 @@
 locals {
 
   csi-external-snapshotter = {
-    enabled = true
+    enabled = false
     version = "v4.2.1"
   }
 
