@@ -110,6 +110,9 @@ dependencies:
   - name: tigera-operator
     version: v3.20.2
     repository: https://docs.projectcalico.org/charts
+  - name: traefik
+    version: v10.6.0
+    repository: https://helm.traefik.io/traefik
   - name: memcached
     version: 5.15.8
     repository: https://charts.bitnami.com/bitnami
