@@ -72,7 +72,7 @@ dependencies:
     version: 2.5.0
     repository: https://grafana.github.io/helm-charts
   - name: loki
-    version: 2.6.0
+    version: 2.7.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 3.8.2
@@ -120,5 +120,5 @@ dependencies:
     version: 2.26.1
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.5.4
+    version: 0.5.5
     repository: https://victoriametrics.github.io/helm-charts/
