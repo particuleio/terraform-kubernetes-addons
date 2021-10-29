@@ -10,7 +10,6 @@ locals {
       namespace              = "traefik"
       enabled                = false
       ingress_cidrs          = ["0.0.0.0/0"]
-      allowed_cidrs          = ["0.0.0.0/0"]
       default_network_policy = true
       manage_crds            = true
     },
@@ -163,43 +162,6 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
 
       dynamic "from" {
         for_each = local.traefik["ingress_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "traefik_allow_control_plane" {
-  count = local.traefik["enabled"] && local.traefik["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app"
-        operator = "In"
-        values   = ["${local.traefik["name"]}-operator"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "10250"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.traefik["allowed_cidrs"]
         content {
           ip_block {
             cidr = from.value
