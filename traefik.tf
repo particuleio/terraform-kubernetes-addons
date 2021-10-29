@@ -9,6 +9,7 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "traefik")].version
       namespace              = "traefik"
       enabled                = false
+      ingress_cidrs          = ["0.0.0.0/0"]
       allowed_cidrs          = ["0.0.0.0/0"]
       default_network_policy = true
       manage_crds            = true
@@ -124,6 +125,47 @@ resource "kubernetes_network_policy" "traefik_allow_monitoring" {
         namespace_selector {
           match_labels = {
             "${local.labels_prefix}/component" = "monitoring"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "traefik_allow_ingress" {
+  count = local.traefik["enabled"] && local.traefik["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+      match_expressions {
+        key      = "app.kubernetes.io/name"
+        operator = "In"
+        values   = ["traefik"]
+      }
+    }
+
+    ingress {
+      ports {
+        port     = "http"
+        protocol = "TCP"
+      }
+      ports {
+        port     = "https"
+        protocol = "TCP"
+      }
+
+      dynamic "from" {
+        for_each = local.traefik["ingress_cidrs"]
+        content {
+          ip_block {
+            cidr = from.value
           }
         }
       }
