@@ -217,6 +217,7 @@ resource "kubernetes_manifest" "aws-ebs-csi-driver_vsc" {
   manifest = yamldecode(local.aws-ebs-csi-driver.volume_snapshot_class)
 
   depends_on = [
-    kubectl_manifest.csi-external-snapshotter
+    kubectl_manifest.csi-external-snapshotter,
+    helm_release.aws-ebs-csi-driver
   ]
 }
