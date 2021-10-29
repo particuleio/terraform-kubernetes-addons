@@ -27,7 +27,7 @@ resource "kubernetes_namespace" "traefik" {
   metadata {
     labels = {
       name                               = local.traefik["namespace"]
-      "${local.labels_prefix}/component" = "traefik"
+      "${local.labels_prefix}/component" = "ingress"
     }
 
     name = local.traefik["namespace"]
@@ -107,11 +107,11 @@ resource "kubernetes_network_policy" "traefik_allow_namespace" {
   }
 }
 
-resource "kubernetes_network_policy" "traefik_allow_ingress" {
+resource "kubernetes_network_policy" "traefik_allow_monitoring" {
   count = local.traefik["enabled"] && local.traefik["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-allow-ingress"
+    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-allow-monitoring"
     namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
   }
 
@@ -123,7 +123,7 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
       from {
         namespace_selector {
           match_labels = {
-            "${local.labels_prefix}/component" = "ingress"
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }
