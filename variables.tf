@@ -214,6 +214,12 @@ variable "tigera-operator" {
   default     = {}
 }
 
+variable "traefik" {
+  description = "Customize traefik chart, see `traefik.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "vault" {
   description = "Customize Hashicorp Vault chart, see `vault.tf` for supported values"
   type        = any
