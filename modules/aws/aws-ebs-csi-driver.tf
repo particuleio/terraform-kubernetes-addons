@@ -34,7 +34,7 @@ locals {
             labels:
               velero.io/csi-volumesnapshot-class: "true"
           driver: ebs.csi.aws.com
-          deletionPolicy: Delete
+          deletionPolicy: Retain
         VOLUME_SNAPSHOT_CLASS
     },
     var.aws-ebs-csi-driver
