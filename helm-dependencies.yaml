@@ -60,7 +60,7 @@ dependencies:
     version: 2.5.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 19.2.2
+    version: 19.2.3
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v2.1.3
@@ -72,13 +72,13 @@ dependencies:
     version: 2.5.0
     repository: https://grafana.github.io/helm-charts
   - name: loki
-    version: 2.7.0
+    version: 2.8.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 3.8.2
+    version: 3.9.1
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.10.7
+    version: 5.10.8
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
     version: 2.0.9
@@ -87,13 +87,13 @@ dependencies:
     version: 3.0.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
-    version: 0.16.0
+    version: 0.17.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
     version: 5.3.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: rabbitmq-cluster-operator
-    version: 1.0.2
+    version: 2.0.0
     repository: https://charts.bitnami.com/bitnami
   - name: scaleway-webhook
     version: v0.0.1
@@ -105,13 +105,13 @@ dependencies:
     version: 0.26.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 7.0.5
+    version: 8.0.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.20.2
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: v10.6.0
+    version: 10.6.1
     repository: https://helm.traefik.io/traefik
   - name: memcached
     version: 5.15.8
@@ -123,5 +123,5 @@ dependencies:
     version: 2.26.2
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.5.7
+    version: 0.5.8
     repository: https://victoriametrics.github.io/helm-charts/
