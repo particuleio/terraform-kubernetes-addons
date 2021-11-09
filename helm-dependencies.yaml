@@ -57,7 +57,7 @@ dependencies:
     version: 15.1.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.5.0
+    version: 2.6.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
     version: 19.2.3
@@ -72,7 +72,7 @@ dependencies:
     version: 2.5.0
     repository: https://grafana.github.io/helm-charts
   - name: loki
-    version: 2.8.0
+    version: 2.8.1
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 3.9.1
@@ -108,7 +108,7 @@ dependencies:
     version: 8.0.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.20.2
+    version: v3.21.0
     repository: https://docs.projectcalico.org/charts
   - name: traefik
     version: 10.6.1

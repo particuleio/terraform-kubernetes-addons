@@ -266,3 +266,34 @@ resource "kubernetes_network_policy" "velero_allow_namespace" {
     policy_types = ["Ingress"]
   }
 }
+
+resource "kubernetes_network_policy" "velero_allow_monitoring" {
+  count = local.velero["enabled"] && local.velero["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.velero.*.metadata.0.name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.velero.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      ports {
+        port     = "8085"
+        protocol = "TCP"
+      }
+
+      from {
+        namespace_selector {
+          match_labels = {
+            "${local.labels_prefix}/component" = "monitoring"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
