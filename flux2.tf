@@ -67,9 +67,9 @@ resource "kubernetes_namespace" "flux2" {
 }
 
 resource "tls_private_key" "identity" {
-  count     = local.flux2["enabled"] ? 1 : 0
-  algorithm = "ECDSA"
-  rsa_bits  = 4096
+  count       = local.flux2["enabled"] ? 1 : 0
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P521"
 }
 
 data "flux_install" "main" {
