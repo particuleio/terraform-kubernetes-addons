@@ -33,7 +33,7 @@ dependencies:
     version: 9.10.8
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 5.4.15
+    version: 5.4.16
     repository: https://charts.bitnami.com/bitnami
   - name: flux
     version: 1.11.3
@@ -78,7 +78,7 @@ dependencies:
     version: 3.9.1
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.10.8
+    version: 5.10.10
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
     version: 2.0.9

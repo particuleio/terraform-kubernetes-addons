@@ -36,15 +36,14 @@ locals {
           pdb:
             create: true
             minAvailable: 1
-          grpc:
+          grpcTLS:
             client:
+              secure: true
+              key: |
+                ${indent(8, v["generate_cert"] ? tls_private_key.thanos-tls-querier-cert-key[k].private_key_pem : "")}
+              cert: |
+                ${indent(8, v["generate_cert"] ? tls_locally_signed_cert.thanos-tls-querier-cert[k].cert_pem : "")}
               servername: ${v["client_server_name"]}
-              tls:
-                enabled: true
-                key: |
-                  ${indent(10, v["generate_cert"] ? tls_private_key.thanos-tls-querier-cert-key[k].private_key_pem : "")}
-                cert: |
-                  ${indent(10, v["generate_cert"] ? tls_locally_signed_cert.thanos-tls-querier-cert[k].cert_pem : "")}
           stores: ${jsonencode(v["stores"])}
         queryFrontend:
           enabled: false
