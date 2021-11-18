@@ -117,7 +117,7 @@ dependencies:
     version: 5.15.8
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.17.1
+    version: 0.18.0
     repository: https://helm.releases.hashicorp.com
   - name: velero
     version: 2.26.4
