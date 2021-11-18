@@ -40,8 +40,6 @@ locals {
       failurePolicy: Fail
       priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
     server:
-      auditStorage:
-        enabled: true
       serviceAccount:
         name: ${local.vault["service_account_name"]}
         annotations:
