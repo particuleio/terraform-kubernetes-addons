@@ -106,6 +106,18 @@ variable "labels_prefix" {
   default     = "particule.io"
 }
 
+variable "linkerd2" {
+  description = "Customize linkerd2 chart, see `linkerd2.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "linkerd2-cni" {
+  description = "Customize linkerd2-cni chart, see `linkerd2-cni.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "loki-stack" {
   description = "Customize loki-stack chart, see `loki-stack.tf` for supported values"
   type        = any

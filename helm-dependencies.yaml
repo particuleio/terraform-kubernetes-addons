@@ -68,6 +68,15 @@ dependencies:
   - name: kyverno-crds
     version: v2.0.3
     repository: https://kyverno.github.io/kyverno/
+  - name: linkerd2
+    repository: https://helm.linkerd.io/stable
+    version: 2.11.1
+  - name: linkerd2-cni
+    repository: https://helm.linkerd.io/stable
+    version: 2.11.1
+  - name: linkerd-viz
+    repository: https://helm.linkerd.io/stable
+    version: 2.11.1
   - name: loki-stack
     version: 2.5.0
     repository: https://grafana.github.io/helm-charts
