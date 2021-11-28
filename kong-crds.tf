@@ -22,6 +22,7 @@ data "kubectl_file_documents" "kong_crds" {
 }
 
 resource "kubectl_manifest" "kong_crds" {
-  for_each  = local.kong.enabled && local.kong.manage_crds ? { for v in local.kong_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-  yaml_body = each.value
+  for_each          = local.kong.enabled && local.kong.manage_crds ? { for v in local.kong_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
+  yaml_body         = each.value
+  server_side_apply = true
 }
