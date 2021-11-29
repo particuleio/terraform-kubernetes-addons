@@ -24,6 +24,8 @@ locals {
         aws:
           region: ${data.aws_region.current.name}
         txtPrefix: "ext-dns-"
+        policy: sync
+        txtOwnerId: ${var.cluster-name}
         rbac:
          create: true
          pspEnabled: true
