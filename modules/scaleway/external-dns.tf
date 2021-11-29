@@ -22,6 +22,8 @@ scaleway:
   scwSecretKey: ${local.scaleway["scw_secret_key"]}
   scwDefaultOrganizationId: ${local.scaleway["scw_default_organization_id"]}
 txtPrefix: "ext-dns-"
+policy: sync
+txtOwnerId: ${var.cluster-name}
 rbac:
  create: true
  pspEnabled: false
