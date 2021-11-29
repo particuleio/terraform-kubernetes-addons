@@ -114,7 +114,7 @@ dependencies:
     version: 10.6.2
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 5.15.9
+    version: 5.15.10
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.18.0
