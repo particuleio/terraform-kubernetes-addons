@@ -9,7 +9,7 @@ locals {
       namespace              = "linkerd-cni"
       create_ns              = true
       enabled                = local.linkerd2.enabled
-      default_network_policy = true
+      default_network_policy = local.linkerd2.default_network_policy
       cni_conflist_filename  = "10-calico.conflist"
     },
     var.linkerd2-cni
@@ -29,7 +29,7 @@ extraInitContainers:
       - -xc
       - |
         for i in $(seq 1 180); do
-          test -f /host/etc/cni/net.d/${local.linkerd2.cni_conflist_filename} && exit 0
+          test -f /host/etc/cni/net.d/${local.linkerd2-cni.cni_conflist_filename} && exit 0
           sleep 1
         done
         exit 1
@@ -46,7 +46,7 @@ resource "kubernetes_namespace" "linkerd2-cni" {
     labels = {
       name                                  = local.linkerd2-cni["namespace"]
       "config.linkerd.io/admission-webhook" = "disabled"
-      "linkerd.io/cni-resource"             = " true"
+      "linkerd.io/cni-resource"             = "true"
     }
 
     annotations = {

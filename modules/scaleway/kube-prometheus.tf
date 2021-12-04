@@ -61,6 +61,11 @@ prometheus:
 alertmanager:
   alertmanagerSpec:
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+prometheusOperator:
+  admissionWebhooks:
+    patch:
+      podAnnotations:
+        linkerd.io/inject: disabled
 VALUES
 
   values_kps_global_requests = <<VALUES
@@ -263,6 +268,10 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
     labels = {
       name                               = local.kube-prometheus-stack["namespace"]
       "${local.labels_prefix}/component" = "monitoring"
+    }
+
+    annotations = {
+      "linkerd.io/inject" = "enabled"
     }
 
     name = local.kube-prometheus-stack["namespace"]

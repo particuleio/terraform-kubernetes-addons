@@ -118,6 +118,12 @@ variable "linkerd2-cni" {
   default     = {}
 }
 
+variable "linkerd-viz" {
+  description = "Customize linkerd-viz chart, see `linkerd-viz.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "loki-stack" {
   description = "Customize loki-stack chart, see `loki-stack.tf` for supported values"
   type        = any
