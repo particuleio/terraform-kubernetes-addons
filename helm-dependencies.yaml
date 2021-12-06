@@ -108,7 +108,7 @@ dependencies:
     version: 8.1.2
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.21.1
+    version: v3.21.2
     repository: https://docs.projectcalico.org/charts
   - name: traefik
     version: 10.7.1
