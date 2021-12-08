@@ -18,7 +18,7 @@ locals {
       acme_http01_ingress_class = ""
       acme_dns01_enabled        = true
       allowed_cidrs             = ["0.0.0.0/0"]
-      experimental_csi_driver   = false
+      csi_driver                = false
     },
     var.cert-manager
   )
@@ -156,14 +156,6 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
   }
 }
 
-data "kubectl_path_documents" "cert-manager_csi_driver" {
-  pattern = "${path.module}/templates/cert-manager-csi-driver.yaml.tpl"
-  vars = {
-    namespace      = local.cert-manager["namespace"]
-    priority_class = local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""
-  }
-}
-
 resource "time_sleep" "cert-manager_sleep" {
   count           = local.cert-manager["enabled"] && (local.cert-manager["acme_http01_enabled"] || local.cert-manager["acme_dns01_enabled"]) ? 1 : 0
   depends_on      = [helm_release.cert-manager]
@@ -177,15 +169,6 @@ resource "kubectl_manifest" "cert-manager_cluster_issuers" {
     helm_release.cert-manager,
     kubernetes_namespace.cert-manager,
     time_sleep.cert-manager_sleep
-  ]
-}
-
-resource "kubectl_manifest" "cert-manager_csi_driver" {
-  count     = local.cert-manager["enabled"] && local.cert-manager["experimental_csi_driver"] ? length(data.kubectl_path_documents.cert-manager_csi_driver.documents) : 0
-  yaml_body = element(data.kubectl_path_documents.cert-manager_csi_driver.documents, count.index)
-  depends_on = [
-    helm_release.cert-manager,
-    kubernetes_namespace.cert-manager,
   ]
 }
 

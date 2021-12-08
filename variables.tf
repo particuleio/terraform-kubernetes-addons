@@ -10,6 +10,12 @@ variable "cert-manager" {
   default     = {}
 }
 
+variable "cert-manager-csi-driver" {
+  description = "Customize cert-manager-csi-driver chart, see `cert-manager.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "cluster-autoscaler" {
   description = "Customize cluster-autoscaler chart, see `cluster-autoscaler.tf` for supported values"
   type        = any
@@ -104,6 +110,24 @@ variable "labels_prefix" {
   description = "Custom label prefix used for network policy namespace matching"
   type        = string
   default     = "particule.io"
+}
+
+variable "linkerd2" {
+  description = "Customize linkerd2 chart, see `linkerd2.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "linkerd2-cni" {
+  description = "Customize linkerd2-cni chart, see `linkerd2-cni.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "linkerd-viz" {
+  description = "Customize linkerd-viz chart, see `linkerd-viz.tf` for supported values"
+  type        = any
+  default     = {}
 }
 
 variable "loki-stack" {
