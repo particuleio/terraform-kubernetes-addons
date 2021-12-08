@@ -10,19 +10,11 @@ locals {
       enabled                = false
       create_ns              = true
       default_network_policy = true
-      generate_ca            = false
-      trusted_ca_content     = null
     },
     var.vault
   )
 
   values_vault = <<-VALUES
-    injector:
-      replicas: 2
-      metrics:
-        enabled: ${local.kube-prometheus-stack.enabled}
-      failurePolicy: Fail
-      priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
     VALUES
 }
 
@@ -67,7 +59,7 @@ resource "helm_release" "vault" {
 }
 
 resource "kubernetes_network_policy" "vault_default_deny" {
-  count = local.vault["enabled"] && local.vault["create_ns"] && local.vault["default_network_policy"] ? 1 : 0
+  count = local.vault["enabled"] && local.vault["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${local.vault["namespace"]}-${local.vault["name"]}-default-deny"
@@ -82,7 +74,7 @@ resource "kubernetes_network_policy" "vault_default_deny" {
 }
 
 resource "kubernetes_network_policy" "vault_allow_namespace" {
-  count = local.vault["enabled"] && local.vault["create_ns"] && local.vault["default_network_policy"] ? 1 : 0
+  count = local.vault["enabled"] && local.vault["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${local.vault["namespace"]}-${local.vault["name"]}-default-namespace"
@@ -105,86 +97,4 @@ resource "kubernetes_network_policy" "vault_allow_namespace" {
 
     policy_types = ["Ingress"]
   }
-}
-
-resource "kubernetes_network_policy" "vault_allow_control_plane" {
-  count = local.vault["enabled"] && local.vault["default_network_policy"] && local.vault.create_ns ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.vault.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.vault.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["${local.vault["name"]}-agent-injector"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "8080"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.vault["allowed_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "tls_private_key" "vault-tls-ca-key" {
-  count       = local.vault["generate_ca"] ? 1 : 0
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P384"
-}
-
-resource "tls_self_signed_cert" "vault-tls-ca-cert" {
-  count             = local.vault["generate_ca"] ? 1 : 0
-  key_algorithm     = "ECDSA"
-  private_key_pem   = tls_private_key.vault-tls-ca-key[0].private_key_pem
-  is_ca_certificate = true
-
-  subject {
-    common_name  = var.cluster-name
-    organization = var.cluster-name
-  }
-
-  validity_period_hours = 87600
-
-  allowed_uses = [
-    "cert_signing"
-  ]
-}
-
-resource "kubernetes_secret" "vault-ca" {
-  count = local.vault["enabled"] && (local.vault["generate_ca"] || local.vault["trusted_ca_content"] != null) ? 1 : 0
-  metadata {
-    name      = "${local.vault["name"]}-ca"
-    namespace = local.vault["create_ns"] ? kubernetes_namespace.vault.*.metadata.0.name[count.index] : local.vault["namespace"]
-  }
-
-  data = {
-    "ca.crt" = local.vault["generate_ca"] ? tls_self_signed_cert.vault-tls-ca-cert[count.index].cert_pem : local.vault["trusted_ca_content"]
-  }
-}
-
-output "vault_ca_pem" {
-  value = element(concat(tls_self_signed_cert.vault-tls-ca-cert[*].cert_pem, [""]), 0)
-}
-
-output "vault_ca_key" {
-  value     = element(concat(tls_private_key.vault-tls-ca-key[*].private_key_pem, [""]), 0)
-  sensitive = true
 }

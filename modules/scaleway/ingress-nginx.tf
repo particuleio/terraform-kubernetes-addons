@@ -38,10 +38,6 @@ defaultBackend:
   replicaCount: 2
 podSecurityPolicy:
   enabled: false
-  admissionWebhooks:
-    patch:
-      podAnnotations:
-        linkerd.io/inject: disabled
 VALUES
 
 }
