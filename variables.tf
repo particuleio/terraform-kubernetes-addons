@@ -10,6 +10,12 @@ variable "cert-manager" {
   default     = {}
 }
 
+variable "cert-manager-csi-driver" {
+  description = "Customize cert-manager-csi-driver chart, see `cert-manager.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "cluster-autoscaler" {
   description = "Customize cluster-autoscaler chart, see `cluster-autoscaler.tf` for supported values"
   type        = any
