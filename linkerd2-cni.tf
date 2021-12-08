@@ -9,8 +9,8 @@ locals {
       namespace              = "linkerd-cni"
       create_ns              = true
       enabled                = local.linkerd2.enabled
-      default_network_policy = local.linkerd2.default_network_policy
       cni_conflist_filename  = "10-calico.conflist"
+      default_network_policy = true
     },
     var.linkerd2-cni
   )

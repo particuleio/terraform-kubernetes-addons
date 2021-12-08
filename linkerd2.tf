@@ -25,15 +25,15 @@ locals {
       issuer:
         scheme: kubernetes.io/tls
     identityTrustAnchorsPEM: |
-      ${indent(2, local.linkerd2["trust_anchor_pem"] == null ? tls_self_signed_cert.linkerd_trust_anchor.0.cert_pem : local.linkerd2["trust_anchor_pem"])}
+      ${indent(2, local.linkerd2.enabled ? local.linkerd2["trust_anchor_pem"] == null ? tls_self_signed_cert.linkerd_trust_anchor.0.cert_pem : local.linkerd2["trust_anchor_pem"] : "")}
     proxyInjector:
       externalSecret: true
       caBundle: |
-        ${indent(4, tls_self_signed_cert.webhook_issuer_tls.0.cert_pem)}
+        ${indent(4, local.linkerd2.enabled ? tls_self_signed_cert.webhook_issuer_tls.0.cert_pem : "")}
     profileValidator:
       externalSecret: true
       caBundle: |
-        ${indent(4, tls_self_signed_cert.webhook_issuer_tls.0.cert_pem)}
+        ${indent(4, local.linkerd2.enabled ? tls_self_signed_cert.webhook_issuer_tls.0.cert_pem : "")}
     VALUES
 
   values_linkerd2_ha = <<-VALUES
@@ -210,6 +210,7 @@ resource "tls_self_signed_cert" "linkerd_trust_anchor" {
 }
 
 resource "kubernetes_secret" "linkerd_trust_anchor" {
+  count = local.linkerd2["enabled"] && local.linkerd2["trust_anchor_pem"] == null ? 1 : 0
   metadata {
     name      = "linkerd-trust-anchor"
     namespace = local.linkerd2.create_ns ? kubernetes_namespace.linkerd2.0.metadata[0].name : local.linkerd2.namespace
@@ -248,6 +249,7 @@ resource "tls_self_signed_cert" "webhook_issuer_tls" {
 }
 
 resource "kubernetes_secret" "webhook_issuer_tls" {
+  count = local.linkerd2["enabled"] ? 1 : 0
   metadata {
     name      = "webhook-issuer-tls"
     namespace = local.linkerd2.create_ns ? kubernetes_namespace.linkerd2.0.metadata[0].name : local.linkerd2.namespace

@@ -9,7 +9,7 @@ locals {
       namespace              = "linkerd-viz"
       create_ns              = true
       enabled                = local.linkerd2.enabled
-      default_network_policy = local.linkerd2.default_network_policy
+      default_network_policy = true
       ha                     = true
     },
     var.linkerd-viz
