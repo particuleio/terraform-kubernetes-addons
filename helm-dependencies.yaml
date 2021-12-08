@@ -39,7 +39,7 @@ dependencies:
     version: 5.5.2
     repository: https://charts.bitnami.com/bitnami
   - name: flux
-    version: 1.11.3
+    version: 1.11.4
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
     version: 4.0.13
