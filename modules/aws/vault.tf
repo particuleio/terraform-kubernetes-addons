@@ -19,8 +19,6 @@ locals {
       iam_policy_override       = null
       use_kms                   = true
       kms_enable_key_rotation   = true
-      generate_ca               = false
-      trusted_ca_content        = null
     },
     var.vault
   )
@@ -253,50 +251,4 @@ resource "kubernetes_network_policy" "vault_allow_control_plane" {
 
     policy_types = ["Ingress"]
   }
-}
-
-resource "tls_private_key" "vault-tls-ca-key" {
-  count       = local.vault["generate_ca"] ? 1 : 0
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P384"
-}
-
-resource "tls_self_signed_cert" "vault-tls-ca-cert" {
-  count             = local.vault["generate_ca"] ? 1 : 0
-  key_algorithm     = "ECDSA"
-  private_key_pem   = tls_private_key.vault-tls-ca-key[0].private_key_pem
-  is_ca_certificate = true
-
-  subject {
-    common_name  = var.cluster-name
-    organization = var.cluster-name
-  }
-
-  validity_period_hours = 87600
-
-  allowed_uses = [
-    "cert_signing"
-  ]
-}
-
-resource "kubernetes_secret" "vault-ca" {
-  count = local.vault["enabled"] && (local.vault["generate_ca"] || local.vault["trusted_ca_content"] != null) ? 1 : 0
-  metadata {
-    name      = "${local.vault["name"]}-ca"
-    namespace = local.vault["create_ns"] ? kubernetes_namespace.vault.*.metadata.0.name[count.index] : local.vault["namespace"]
-  }
-
-  data = {
-    "ca.crt" = local.vault["generate_ca"] ? tls_self_signed_cert.vault-tls-ca-cert[count.index].cert_pem : local.vault["trusted_ca_content"]
-  }
-}
-
-output "vault_ca_pem" {
-  value = element(concat(tls_self_signed_cert.vault-tls-ca-cert[*].cert_pem, [""]), 0)
-}
-
-
-output "vault_ca_key" {
-  value     = element(concat(tls_private_key.vault-tls-ca-key[*].private_key_pem, [""]), 0)
-  sensitive = true
 }

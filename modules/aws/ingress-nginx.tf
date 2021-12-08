@@ -39,10 +39,6 @@ controller:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 podSecurityPolicy:
   enabled: true
-  admissionWebhooks:
-    patch:
-      podAnnotations:
-        linkerd.io/inject: disabled
 VALUES
 
   values_ingress-nginx_nlb = <<VALUES
@@ -65,10 +61,6 @@ controller:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 podSecurityPolicy:
   enabled: true
-  admissionWebhooks:
-    patch:
-      podAnnotations:
-        linkerd.io/inject: disabled
 VALUES
 
   values_ingress-nginx_nlb_ip = <<VALUES
@@ -91,10 +83,6 @@ controller:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 podSecurityPolicy:
   enabled: true
-  admissionWebhooks:
-    patch:
-      podAnnotations:
-        linkerd.io/inject: disabled
 VALUES
 
   values_ingress-nginx_l7 = <<VALUES
@@ -124,10 +112,6 @@ controller:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 podSecurityPolicy:
   enabled: true
-  admissionWebhooks:
-    patch:
-      podAnnotations:
-        linkerd.io/inject: disabled
 VALUES
 
 }

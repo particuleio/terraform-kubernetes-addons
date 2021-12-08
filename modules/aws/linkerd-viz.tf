@@ -1,1 +1,0 @@
-../../linkerd-viz.tf
