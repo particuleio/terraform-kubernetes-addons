@@ -270,10 +270,6 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
       "${local.labels_prefix}/component" = "monitoring"
     }
 
-    annotations = {
-      "linkerd.io/inject" = "enabled"
-    }
-
     name = local.kube-prometheus-stack["namespace"]
   }
 }
