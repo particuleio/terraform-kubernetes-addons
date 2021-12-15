@@ -282,12 +282,15 @@ No modules.
 | [random_string.grafana_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [time_sleep.cert-manager_sleep](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [tls_cert_request.promtail-csr](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) | resource |
+| [tls_cert_request.vault-tls-client-csr](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) | resource |
 | [tls_locally_signed_cert.promtail-cert](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/locally_signed_cert) | resource |
+| [tls_locally_signed_cert.vault-tls-client-cert](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/locally_signed_cert) | resource |
 | [tls_private_key.identity](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.linkerd_trust_anchor](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.loki-stack-ca-key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.promtail-key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.vault-tls-ca-key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
+| [tls_private_key.vault-tls-client-key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.webhook_issuer_tls](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_self_signed_cert.linkerd_trust_anchor](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
 | [tls_self_signed_cert.loki-stack-ca-cert](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
@@ -364,4 +367,6 @@ No modules.
 | <a name="output_promtail-key"></a> [promtail-key](#output\_promtail-key) | n/a |
 | <a name="output_vault_ca_key"></a> [vault\_ca\_key](#output\_vault\_ca\_key) | n/a |
 | <a name="output_vault_ca_pem"></a> [vault\_ca\_pem](#output\_vault\_ca\_pem) | n/a |
+| <a name="output_vault_tls_client_cert_pem"></a> [vault\_tls\_client\_cert\_pem](#output\_vault\_tls\_client\_cert\_pem) | n/a |
+| <a name="output_vault_tls_client_key"></a> [vault\_tls\_client\_key](#output\_vault\_tls\_client\_key) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

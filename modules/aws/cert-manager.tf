@@ -19,6 +19,7 @@ locals {
       acme_dns01_enabled        = true
       allowed_cidrs             = ["0.0.0.0/0"]
       csi_driver                = false
+      name_prefix               = "${var.cluster-name}-cert-manager"
     },
     var.cert-manager
   )
@@ -47,7 +48,7 @@ module "iam_assumable_role_cert-manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
   create_role                   = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"]
-  role_name                     = "tf-${var.cluster-name}-${local.cert-manager["name"]}-irsa"
+  role_name                     = local.cert-manager["name_prefix"]
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns              = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? [aws_iam_policy.cert-manager[0].arn] : []
   number_of_role_policy_arns    = 1
@@ -57,7 +58,7 @@ module "iam_assumable_role_cert-manager" {
 
 resource "aws_iam_policy" "cert-manager" {
   count  = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? 1 : 0
-  name   = "tf-${var.cluster-name}-${local.cert-manager["name"]}"
+  name   = local.cert-manager["name_prefix"]
   policy = local.cert-manager["iam_policy_override"] == null ? data.aws_iam_policy_document.cert-manager.json : local.cert-manager["iam_policy_override"]
   tags   = local.tags
 }

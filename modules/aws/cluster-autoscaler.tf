@@ -10,9 +10,10 @@ locals {
       service_account_name      = "cluster-autoscaler"
       create_iam_resources_irsa = true
       enabled                   = false
-      version                   = "v1.18.3"
+      version                   = "v1.21.1"
       iam_policy_override       = null
       default_network_policy    = true
+      name_prefix               = "${var.cluster-name}-cluster-autoscaler"
     },
     var.cluster-autoscaler
   )
@@ -52,7 +53,7 @@ module "iam_assumable_role_cluster-autoscaler" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
   create_role                   = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"]
-  role_name                     = "tf-${var.cluster-name}-${local.cluster-autoscaler["name"]}-irsa"
+  role_name                     = local.cluster-autoscaler["name_prefix"]
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns              = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? [aws_iam_policy.cluster-autoscaler[0].arn] : []
   number_of_role_policy_arns    = 1
@@ -62,7 +63,7 @@ module "iam_assumable_role_cluster-autoscaler" {
 
 resource "aws_iam_policy" "cluster-autoscaler" {
   count  = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? 1 : 0
-  name   = "tf-${var.cluster-name}-${local.cluster-autoscaler["name"]}"
+  name   = local.cluster-autoscaler["name_prefix"]
   policy = local.cluster-autoscaler["iam_policy_override"] == null ? data.aws_iam_policy_document.cluster-autoscaler.json : local.cluster-autoscaler["iam_policy_override"]
   tags   = local.tags
 }

@@ -25,6 +25,7 @@ locals {
       default_global_requests           = false
       default_global_limits             = false
       manage_crds                       = true
+      name_prefix                       = "${var.cluster-name}-kps"
     },
     var.kube-prometheus-stack
   )
@@ -269,7 +270,7 @@ module "iam_assumable_role_kube-prometheus-stack_grafana" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
   create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"]
-  role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-grafana-irsa"
+  role_name                     = "${local.kube-prometheus-stack["name_prefix"]}-grafana"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack_grafana[0].arn] : []
   number_of_role_policy_arns    = 1
@@ -281,7 +282,7 @@ module "iam_assumable_role_kube-prometheus-stack_thanos" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
   create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"]
-  role_name                     = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-thanos-irsa"
+  role_name                     = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack_thanos[0].arn] : []
   number_of_role_policy_arns    = 1
@@ -291,14 +292,14 @@ module "iam_assumable_role_kube-prometheus-stack_thanos" {
 
 resource "aws_iam_policy" "kube-prometheus-stack_grafana" {
   count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? 1 : 0
-  name   = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-grafana"
+  name   = "${local.kube-prometheus-stack["name_prefix"]}-grafana"
   policy = local.kube-prometheus-stack["grafana_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack_grafana.json : local.kube-prometheus-stack["grafana_iam_policy_override"]
   tags   = local.tags
 }
 
 resource "aws_iam_policy" "kube-prometheus-stack_thanos" {
   count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
-  name   = "${var.cluster-name}-${local.kube-prometheus-stack["name"]}-thanos"
+  name   = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
   policy = local.kube-prometheus-stack["thanos_iam_policy_override"] == null ? data.aws_iam_policy_document.kube-prometheus-stack_thanos.json : local.kube-prometheus-stack["thanos_iam_policy_override"]
   tags   = local.tags
 }

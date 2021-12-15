@@ -20,6 +20,7 @@ locals {
       trusted_ca_content        = null
       create_promtail_cert      = true
       create_grafana_ds_cm      = true
+      name_prefix               = "${var.cluster-name}-loki"
     },
     var.loki-stack
   )
@@ -58,7 +59,7 @@ module "iam_assumable_role_loki-stack" {
   source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                      = "~> 4.0"
   create_role                  = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"]
-  role_name                    = "${var.cluster-name}-${local.loki-stack["name"]}-loki-stack-irsa"
+  role_name                    = local.loki-stack["name_prefix"]
   provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns             = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? [aws_iam_policy.loki-stack[0].arn] : []
   number_of_role_policy_arns   = 1
@@ -68,7 +69,7 @@ module "iam_assumable_role_loki-stack" {
 
 resource "aws_iam_policy" "loki-stack" {
   count  = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? 1 : 0
-  name   = "${var.cluster-name}-${local.loki-stack["name"]}-loki-stack"
+  name   = local.loki-stack["name_prefix"]
   policy = local.loki-stack["iam_policy_override"] == null ? data.aws_iam_policy_document.loki-stack.json : local.loki-stack["iam_policy_override"]
 }
 
