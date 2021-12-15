@@ -62,7 +62,7 @@ module "iam_assumable_role_thanos-storegateway" {
   source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                      = "~> 4.0"
   create_role                  = each.value["enabled"] && each.value["create_iam_resources_irsa"]
-  role_name                    = local.thanos-storegateway["name_prefix"]
+  role_name                    = "${each.value.name_prefix}-${each.key}"
   provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns             = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.thanos-storegateway[each.key].arn] : []
   number_of_role_policy_arns   = 1
@@ -72,7 +72,7 @@ module "iam_assumable_role_thanos-storegateway" {
 
 resource "aws_iam_policy" "thanos-storegateway" {
   for_each = { for k, v in local.thanos-storegateway : k => v if v["enabled"] && v["create_iam_resources_irsa"] }
-  name     = local.thanos-storegateway["name_prefix"]
+  name     = "${each.value.name_prefix}-${each.key}"
   policy   = each.value["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos-storegateway[each.key].json : each.value["iam_policy_override"]
   tags     = local.tags
 }
