@@ -25,6 +25,7 @@ locals {
       sg_egress_ipv6_cidr_blocks                     = null
       sg_auto_ingress_with_self                      = []
       sg_input_ingress_with_source_security_group_id = []
+      name_prefix                                    = "${var.cluster-name}-aws-efs-csi-driver"
     },
     var.aws-efs-csi-driver
   )
@@ -42,7 +43,7 @@ module "iam_assumable_role_aws-efs-csi-driver" {
   source                     = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                    = "~> 4.0"
   create_role                = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"]
-  role_name                  = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}-irsa"
+  role_name                  = local.aws-efs-csi-driver["name_prefix"]
   provider_url               = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns           = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? [aws_iam_policy.aws-efs-csi-driver[0].arn] : []
   number_of_role_policy_arns = 1
@@ -66,7 +67,7 @@ data "aws_iam_policy_document" "aws-efs-csi-driver_default" {
 
 resource "aws_iam_policy" "aws-efs-csi-driver" {
   count  = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? 1 : 0
-  name   = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  name   = local.aws-efs-csi-driver["name_prefix"]
   policy = local.aws-efs-csi-driver["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-efs-csi-driver.0.json : local.aws-efs-csi-driver["iam_policy_override"]
   tags   = local.tags
 }
@@ -85,7 +86,7 @@ resource "kubernetes_namespace" "aws-efs-csi-driver" {
 
 resource "aws_efs_file_system" "aws-efs-csi-driver" {
   count                           = local.aws-efs-csi-driver["enabled"] && lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? 1 : 0
-  creation_token                  = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  creation_token                  = local.aws-efs-csi-driver["name_prefix"]
   encrypted                       = lookup(local.aws-efs-csi-driver, "encrypted", "true")
   performance_mode                = lookup(local.aws-efs-csi-driver, "performance_mode", "generalPurpose")
   provisioned_throughput_in_mibps = lookup(local.aws-efs-csi-driver, "provisioned_throughput_in_mibps", 0)
@@ -96,7 +97,7 @@ resource "aws_efs_file_system" "aws-efs-csi-driver" {
       transition_to_ia = lookup(lifecycle_policy.value, "transition_to_ia", null)
     }
   }
-  tags = merge(local.tags, { "Name" : "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}" })
+  tags = merge(local.tags, { "Name" : local.aws-efs-csi-driver["name_prefix"] })
 }
 
 
@@ -111,8 +112,8 @@ module "security-group-efs-csi-driver" {
   count                                 = local.aws-efs-csi-driver["enabled"] ? 1 : 0
   source                                = "terraform-aws-modules/security-group/aws//modules/nfs"
   version                               = "~> 4.0"
-  name                                  = "tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
-  description                           = "NFS access to tf-${var.cluster-name}-${local.aws-efs-csi-driver["name"]}"
+  name                                  = local.aws-efs-csi-driver["name_prefix"]
+  description                           = "NFS access to ${local.aws-efs-csi-driver["name_prefix"]}"
   vpc_id                                = local.aws-efs-csi-driver["sg_vpc_id"]
   ingress_cidr_blocks                   = local.aws-efs-csi-driver["sg_vpc_ingress_cidrs"]
   egress_ipv6_cidr_blocks               = local.aws-efs-csi-driver["sg_egress_ipv6_cidr_blocks"]

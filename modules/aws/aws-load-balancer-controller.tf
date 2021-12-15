@@ -13,6 +13,7 @@ locals {
       iam_policy_override       = null
       default_network_policy    = true
       allowed_cidrs             = ["0.0.0.0/0"]
+      name_prefix               = "${var.cluster-name}-awslbc"
     },
     var.aws-load-balancer-controller
   )
@@ -31,7 +32,7 @@ module "iam_assumable_role_aws-load-balancer-controller" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
   create_role                   = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"]
-  role_name                     = "tf-${var.cluster-name}-${local.aws-load-balancer-controller["name"]}-irsa"
+  role_name                     = local.aws-load-balancer-controller["name_prefix"]
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns              = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? [aws_iam_policy.aws-load-balancer-controller[0].arn] : []
   number_of_role_policy_arns    = 1
@@ -41,7 +42,7 @@ module "iam_assumable_role_aws-load-balancer-controller" {
 
 resource "aws_iam_policy" "aws-load-balancer-controller" {
   count  = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? 1 : 0
-  name   = "tf-${var.cluster-name}-${local.aws-load-balancer-controller["name"]}"
+  name   = local.aws-load-balancer-controller["name_prefix"]
   policy = local.aws-load-balancer-controller["iam_policy_override"] == null ? templatefile("${path.module}/iam/aws-load-balancer-controller.json", { arn-partition = var.arn-partition }) : local.aws-load-balancer-controller["iam_policy_override"]
   tags   = local.tags
 }

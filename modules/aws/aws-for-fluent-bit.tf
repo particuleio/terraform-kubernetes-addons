@@ -14,6 +14,7 @@ locals {
       iam_policy_override              = null
       default_network_policy           = true
       containers_log_retention_in_days = 180
+      name_prefix                      = "${var.cluster-name}-aws-for-fluent-bit"
     },
     var.aws-for-fluent-bit
   )
@@ -44,7 +45,7 @@ module "iam_assumable_role_aws-for-fluent-bit" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
   create_role                   = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"]
-  role_name                     = "tf-${var.cluster-name}-${local.aws-for-fluent-bit["name"]}-irsa"
+  role_name                     = local.aws-for-fluent-bit["name_prefix"]
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns              = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? [aws_iam_policy.aws-for-fluent-bit[0].arn] : []
   number_of_role_policy_arns    = 1
@@ -54,7 +55,7 @@ module "iam_assumable_role_aws-for-fluent-bit" {
 
 resource "aws_iam_policy" "aws-for-fluent-bit" {
   count  = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? 1 : 0
-  name   = "tf-${var.cluster-name}-${local.aws-for-fluent-bit["name"]}"
+  name   = local.aws-for-fluent-bit["name_prefix"]
   policy = local.aws-for-fluent-bit["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-for-fluent-bit.json : local.aws-for-fluent-bit["iam_policy_override"]
   tags   = local.tags
 }

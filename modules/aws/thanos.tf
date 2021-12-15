@@ -20,6 +20,7 @@ locals {
       bucket_force_destroy      = false
       generate_ca               = false
       trusted_ca_content        = null
+      name_prefix               = "${var.cluster-name}-thanos"
     },
     var.thanos
   )
@@ -222,7 +223,7 @@ module "iam_assumable_role_thanos" {
   source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                      = "~> 4.0"
   create_role                  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"]
-  role_name                    = "${var.cluster-name}-${local.thanos["name"]}-thanos-irsa"
+  role_name                    = local.thanos["name_prefix"]
   provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns             = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? [aws_iam_policy.thanos[0].arn] : []
   number_of_role_policy_arns   = 1
@@ -233,7 +234,7 @@ module "iam_assumable_role_thanos" {
 
 resource "aws_iam_policy" "thanos" {
   count  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0
-  name   = "${var.cluster-name}-${local.thanos["name"]}-thanos"
+  name   = local.thanos["name_prefix"]
   policy = local.thanos["iam_policy_override"] == null ? data.aws_iam_policy_document.thanos.json : local.thanos["iam_policy_override"]
   tags   = local.tags
 }

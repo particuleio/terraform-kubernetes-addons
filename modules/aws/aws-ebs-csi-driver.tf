@@ -36,6 +36,7 @@ locals {
           driver: ebs.csi.aws.com
           deletionPolicy: Retain
         VOLUME_SNAPSHOT_CLASS
+      name_prefix               = "${var.cluster-name}-aws-ebs-csi-driver"
     },
     var.aws-ebs-csi-driver
   )
@@ -59,7 +60,7 @@ module "iam_assumable_role_aws-ebs-csi-driver" {
   source                     = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                    = "~> 4.0"
   create_role                = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"]
-  role_name                  = "tf-${var.cluster-name}-${local.aws-ebs-csi-driver["name"]}-irsa"
+  role_name                  = local.aws-ebs-csi-driver["name_prefix"]
   provider_url               = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns           = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? [aws_iam_policy.aws-ebs-csi-driver[0].arn] : []
   number_of_role_policy_arns = 1
@@ -89,7 +90,7 @@ data "aws_iam_policy_document" "aws-ebs-csi-driver_default" {
 
 resource "aws_iam_policy" "aws-ebs-csi-driver" {
   count  = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? 1 : 0
-  name   = "tf-${var.cluster-name}-${local.aws-ebs-csi-driver["name"]}"
+  name   = local.aws-ebs-csi-driver["name_prefix"]
   policy = local.aws-ebs-csi-driver["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-ebs-csi-driver.0.json : local.aws-ebs-csi-driver["iam_policy_override"]
   tags   = local.tags
 }

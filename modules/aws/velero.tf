@@ -17,6 +17,7 @@ locals {
       allowed_cidrs             = ["0.0.0.0/0"]
       default_network_policy    = true
       kms_key_arn_access_list   = []
+      name_prefix               = "${var.cluster-name}-velero"
     },
     var.velero
   )
@@ -65,7 +66,7 @@ module "iam_assumable_role_velero" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 4.0"
   create_role                   = local.velero["enabled"] && local.velero["create_iam_resources_irsa"]
-  role_name                     = "${var.cluster-name}-${local.velero["name"]}-irsa"
+  role_name                     = local.velero["name_prefix"]
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
   role_policy_arns              = local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? [aws_iam_policy.velero[0].arn] : []
   number_of_role_policy_arns    = 1
@@ -75,7 +76,7 @@ module "iam_assumable_role_velero" {
 
 resource "aws_iam_policy" "velero" {
   count  = local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? 1 : 0
-  name   = "${var.cluster-name}-${local.velero["name"]}-velero"
+  name   = local.velero["name_prefix"]
   policy = local.velero["iam_policy_override"] == null ? data.aws_iam_policy_document.velero.0.json : local.velero["iam_policy_override"]
   tags   = local.tags
 }
