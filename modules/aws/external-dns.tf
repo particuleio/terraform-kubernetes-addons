@@ -25,6 +25,7 @@ locals {
         aws:
           region: ${data.aws_region.current.name}
         txtPrefix: "ext-dns-"
+        logFormat: json
         policy: sync
         txtOwnerId: ${var.cluster-name}
         rbac:

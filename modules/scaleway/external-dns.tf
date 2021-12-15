@@ -23,6 +23,7 @@ scaleway:
   scwDefaultOrganizationId: ${local.scaleway["scw_default_organization_id"]}
 txtPrefix: "ext-dns-"
 policy: sync
+logFormat: json
 txtOwnerId: ${var.cluster-name}
 rbac:
  create: true
