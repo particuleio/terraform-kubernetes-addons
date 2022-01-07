@@ -60,7 +60,7 @@ dependencies:
     version: 16.0.5
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.6.3
+    version: 2.6.4
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
     version: 27.2.2
