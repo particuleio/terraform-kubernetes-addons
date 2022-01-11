@@ -90,7 +90,7 @@ dependencies:
     version: 3.9.2
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.10.12
+    version: 5.10.13
     repository: https://charts.bitnami.com/bitnami
   - name: node-problem-detector
     version: 2.0.9
