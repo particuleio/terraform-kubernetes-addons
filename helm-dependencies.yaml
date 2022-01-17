@@ -114,13 +114,13 @@ dependencies:
     version: 2.1.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
-    version: 0.27.0
+    version: 0.27.1
     repository: https://strimzi.io/charts/
   - name: thanos
     version: 8.3.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.21.3
+    version: v3.21.4
     repository: https://docs.projectcalico.org/charts
   - name: traefik
     version: 10.9.1
