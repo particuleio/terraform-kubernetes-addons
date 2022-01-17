@@ -2,14 +2,13 @@ locals {
   istio-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].version
-      namespace              = "istio-system"
-      enabled                = false
-      version                = "1.7.4"
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].version
+      namespace     = "istio-system"
+      enabled       = false
+      version       = "1.7.4"
     },
     var.istio-operator
   )
@@ -58,45 +57,4 @@ resource "helm_release" "istio-operator" {
     local.istio-operator["extra_values"]
   ]
   namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
-}
-
-resource "kubernetes_network_policy" "istio-operator_default_deny" {
-  count = local.istio-operator["enabled"] && local.istio-operator["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "istio-operator_allow_namespace" {
-  count = local.istio-operator["enabled"] && local.istio-operator["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

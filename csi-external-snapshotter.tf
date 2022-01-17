@@ -46,10 +46,3 @@ resource "kubectl_manifest" "csi-external-snapshotter" {
   for_each  = local.csi-external-snapshotter.enabled ? { for v in local.csi-external-snapshotter_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
   yaml_body = each.value
 }
-
-#resource "kubectl_manifest" "csi-external-snapshotter" {
-#  for_each  = local.csi-external-snapshotter.enabled ? local.csi-external-snapshotter_crds_apply : {}
-#  yaml_body = each.value
-#}
-#
-#

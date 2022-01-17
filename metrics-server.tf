@@ -2,14 +2,13 @@ locals {
   metrics-server = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].version
-      namespace              = "metrics-server"
-      enabled                = false
-      default_network_policy = true
-      allowed_cidrs          = ["0.0.0.0/0"]
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].version
+      namespace     = "metrics-server"
+      enabled       = false
+      allowed_cidrs = ["0.0.0.0/0"]
     },
     var.metrics-server
   )
@@ -61,82 +60,3 @@ resource "helm_release" "metrics-server" {
   ]
   namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
 }
-
-resource "kubernetes_network_policy" "metrics-server_default_deny" {
-  count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "metrics-server_allow_namespace" {
-  count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "metrics-server_allow_control_plane" {
-  count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["metrics-server"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "8443"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.metrics-server["allowed_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-

@@ -3,13 +3,12 @@ locals {
   cert-manager-csi-driver = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].version
-      enabled                = local.cert-manager.csi_driver
-      default_network_policy = true
-      namespace              = local.cert-manager.namespace
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager-csi-driver")].version
+      enabled       = local.cert-manager.csi_driver
+      namespace     = local.cert-manager.namespace
     },
     var.cert-manager-csi-driver
   )

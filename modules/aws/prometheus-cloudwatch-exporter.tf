@@ -9,7 +9,6 @@ locals {
       namespace                 = "monitoring"
       create_ns                 = false
       enabled                   = false
-      default_network_policy    = true
       service_account_name      = "prometheus-cloudwatch-exporter"
       create_iam_resources_irsa = true
       iam_policy_override       = null
@@ -106,45 +105,4 @@ resource "helm_release" "prometheus-cloudwatch-exporter" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "prometheus-cloudwatch-exporter_default_deny" {
-  count = local.prometheus-cloudwatch-exporter["create_ns"] && local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "prometheus-cloudwatch-exporter_allow_namespace" {
-  count = local.prometheus-cloudwatch-exporter["create_ns"] && local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

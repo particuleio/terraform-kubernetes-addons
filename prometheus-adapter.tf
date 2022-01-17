@@ -2,14 +2,13 @@ locals {
   prometheus-adapter = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].version
-      namespace              = "monitoring"
-      create_ns              = false
-      enabled                = false
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].version
+      namespace     = "monitoring"
+      create_ns     = false
+      enabled       = false
     },
     var.prometheus-adapter
   )
@@ -64,45 +63,4 @@ resource "helm_release" "prometheus-adapter" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "prometheus-adapter_default_deny" {
-  count = local.prometheus-adapter["create_ns"] && local.prometheus-adapter["enabled"] && local.prometheus-adapter["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "prometheus-adapter_allow_namespace" {
-  count = local.prometheus-adapter["create_ns"] && local.prometheus-adapter["enabled"] && local.prometheus-adapter["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

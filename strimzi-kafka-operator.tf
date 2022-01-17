@@ -2,14 +2,13 @@ locals {
   strimzi-kafka-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].version
-      namespace              = "strimzi-kafka-operator"
-      enabled                = false
-      create_ns              = true
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].version
+      namespace     = "strimzi-kafka-operator"
+      enabled       = false
+      create_ns     = true
     },
     var.strimzi-kafka-operator
   )
@@ -57,45 +56,4 @@ resource "helm_release" "strimzi-kafka-operator" {
     local.strimzi-kafka-operator["extra_values"]
   ]
   namespace = local.strimzi-kafka-operator["create_ns"] ? kubernetes_namespace.strimzi-kafka-operator.*.metadata.0.name[count.index] : local.strimzi-kafka-operator["namespace"]
-}
-
-resource "kubernetes_network_policy" "strimzi-kafka-operator_default_deny" {
-  count = local.strimzi-kafka-operator["enabled"] && local.strimzi-kafka-operator["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.strimzi-kafka-operator["namespace"]}-${local.strimzi-kafka-operator["name"]}-default-deny"
-    namespace = local.strimzi-kafka-operator["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "strimzi-kafka-operator_allow_namespace" {
-  count = local.strimzi-kafka-operator["enabled"] && local.strimzi-kafka-operator["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.strimzi-kafka-operator["namespace"]}-${local.strimzi-kafka-operator["name"]}-default-namespace"
-    namespace = local.strimzi-kafka-operator["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = local.strimzi-kafka-operator["namespace"]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

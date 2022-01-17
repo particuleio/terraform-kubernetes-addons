@@ -9,7 +9,6 @@ locals {
       namespace                        = "monitoring"
       enabled                          = false
       allowed_cidrs                    = ["0.0.0.0/0"]
-      default_network_policy           = true
       install_prometheus_operator_crds = true
     },
     var.victoria-metrics-k8s-stack
@@ -102,108 +101,4 @@ resource "helm_release" "victoria-metrics-k8s-stack" {
   depends_on = [
     helm_release.ingress-nginx,
   ]
-}
-
-resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_default_deny" {
-  count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_allow_namespace" {
-  count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_allow_ingress" {
-  count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "ingress"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_allow_control_plane" {
-  count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app"
-        operator = "In"
-        values   = ["${local.victoria-metrics-k8s-stack["name"]}-operator"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "10250"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.victoria-metrics-k8s-stack["allowed_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

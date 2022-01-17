@@ -18,7 +18,6 @@ locals {
       is_default_class          = false
       enabled                   = false
       iam_policy_override       = null
-      default_network_policy    = true
       create_kms_key            = true
       existing_kms_key_arn      = null
       override_kms_alias        = null
@@ -158,47 +157,6 @@ resource "kubernetes_storage_class" "aws-ebs-csi-driver" {
     },
     local.aws-ebs-csi-driver.extra_sc_parameters
   )
-}
-
-resource "kubernetes_network_policy" "aws-ebs-csi-driver_default_deny" {
-  count = local.aws-ebs-csi-driver["create_ns"] && local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "aws-ebs-csi-driver_allow_namespace" {
-  count = local.aws-ebs-csi-driver["create_ns"] && local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }
 
 resource "aws_kms_key" "aws-ebs-csi-driver" {

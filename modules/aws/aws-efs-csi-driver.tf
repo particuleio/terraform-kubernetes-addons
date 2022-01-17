@@ -18,7 +18,6 @@ locals {
       is_default_class                               = false
       enabled                                        = false
       iam_policy_override                            = null
-      default_network_policy                         = true
       sg_vpc_ingress_cidrs                           = ["0.0.0.0/0"]
       sg_vpc_id                                      = null
       sg_ingress_cidr_blocks                         = null
@@ -100,7 +99,6 @@ resource "aws_efs_file_system" "aws-efs-csi-driver" {
   tags = merge(local.tags, { "Name" : local.aws-efs-csi-driver["name_prefix"] })
 }
 
-
 resource "aws_efs_mount_target" "aws-efs-csi-driver" {
   count           = local.aws-efs-csi-driver["enabled"] ? length(local.aws-efs-csi-driver["subnets"]) : 0
   file_system_id  = lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
@@ -148,61 +146,4 @@ resource "helm_release" "aws-efs-csi-driver" {
     local.aws-efs-csi-driver["extra_values"]
   ]
   namespace = local.aws-efs-csi-driver["create_ns"] ? kubernetes_namespace.aws-efs-csi-driver.*.metadata.0.name[count.index] : local.aws-efs-csi-driver["namespace"]
-}
-
-resource "kubernetes_storage_class" "aws-efs-csi-driver" {
-  count = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_storage_class"] ? 1 : 0
-  metadata {
-    name = local.aws-efs-csi-driver["storage_class_name"]
-    annotations = {
-      "storageclass.kubernetes.io/is-default-class" = tostring(local.aws-efs-csi-driver["is_default_class"])
-    }
-  }
-  storage_provisioner = "efs.csi.aws.com"
-  parameters = {
-    provisioningMode : "efs-ap"
-    fileSystemId : lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
-    directoryPerms : "700"
-  }
-}
-
-resource "kubernetes_network_policy" "aws-efs-csi-driver_default_deny" {
-  count = local.aws-efs-csi-driver["create_ns"] && local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-efs-csi-driver.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-efs-csi-driver.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "aws-efs-csi-driver_allow_namespace" {
-  count = local.aws-efs-csi-driver["create_ns"] && local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-efs-csi-driver.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-efs-csi-driver.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.aws-efs-csi-driver.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

@@ -2,13 +2,12 @@ locals {
   aws-node-termination-handler = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].version
-      namespace              = "aws-node-termination-handler"
-      enabled                = false
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].version
+      namespace     = "aws-node-termination-handler"
+      enabled       = false
     },
     var.aws-node-termination-handler
   )
@@ -58,45 +57,4 @@ resource "helm_release" "aws-node-termination-handler" {
     local.aws-node-termination-handler["extra_values"]
   ]
   namespace = local.aws-node-termination-handler["namespace"]
-}
-
-resource "kubernetes_network_policy" "aws-node-termination-handler_default_deny" {
-  count = local.aws-node-termination-handler["enabled"] && local.aws-node-termination-handler["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "aws-node-termination-handler_allow_namespace" {
-  count = local.aws-node-termination-handler["enabled"] && local.aws-node-termination-handler["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

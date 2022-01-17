@@ -2,18 +2,17 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].version
-      namespace              = "monitoring"
-      create_ns              = false
-      enabled                = false
-      default_network_policy = true
-      generate_ca            = true
-      trusted_ca_content     = null
-      create_promtail_cert   = true
-      create_grafana_ds_cm   = true
+      name                 = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
+      chart                = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
+      repository           = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].repository
+      chart_version        = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].version
+      namespace            = "monitoring"
+      create_ns            = false
+      enabled              = false
+      generate_ca          = true
+      trusted_ca_content   = null
+      create_promtail_cert = true
+      create_grafana_ds_cm = true
     },
     var.loki-stack
   )
@@ -117,73 +116,6 @@ resource "tls_self_signed_cert" "loki-stack-ca-cert" {
   allowed_uses = [
     "cert_signing"
   ]
-}
-
-resource "kubernetes_network_policy" "loki-stack_default_deny" {
-  count = local.loki-stack["create_ns"] && local.loki-stack["enabled"] && local.loki-stack["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "loki-stack_allow_namespace" {
-  count = local.loki-stack["create_ns"] && local.loki-stack["enabled"] && local.loki-stack["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "loki-stack_allow_ingress" {
-  count = local.loki-stack["create_ns"] && local.loki-stack["enabled"] && local.loki-stack["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "ingress"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }
 
 resource "kubernetes_secret" "loki-stack-ca" {

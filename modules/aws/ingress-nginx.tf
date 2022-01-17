@@ -3,18 +3,17 @@ locals {
   ingress-nginx = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].version
-      namespace              = "ingress-nginx"
-      use_nlb                = false
-      use_nlb_ip             = false
-      use_l7                 = false
-      enabled                = false
-      default_network_policy = true
-      ingress_cidrs          = ["0.0.0.0/0"]
-      allowed_cidrs          = ["0.0.0.0/0"]
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].version
+      namespace     = "ingress-nginx"
+      use_nlb       = false
+      use_nlb_ip    = false
+      use_l7        = false
+      enabled       = false
+      ingress_cidrs = ["0.0.0.0/0"]
+      allowed_cidrs = ["0.0.0.0/0"]
     },
     var.ingress-nginx
   )
@@ -175,154 +174,4 @@ resource "helm_release" "ingress-nginx" {
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
   ]
-}
-
-resource "kubernetes_network_policy" "ingress-nginx_default_deny" {
-  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "ingress-nginx_allow_namespace" {
-  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
-  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["ingress-nginx"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "80"
-        protocol = "TCP"
-      }
-      ports {
-        port     = "443"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.ingress-nginx["ingress_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "ingress-nginx_allow_monitoring" {
-  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      ports {
-        port     = "metrics"
-        protocol = "TCP"
-      }
-
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "monitoring"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
-  count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["ingress-nginx"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "8443"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.ingress-nginx["allowed_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

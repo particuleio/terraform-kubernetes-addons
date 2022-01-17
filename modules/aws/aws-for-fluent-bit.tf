@@ -12,7 +12,6 @@ locals {
       create_iam_resources_irsa        = true
       enabled                          = false
       iam_policy_override              = null
-      default_network_policy           = true
       containers_log_retention_in_days = 180
       name_prefix                      = "${var.cluster-name}-aws-for-fluent-bit"
     },
@@ -120,45 +119,4 @@ resource "helm_release" "aws-for-fluent-bit" {
     local.aws-for-fluent-bit["extra_values"]
   ]
   namespace = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
-}
-
-resource "kubernetes_network_policy" "aws-for-fluent-bit_default_deny" {
-  count = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "aws-for-fluent-bit_allow_namespace" {
-  count = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

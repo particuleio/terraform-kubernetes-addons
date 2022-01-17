@@ -2,14 +2,13 @@ locals {
   admiralty = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].version
-      namespace              = "admiralty"
-      enabled                = false
-      create_ns              = true
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].version
+      namespace     = "admiralty"
+      enabled       = false
+      create_ns     = true
     },
     var.admiralty
   )
@@ -56,45 +55,4 @@ resource "helm_release" "admiralty" {
     local.admiralty["extra_values"]
   ]
   namespace = local.admiralty["create_ns"] ? kubernetes_namespace.admiralty.*.metadata.0.name[count.index] : local.admiralty["namespace"]
-}
-
-resource "kubernetes_network_policy" "admiralty_default_deny" {
-  count = local.admiralty["enabled"] && local.admiralty["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.admiralty["namespace"]}-${local.admiralty["name"]}-default-deny"
-    namespace = local.admiralty["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "admiralty_allow_namespace" {
-  count = local.admiralty["enabled"] && local.admiralty["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.admiralty["namespace"]}-${local.admiralty["name"]}-default-namespace"
-    namespace = local.admiralty["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = local.admiralty["namespace"]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

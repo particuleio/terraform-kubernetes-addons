@@ -2,15 +2,14 @@ locals {
   linkerd2-cni = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].version
-      namespace              = "linkerd-cni"
-      create_ns              = true
-      enabled                = local.linkerd2.enabled
-      cni_conflist_filename  = "10-calico.conflist"
-      default_network_policy = true
+      name                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].name
+      chart                 = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].name
+      repository            = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].repository
+      chart_version         = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].version
+      namespace             = "linkerd-cni"
+      create_ns             = true
+      enabled               = local.linkerd2.enabled
+      cni_conflist_filename = "10-calico.conflist"
     },
     var.linkerd2-cni
   )
@@ -83,45 +82,4 @@ resource "helm_release" "linkerd2-cni" {
     local.linkerd2-cni["extra_values"]
   ]
   namespace = local.linkerd2-cni["create_ns"] ? kubernetes_namespace.linkerd2-cni.*.metadata.0.name[count.index] : local.linkerd2-cni["namespace"]
-}
-
-resource "kubernetes_network_policy" "linkerd2-cni_default_deny" {
-  count = local.linkerd2-cni["create_ns"] && local.linkerd2-cni["enabled"] && local.linkerd2-cni["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.linkerd2-cni.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.linkerd2-cni.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "linkerd2-cni_allow_namespace" {
-  count = local.linkerd2-cni["create_ns"] && local.linkerd2-cni["enabled"] && local.linkerd2-cni["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.linkerd2-cni.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.linkerd2-cni.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.linkerd2-cni.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

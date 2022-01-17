@@ -11,7 +11,6 @@ locals {
       create_iam_resources_irsa = true
       enabled                   = false
       iam_policy_override       = null
-      default_network_policy    = true
       allowed_cidrs             = ["0.0.0.0/0"]
       name_prefix               = "${var.cluster-name}-awslbc"
     },
@@ -85,82 +84,4 @@ resource "helm_release" "aws-load-balancer-controller" {
     local.aws-load-balancer-controller["extra_values"]
   ]
   namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
-}
-
-resource "kubernetes_network_policy" "aws-load-balancer-controller_default_deny" {
-  count = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "aws-load-balancer-controller_allow_namespace" {
-  count = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "aws-load-balancer-controller_allow_control_plane" {
-  count = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["aws-load-balancer-controller"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "9443"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.aws-load-balancer-controller["allowed_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

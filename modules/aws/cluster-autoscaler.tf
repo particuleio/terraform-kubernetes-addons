@@ -12,7 +12,6 @@ locals {
       enabled                   = false
       version                   = "v1.21.1"
       iam_policy_override       = null
-      default_network_policy    = true
       name_prefix               = "${var.cluster-name}-cluster-autoscaler"
     },
     var.cluster-autoscaler
@@ -152,76 +151,4 @@ resource "helm_release" "cluster-autoscaler" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "cluster-autoscaler_default_deny" {
-  count = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "cluster-autoscaler_allow_namespace" {
-  count = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "cluster-autoscaler_allow_monitoring" {
-  count = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      ports {
-        port     = "8085"
-        protocol = "TCP"
-      }
-
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "monitoring"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

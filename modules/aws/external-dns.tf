@@ -12,7 +12,6 @@ locals {
       enabled                   = false
       create_iam_resources_irsa = true
       iam_policy_override       = null
-      default_network_policy    = true
       name_prefix               = "${var.cluster-name}"
     },
     v,
@@ -29,8 +28,8 @@ locals {
         policy: sync
         txtOwnerId: ${var.cluster-name}
         rbac:
-         create: true
-         pspEnabled: true
+          create: true
+          pspEnabled: true
         serviceAccount:
           name: ${v["service_account_name"]}
           annotations:
@@ -132,76 +131,4 @@ resource "helm_release" "external-dns" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "external-dns_default_deny" {
-  for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
-
-  metadata {
-    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-default-deny"
-    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "external-dns_allow_namespace" {
-  for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
-
-  metadata {
-    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-namespace"
-    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.external-dns[each.key].metadata.0.name
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
-  for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
-
-  metadata {
-    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-monitoring"
-    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      ports {
-        port     = "http"
-        protocol = "TCP"
-      }
-
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "monitoring"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

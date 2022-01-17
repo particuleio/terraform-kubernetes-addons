@@ -2,14 +2,13 @@ locals {
   karma = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].version
-      namespace              = "monitoring"
-      create_ns              = false
-      enabled                = false
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "karma")].version
+      namespace     = "monitoring"
+      create_ns     = false
+      enabled       = false
     },
     var.karma
   )
@@ -24,8 +23,7 @@ resource "kubernetes_namespace" "karma" {
 
   metadata {
     labels = {
-      name                               = local.karma["namespace"]
-      "${local.labels_prefix}/component" = "monitoring"
+      name = local.karma["namespace"]
     }
 
     name = local.karma["namespace"]
@@ -62,71 +60,4 @@ resource "helm_release" "karma" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "karma_default_deny" {
-  count = local.karma["create_ns"] && local.karma["enabled"] && local.karma["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.karma.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.karma.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "karma_allow_namespace" {
-  count = local.karma["create_ns"] && local.karma["enabled"] && local.karma["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.karma.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.karma.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.karma.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "karma_allow_ingress" {
-  count = local.karma["enabled"] && local.karma["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : local.karma["namespace"]}-allow-ingress-karma"
-    namespace = local.karma["create_ns"] ? kubernetes_namespace.karma.*.metadata.0.name[count.index] : local.karma["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "ingress"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

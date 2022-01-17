@@ -3,18 +3,17 @@ locals {
   promtail = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].version
-      namespace              = "monitoring"
-      create_ns              = false
-      enabled                = false
-      loki_address           = "http://${local.loki-stack["name"]}:3100/loki/api/v1/push"
-      use_tls                = false
-      tls_crt                = null
-      tls_key                = null
-      default_network_policy = false
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "promtail")].version
+      namespace     = "monitoring"
+      create_ns     = false
+      enabled       = false
+      loki_address  = "http://${local.loki-stack["name"]}:3100/loki/api/v1/push"
+      use_tls       = false
+      tls_crt       = null
+      tls_key       = null
     },
     var.promtail
   )
@@ -139,72 +138,5 @@ resource "kubernetes_secret" "promtail-tls" {
   data = {
     "tls.crt" = local.promtail["tls_crt"]
     "tls.key" = local.promtail["tls_key"]
-  }
-}
-
-resource "kubernetes_network_policy" "promtail_default_deny" {
-  count = local.promtail["create_ns"] && local.promtail["enabled"] && local.promtail["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.promtail.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.promtail.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "promtail_allow_namespace" {
-  count = local.promtail["create_ns"] && local.promtail["enabled"] && local.promtail["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.promtail.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.promtail.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.promtail.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "promtail_allow_ingress" {
-  count = local.promtail["create_ns"] && local.promtail["enabled"] && local.promtail["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.promtail.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.promtail.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "ingress"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
   }
 }

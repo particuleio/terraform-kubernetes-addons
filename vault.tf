@@ -2,16 +2,15 @@ locals {
   vault = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].version
-      namespace              = "vault"
-      enabled                = false
-      create_ns              = true
-      default_network_policy = true
-      generate_ca            = false
-      trusted_ca_content     = null
+      name               = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].name
+      chart              = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].name
+      repository         = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].repository
+      chart_version      = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].version
+      namespace          = "vault"
+      enabled            = false
+      create_ns          = true
+      generate_ca        = false
+      trusted_ca_content = null
     },
     var.vault
   )
@@ -64,84 +63,6 @@ resource "helm_release" "vault" {
     local.vault["extra_values"]
   ]
   namespace = local.vault["create_ns"] ? kubernetes_namespace.vault.*.metadata.0.name[count.index] : local.vault["namespace"]
-}
-
-resource "kubernetes_network_policy" "vault_default_deny" {
-  count = local.vault["enabled"] && local.vault["create_ns"] && local.vault["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.vault["namespace"]}-${local.vault["name"]}-default-deny"
-    namespace = local.vault["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "vault_allow_namespace" {
-  count = local.vault["enabled"] && local.vault["create_ns"] && local.vault["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.vault["namespace"]}-${local.vault["name"]}-default-namespace"
-    namespace = local.vault["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = local.vault["namespace"]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "vault_allow_control_plane" {
-  count = local.vault["enabled"] && local.vault["default_network_policy"] && local.vault.create_ns ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.vault.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.vault.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["${local.vault["name"]}-agent-injector"]
-      }
-    }
-
-    ingress {
-      ports {
-        port     = "8080"
-        protocol = "TCP"
-      }
-
-      dynamic "from" {
-        for_each = local.vault["allowed_cidrs"]
-        content {
-          ip_block {
-            cidr = from.value
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }
 
 resource "tls_private_key" "vault-tls-ca-key" {

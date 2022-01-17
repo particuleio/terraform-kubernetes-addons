@@ -3,14 +3,13 @@ locals {
   external-dns = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].version
-      namespace              = "external-dns"
-      service_account_name   = "external-dns"
-      enabled                = false
-      default_network_policy = true
+      name                 = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
+      chart                = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
+      repository           = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].repository
+      chart_version        = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].version
+      namespace            = "external-dns"
+      service_account_name = "external-dns"
+      enabled              = false
     },
     var.external-dns
   )
@@ -26,8 +25,8 @@ policy: sync
 logFormat: json
 txtOwnerId: ${var.cluster-name}
 rbac:
- create: true
- pspEnabled: false
+  create: true
+  pspEnabled: false
 metrics:
   enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
   serviceMonitor:
@@ -78,76 +77,4 @@ resource "helm_release" "external-dns" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "external-dns_default_deny" {
-  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "external-dns_allow_namespace" {
-  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
-  count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      ports {
-        port     = "http"
-        protocol = "TCP"
-      }
-
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

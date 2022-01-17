@@ -11,7 +11,6 @@ locals {
       iam_policy_override     = null
       create_ns               = false
       enabled                 = false
-      default_network_policy  = true
       default_global_requests = false
       default_global_limits   = false
       create_bucket           = false

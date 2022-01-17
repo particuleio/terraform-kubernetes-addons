@@ -10,7 +10,6 @@ locals {
       create_ns                = true
       namespace                = "flux-system"
       target_path              = "production"
-      default_network_policy   = true
       version                  = "v0.21.1"
       github_url               = "ssh://git@<host>/<org>/<repository>"
       create_github_repository = false
@@ -193,61 +192,3 @@ resource "github_repository_file" "kustomize" {
   branch              = local.flux2["branch"]
   overwrite_on_create = true
 }
-
-resource "kubernetes_network_policy" "flux2_allow_monitoring" {
-  count = local.flux2["enabled"] && local.flux2["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-monitoring"
-    namespace = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      ports {
-        port     = "8080"
-        protocol = "TCP"
-      }
-
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "monitoring"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "flux2_allow_namespace" {
-  count = local.flux2["enabled"] && local.flux2["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-namespace"
-    namespace = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-

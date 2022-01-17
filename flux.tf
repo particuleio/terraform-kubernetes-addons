@@ -3,14 +3,13 @@ locals {
   flux = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].version
-      namespace              = "flux"
-      service_account_name   = "flux"
-      enabled                = false
-      default_network_policy = true
+      name                 = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
+      chart                = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
+      repository           = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].repository
+      chart_version        = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].version
+      namespace            = "flux"
+      service_account_name = "flux"
+      enabled              = false
     },
     var.flux
   )
@@ -107,76 +106,4 @@ resource "helm_release" "flux" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "flux_default_deny" {
-  count = local.flux["enabled"] && local.flux["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.flux.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "flux_allow_namespace" {
-  count = local.flux["enabled"] && local.flux["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.flux.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.flux.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "flux_allow_monitoring" {
-  count = local.flux["enabled"] && local.flux["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.flux.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      ports {
-        port     = "3030"
-        protocol = "TCP"
-      }
-
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

@@ -2,14 +2,13 @@ locals {
   rabbitmq-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].version
-      namespace              = "rabbitmq-operator"
-      create_ns              = true
-      enabled                = false
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].version
+      namespace     = "rabbitmq-operator"
+      create_ns     = true
+      enabled       = false
     },
     var.rabbitmq-operator
   )
@@ -61,45 +60,4 @@ resource "helm_release" "rabbitmq-operator" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "rabbitmq-operator_default_deny" {
-  count = local.rabbitmq-operator["create_ns"] && local.rabbitmq-operator["enabled"] && local.rabbitmq-operator["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "rabbitmq-operator_allow_namespace" {
-  count = local.rabbitmq-operator["create_ns"] && local.rabbitmq-operator["enabled"] && local.rabbitmq-operator["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

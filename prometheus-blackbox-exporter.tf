@@ -2,14 +2,13 @@ locals {
   prometheus-blackbox-exporter = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].version
-      namespace              = "monitoring"
-      create_ns              = false
-      enabled                = false
-      default_network_policy = true
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-blackbox-exporter")].version
+      namespace     = "monitoring"
+      create_ns     = false
+      enabled       = false
     },
     var.prometheus-blackbox-exporter
   )
@@ -64,45 +63,4 @@ resource "helm_release" "prometheus-blackbox-exporter" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
-}
-
-resource "kubernetes_network_policy" "prometheus-blackbox-exporter_default_deny" {
-  count = local.prometheus-blackbox-exporter["create_ns"] && local.prometheus-blackbox-exporter["enabled"] && local.prometheus-blackbox-exporter["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.prometheus-blackbox-exporter.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.prometheus-blackbox-exporter.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "prometheus-blackbox-exporter_allow_namespace" {
-  count = local.prometheus-blackbox-exporter["create_ns"] && local.prometheus-blackbox-exporter["enabled"] && local.prometheus-blackbox-exporter["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.prometheus-blackbox-exporter.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.prometheus-blackbox-exporter.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.prometheus-blackbox-exporter.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

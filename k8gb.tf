@@ -2,14 +2,13 @@ locals {
   k8gb = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].version
-      namespace              = "k8gb"
-      enabled                = false
-      create_ns              = true
-      default_network_policy = false
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].version
+      namespace     = "k8gb"
+      enabled       = false
+      create_ns     = true
     },
     var.k8gb
   )
@@ -56,45 +55,4 @@ resource "helm_release" "k8gb" {
     local.k8gb["extra_values"]
   ]
   namespace = local.k8gb["create_ns"] ? kubernetes_namespace.k8gb.*.metadata.0.name[count.index] : local.k8gb["namespace"]
-}
-
-resource "kubernetes_network_policy" "k8gb_default_deny" {
-  count = local.k8gb["enabled"] && local.k8gb["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.k8gb["namespace"]}-${local.k8gb["name"]}-default-deny"
-    namespace = local.k8gb["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "k8gb_allow_namespace" {
-  count = local.k8gb["enabled"] && local.k8gb["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${local.k8gb["namespace"]}-${local.k8gb["name"]}-default-namespace"
-    namespace = local.k8gb["namespace"]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = local.k8gb["namespace"]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }

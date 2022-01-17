@@ -15,7 +15,6 @@ locals {
       bucket                    = "${var.cluster-name}-velero"
       bucket_force_destroy      = false
       allowed_cidrs             = ["0.0.0.0/0"]
-      default_network_policy    = true
       kms_key_arn_access_list   = []
       name_prefix               = "${var.cluster-name}-velero"
     },
@@ -46,18 +45,18 @@ priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_cla
 credentials:
   useSecret: false
 initContainers:
-   - name: velero-plugin-for-aws
-     image: velero/velero-plugin-for-aws:v1.3.0
-     imagePullPolicy: IfNotPresent
-     volumeMounts:
-       - mountPath: /target
-         name: plugins
-   - name: velero-plugin-for-csi
-     image: velero/velero-plugin-for-csi:v0.2.0
-     imagePullPolicy: IfNotPresent
-     volumeMounts:
-       - mountPath: /target
-         name: plugins
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.3.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+  - name: velero-plugin-for-csi
+    image: velero/velero-plugin-for-csi:v0.2.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
 VALUES
 
 }
@@ -225,76 +224,4 @@ resource "helm_release" "velero" {
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
   ]
-}
-
-resource "kubernetes_network_policy" "velero_default_deny" {
-  count = local.velero["enabled"] && local.velero["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.velero.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.velero.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "velero_allow_namespace" {
-  count = local.velero["enabled"] && local.velero["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.velero.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.velero.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            name = kubernetes_namespace.velero.*.metadata.0.name[count.index]
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
-}
-
-resource "kubernetes_network_policy" "velero_allow_monitoring" {
-  count = local.velero["enabled"] && local.velero["default_network_policy"] ? 1 : 0
-
-  metadata {
-    name      = "${kubernetes_namespace.velero.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.velero.*.metadata.0.name[count.index]
-  }
-
-  spec {
-    pod_selector {
-    }
-
-    ingress {
-      ports {
-        port     = "8085"
-        protocol = "TCP"
-      }
-
-      from {
-        namespace_selector {
-          match_labels = {
-            "${local.labels_prefix}/component" = "monitoring"
-          }
-        }
-      }
-    }
-
-    policy_types = ["Ingress"]
-  }
 }
