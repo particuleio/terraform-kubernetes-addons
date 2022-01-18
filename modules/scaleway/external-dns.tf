@@ -11,29 +11,38 @@ locals {
       service_account_name   = "external-dns"
       enabled                = false
       default_network_policy = true
+      secret_name            = "scaleway-credentials"
     },
     var.external-dns
   )
 
-  values_external-dns = <<VALUES
-provider: scaleway
-scaleway:
-  scwAccessKey: ${local.scaleway["scw_access_key"]}
-  scwSecretKey: ${local.scaleway["scw_secret_key"]}
-  scwDefaultOrganizationId: ${local.scaleway["scw_default_organization_id"]}
-txtPrefix: "ext-dns-"
-policy: sync
-logFormat: json
-txtOwnerId: ${var.cluster-name}
-rbac:
- create: true
- pspEnabled: false
-metrics:
-  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
-  serviceMonitor:
-    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
-priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-VALUES
+  values_external-dns = <<-VALUES
+    provider: scaleway
+    txtPrefix: "ext-dns-"
+    txtOwnerId: ${var.cluster-name}
+    logFormat: json
+    policy: sync
+    logFormat: json
+    serviceMonitor:
+      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
+    priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
+    env:
+    - name: SCW_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ${local.external-dns["secret_name"]}
+          key: SCW_ACCESS_KEY
+    - name: SCW_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ${local.external-dns["secret_name"]}
+          key: SCW_SECRET_KEY
+    - name: SCW_DEFAULT_ORGANIZATION_ID
+      valueFrom:
+        secretKeyRef:
+          name: ${local.external-dns["secret_name"]}
+          key: SCW_DEFAULT_ORGANIZATION_ID
+    VALUES
 }
 
 resource "kubernetes_namespace" "external-dns" {
@@ -78,6 +87,19 @@ resource "helm_release" "external-dns" {
   depends_on = [
     helm_release.kube-prometheus-stack
   ]
+}
+
+resource "kubernetes_secret" "external-dns_scaleway_credentials" {
+  count = local.external-dns["enabled"] ? 1 : 0
+  metadata {
+    name      = local.external-dns["secret_name"]
+    namespace = local.external-dns["namespace"]
+  }
+  data = {
+    SCW_ACCESS_KEY              = local.scaleway["scw_access_key"]
+    SCW_SECRET_KEY              = local.scaleway["scw_secret_key"]
+    SCW_DEFAULT_ORGANIZATION_ID = local.scaleway["scw_default_organization_id"]
+  }
 }
 
 resource "kubernetes_network_policy" "external-dns_default_deny" {

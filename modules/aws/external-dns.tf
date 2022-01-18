@@ -22,25 +22,18 @@ locals {
     {
       values = <<-VALUES
         provider: aws
-        aws:
-          region: ${data.aws_region.current.name}
         txtPrefix: "ext-dns-"
+        txtOwnerId: ${var.cluster-name}
         logFormat: json
         policy: sync
-        txtOwnerId: ${var.cluster-name}
-        rbac:
-         create: true
-         pspEnabled: true
         serviceAccount:
           name: ${v["service_account_name"]}
           annotations:
             eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].iam_role_arn : ""}"
-        metrics:
+        serviceMonitor:
           enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
-          serviceMonitor:
-            enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
         priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
-      VALUES
+        VALUES
     },
     v,
   ) }

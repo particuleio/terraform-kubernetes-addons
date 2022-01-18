@@ -36,13 +36,13 @@ dependencies:
     version: 9.11.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 6.1.1
-    repository: https://charts.bitnami.com/bitnami
+    version: 1.7.1
+    repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
     version: 1.11.4
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 4.0.15
+    version: 4.0.16
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
@@ -90,8 +90,8 @@ dependencies:
     version: 3.10.0
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.10.13
-    repository: https://charts.bitnami.com/bitnami
+    version: 3.7.0
+    repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
     version: 2.0.9
     repository: https://charts.deliveryhero.io/
@@ -117,7 +117,7 @@ dependencies:
     version: 0.27.1
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 8.3.0
+    version: 9.0.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.21.4

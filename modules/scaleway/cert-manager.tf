@@ -13,7 +13,7 @@ locals {
       default_network_policy    = true
       acme_email                = "contact@acme.com"
       acme_http01_enabled       = false
-      acme_http01_ingress_class = ""
+      acme_http01_ingress_class = "nginx"
       acme_dns01_enabled        = false
       allowed_cidrs             = ["0.0.0.0/0"]
       csi_driver                = false
@@ -131,15 +131,16 @@ resource "helm_release" "scaleway-webhook-dns" {
   ]
 }
 
-resource "kubernetes_secret" "scaleway_credentials" {
+resource "kubernetes_secret" "cert-manager_scaleway_credentials" {
   count = local.cert-manager_scaleway_webhook_dns["enabled"] ? 1 : 0
   metadata {
     name      = local.cert-manager_scaleway_webhook_dns["secret_name"]
     namespace = local.cert-manager["namespace"]
   }
   data = {
-    SCW_ACCESS_KEY = local.scaleway["scw_access_key"]
-    SCW_SECRET_KEY = local.scaleway["scw_secret_key"]
+    SCW_ACCESS_KEY              = local.scaleway["scw_access_key"]
+    SCW_SECRET_KEY              = local.scaleway["scw_secret_key"]
+    SCW_DEFAULT_ORGANIZATION_ID = local.scaleway["scw_default_organization_id"]
   }
 }
 
