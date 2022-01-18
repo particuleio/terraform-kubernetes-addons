@@ -15,7 +15,7 @@ locals {
       default_network_policy    = true
       acme_email                = "contact@acme.com"
       acme_http01_enabled       = true
-      acme_http01_ingress_class = ""
+      acme_http01_ingress_class = "nginx"
       acme_dns01_enabled        = true
       allowed_cidrs             = ["0.0.0.0/0"]
       csi_driver                = false
