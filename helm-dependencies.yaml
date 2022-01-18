@@ -36,8 +36,8 @@ dependencies:
     version: 9.11.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 6.1.1
-    repository: https://charts.bitnami.com/bitnami
+    version: 1.7.1
+    repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
     version: 1.11.4
     repository: https://charts.fluxcd.io
@@ -90,8 +90,8 @@ dependencies:
     version: 3.10.0
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 5.10.13
-    repository: https://charts.bitnami.com/bitnami
+    version: 3.7.0
+    repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
     version: 2.0.9
     repository: https://charts.deliveryhero.io/
