@@ -12,7 +12,7 @@ dependencies:
     version: 2.6.2
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.2.2
+    version: 2.2.3
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.11
@@ -27,7 +27,7 @@ dependencies:
     version: 0.3.10
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.6.1
+    version: v1.7.0
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
     version: v0.2.1
@@ -63,10 +63,10 @@ dependencies:
     version: 2.6.4
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 30.1.0
+    version: 30.2.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
-    version: v2.1.7
+    version: v2.1.10
     repository: https://kyverno.github.io/kyverno/
   - name: kyverno-crds
     version: v2.0.3
@@ -105,7 +105,7 @@ dependencies:
     version: 5.3.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: rabbitmq-cluster-operator
-    version: 2.2.0
+    version: 2.2.2
     repository: https://charts.bitnami.com/bitnami
   - name: scaleway-webhook
     version: v0.0.1
@@ -135,5 +135,5 @@ dependencies:
     version: 2.27.3
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.6.6
+    version: 0.6.7
     repository: https://victoriametrics.github.io/helm-charts/
