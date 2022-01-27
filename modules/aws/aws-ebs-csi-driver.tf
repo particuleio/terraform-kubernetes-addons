@@ -213,12 +213,13 @@ resource "aws_kms_alias" "aws-ebs-csi-driver" {
   target_key_id = aws_kms_key.aws-ebs-csi-driver.0.id
 }
 
-resource "kubernetes_manifest" "aws-ebs-csi-driver_vsc" {
-  count    = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.volume_snapshot_class != null ? 1 : 0
-  manifest = yamldecode(local.aws-ebs-csi-driver.volume_snapshot_class)
+resource "kubectl_manifest" "aws-ebs-csi-driver_vsc" {
+  count     = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.volume_snapshot_class != null ? 1 : 0
+  yaml_body = local.aws-ebs-csi-driver.volume_snapshot_class
 
   depends_on = [
     kubectl_manifest.csi-external-snapshotter,
     helm_release.aws-ebs-csi-driver
   ]
+  server_side_apply = true
 }
