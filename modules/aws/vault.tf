@@ -257,13 +257,19 @@ resource "kubernetes_network_policy" "vault_allow_control_plane" {
 }
 
 resource "tls_private_key" "vault-tls-ca-key" {
-  count       = local.vault["generate_ca"] ? 1 : 0
+  count       = local.vault["enabled"] && local.vault["generate_ca"] ? 1 : 0
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P384"
+}
+
+resource "tls_private_key" "vault-tls-issuer" {
+  count       = local.vault["enabled"] && local.vault["use_tls"] ? 1 : 0
   algorithm   = "ECDSA"
   ecdsa_curve = "P384"
 }
 
 resource "tls_self_signed_cert" "vault-tls-ca-cert" {
-  count             = local.vault["generate_ca"] ? 1 : 0
+  count             = local.vault["enabled"] && local.vault["generate_ca"] ? 1 : 0
   key_algorithm     = "ECDSA"
   private_key_pem   = tls_private_key.vault-tls-ca-key[0].private_key_pem
   is_ca_certificate = true
@@ -274,6 +280,26 @@ resource "tls_self_signed_cert" "vault-tls-ca-cert" {
   }
 
   validity_period_hours = 87600
+  early_renewal_hours   = 78840
+
+  allowed_uses = [
+    "cert_signing"
+  ]
+}
+
+resource "tls_self_signed_cert" "vault-tls-issuer" {
+  count             = local.vault["enabled"] && local.vault["use_tls"] ? 1 : 0
+  key_algorithm     = "ECDSA"
+  private_key_pem   = tls_private_key.vault-tls-issuer[0].private_key_pem
+  is_ca_certificate = true
+
+  subject {
+    common_name  = var.cluster-name
+    organization = var.cluster-name
+  }
+
+  validity_period_hours = 87600
+  early_renewal_hours   = 78840
 
   allowed_uses = [
     "cert_signing"
@@ -281,13 +307,13 @@ resource "tls_self_signed_cert" "vault-tls-ca-cert" {
 }
 
 resource "tls_private_key" "vault-tls-client-key" {
-  count       = local.vault["generate_ca"] ? 1 : 0
+  count       = local.vault["enabled"] && local.vault["generate_ca"] ? 1 : 0
   algorithm   = "ECDSA"
   ecdsa_curve = "P384"
 }
 
 resource "tls_cert_request" "vault-tls-client-csr" {
-  count           = local.vault["generate_ca"] ? 1 : 0
+  count           = local.vault["enabled"] && local.vault["generate_ca"] ? 1 : 0
   key_algorithm   = "ECDSA"
   private_key_pem = tls_private_key.vault-tls-client-key[count.index].private_key_pem
 
@@ -328,10 +354,25 @@ resource "kubernetes_secret" "vault-ca" {
   }
 }
 
+resource "kubernetes_secret" "vault-tls-issuer" {
+  count = local.vault["enabled"] && local.vault["use_tls"] ? 1 : 0
+
+  metadata {
+    name      = "${local.vault["name"]}-tls-issuer"
+    namespace = local.vault["create_ns"] ? kubernetes_namespace.vault.*.metadata.0.name[count.index] : local.vault["namespace"]
+  }
+
+  data = {
+    "tls.crt" = tls_self_signed_cert.webhook_issuer_tls.0.cert_pem
+    "tls.key" = tls_private_key.webhook_issuer_tls.0.private_key_pem
+  }
+
+  type = "kubernetes.io/tls"
+}
+
 output "vault_ca_pem" {
   value = element(concat(tls_self_signed_cert.vault-tls-ca-cert[*].cert_pem, [""]), 0)
 }
-
 
 output "vault_ca_key" {
   value     = element(concat(tls_private_key.vault-tls-ca-key[*].private_key_pem, [""]), 0)
