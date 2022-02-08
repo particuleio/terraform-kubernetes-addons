@@ -90,7 +90,7 @@ dependencies:
     version: 3.11.0
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 3.7.0
+    version: 3.8.0
     repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
     version: 2.0.9
