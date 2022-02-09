@@ -48,7 +48,7 @@ locals {
       serviceAccount:
         name: ${local.vault["service_account_name"]}
         annotations:
-          eks.amazonaws.com/role-arn: "${local.vault["enabled"] && local.vault["create_iam_resources_irsa"] ? module.iam_assumable_role_vault.iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.vault["enabled"] && local.vault["create_iam_resources_irsa"] ? module.iam_eks_role_vault.iam_role_arn : ""}"
         updateStrategyType: "RollingUpdate"
       priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
       ha:
@@ -84,16 +84,20 @@ locals {
     VALUES
 }
 
-module "iam_assumable_role_vault" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 4.0"
-  create_role                   = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault["use_kms"]
-  role_name                     = local.vault["name_prefix"]
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault.use_kms ? [aws_iam_policy.vault[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.vault["namespace"]}:${local.vault["service_account_name"]}"]
-  tags                          = local.tags
+module "iam_eks_role_vault" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
+  version = "~> 4.0"
+
+  create_role      = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault["use_kms"]
+  role_name        = local.vault["name_prefix"]
+  role_policy_arns = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault.use_kms ? [aws_iam_policy.vault[0].arn] : []
+
+  cluster_service_accounts = {
+    "${var.cluster-name}" = [
+      "${local.vault["namespace"]}:${local.vault["service_account_name"]}"
+    ],
+  }
+  tags = local.tags
 }
 
 resource "aws_iam_policy" "vault" {

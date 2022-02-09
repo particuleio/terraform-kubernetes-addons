@@ -47,7 +47,7 @@ locals {
           enabled: true
           serviceAccount:
             annotations:
-              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].iam_role_arn : ""}"
+              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_eks_role_thanos-storegateway[k].iam_role_arn : ""}"
           pdb:
             create: true
             minAvailable: 1
@@ -57,17 +57,21 @@ locals {
   ) }
 }
 
-module "iam_assumable_role_thanos-storegateway" {
-  for_each                     = local.thanos-storegateway
-  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 4.0"
-  create_role                  = each.value["enabled"] && each.value["create_iam_resources_irsa"]
-  role_name                    = "${each.value.name_prefix}-${each.key}"
-  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns             = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.thanos-storegateway[each.key].arn] : []
-  number_of_role_policy_arns   = 1
-  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.thanos["namespace"]}:${each.value["name"]}-storegateway"]
-  tags                         = local.tags
+module "iam_eks_role_thanos-storegateway" {
+  source   = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
+  version  = "~> 4.0"
+  for_each = local.thanos-storegateway
+
+  create_role      = each.value["enabled"] && each.value["create_iam_resources_irsa"]
+  role_name        = "${each.value.name_prefix}-${each.key}"
+  role_policy_arns = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.thanos-storegateway[each.key].arn] : []
+
+  cluster_service_accounts = {
+    "${var.cluster-name}" = [
+      "${local.thanos["namespace"]}:${each.value["name"]}-storegateway"
+    ],
+  }
+  tags = local.tags
 }
 
 resource "aws_iam_policy" "thanos-storegateway" {

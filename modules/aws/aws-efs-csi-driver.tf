@@ -34,22 +34,24 @@ locals {
     controller:
       serviceAccount:
         annotations:
-          eks.amazonaws.com/role-arn: "${local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-efs-csi-driver.iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? module.iam_eks_role_aws-efs-csi-driver.iam_role_arn : ""}"
     VALUES
 
 }
 
-module "iam_assumable_role_aws-efs-csi-driver" {
-  source                     = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                    = "~> 4.0"
-  create_role                = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"]
-  role_name                  = local.aws-efs-csi-driver["name_prefix"]
-  provider_url               = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns           = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? [aws_iam_policy.aws-efs-csi-driver[0].arn] : []
-  number_of_role_policy_arns = 1
-  oidc_fully_qualified_subjects = [
-    "system:serviceaccount:${local.aws-efs-csi-driver["namespace"]}:${local.aws-efs-csi-driver["service_account_names"]["controller"]}",
-  ]
+module "iam_eks_role_aws-efs-csi-driver" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
+  version = "~> 4.0"
+
+  create_role      = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"]
+  role_name        = local.aws-efs-csi-driver["name_prefix"]
+  role_policy_arns = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? [aws_iam_policy.aws-efs-csi-driver[0].arn] : []
+
+  cluster_service_accounts = {
+    "${var.cluster-name}" = [
+      "${local.aws-efs-csi-driver["namespace"]}:${local.aws-efs-csi-driver["service_account_names"]["controller"]}",
+    ],
+  }
   tags = local.tags
 }
 

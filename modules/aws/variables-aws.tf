@@ -52,12 +52,6 @@ variable "cni-metrics-helper" {
   default     = {}
 }
 
-variable "eks" {
-  description = "EKS cluster inputs"
-  type        = any
-  default     = {}
-}
-
 variable "prometheus-cloudwatch-exporter" {
   description = "Customize prometheus-cloudwatch-exporter chart, see `prometheus-cloudwatch-exporter.tf` for supported values"
   type        = any

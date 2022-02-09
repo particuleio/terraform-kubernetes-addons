@@ -33,7 +33,7 @@ locals {
         minAvailable: 1
       serviceAccount:
         annotations:
-          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_eks_role_thanos.iam_role_arn : ""}"
     metrics:
       enabled: true
       serviceMonitor:
@@ -76,7 +76,7 @@ locals {
       enabled: true
       serviceAccount:
         annotations:
-          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_eks_role_thanos.iam_role_arn : ""}"
     storegateway:
       extraFlags:
         - --ignore-deletion-marks-delay=24h
@@ -84,7 +84,7 @@ locals {
       enabled: true
       serviceAccount:
         annotations:
-          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos.iam_role_arn : ""}"
+          eks.amazonaws.com/role-arn: "${local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? module.iam_eks_role_thanos.iam_role_arn : ""}"
       pdb:
         create: true
         minAvailable: 1
@@ -219,18 +219,21 @@ locals {
     VALUES
 }
 
-module "iam_assumable_role_thanos" {
-  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 4.0"
-  create_role                  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"]
-  role_name                    = local.thanos["name_prefix"]
-  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns             = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? [aws_iam_policy.thanos[0].arn] : []
-  number_of_role_policy_arns   = 1
-  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.thanos["namespace"]}:${local.thanos["name"]}-*"]
-  tags                         = local.tags
-}
+module "iam_eks_role_thanos" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
+  version = "~> 4.0"
 
+  create_role      = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"]
+  role_name        = local.thanos["name_prefix"]
+  role_policy_arns = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? [aws_iam_policy.thanos[0].arn] : []
+
+  cluster_service_accounts = {
+    "${var.cluster-name}" = [
+      "${local.thanos["namespace"]}:${local.thanos["name"]}-*"
+    ],
+  }
+  tags = local.tags
+}
 
 resource "aws_iam_policy" "thanos" {
   count  = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? 1 : 0

@@ -32,7 +32,7 @@ locals {
     serviceAccount:
       name: ${local.loki-stack["name"]}
       annotations:
-        eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_assumable_role_loki-stack.iam_role_arn : ""}"
+        eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_eks_role_loki-stack.iam_role_arn : ""}"
     persistence:
       enabled: true
     config:
@@ -55,16 +55,20 @@ locals {
     VALUES
 }
 
-module "iam_assumable_role_loki-stack" {
-  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 4.0"
-  create_role                  = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"]
-  role_name                    = local.loki-stack["name_prefix"]
-  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns             = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? [aws_iam_policy.loki-stack[0].arn] : []
-  number_of_role_policy_arns   = 1
-  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.loki-stack["namespace"]}:${local.loki-stack["name"]}"]
-  tags                         = local.tags
+module "iam_eks_role_loki-stack" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
+  version = "~> 4.0"
+
+  create_role      = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"]
+  role_name        = local.loki-stack["name_prefix"]
+  role_policy_arns = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? [aws_iam_policy.loki-stack[0].arn] : []
+
+  cluster_service_accounts = {
+    "${var.cluster-name}" = [
+      "${local.loki-stack["namespace"]}:${local.loki-stack["name"]}"
+    ],
+  }
+  tags = local.tags
 }
 
 resource "aws_iam_policy" "loki-stack" {

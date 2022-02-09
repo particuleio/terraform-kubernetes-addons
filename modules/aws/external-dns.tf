@@ -12,6 +12,7 @@ locals {
       enabled                   = false
       create_iam_resources_irsa = true
       iam_policy_override       = null
+      create_ns                 = true
       default_network_policy    = true
       name_prefix               = "${var.cluster-name}"
     },
@@ -29,7 +30,7 @@ locals {
         serviceAccount:
           name: ${v["service_account_name"]}
           annotations:
-            eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_assumable_role_external-dns[k].iam_role_arn : ""}"
+            eks.amazonaws.com/role-arn: "${v["create_iam_resources_irsa"] ? module.iam_eks_role_external-dns[k].iam_role_arn : ""}"
         serviceMonitor:
           enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
         priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
@@ -39,17 +40,21 @@ locals {
   ) }
 }
 
-module "iam_assumable_role_external-dns" {
-  for_each                      = local.external-dns
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 4.0"
-  create_role                   = each.value["enabled"] && each.value["create_iam_resources_irsa"]
-  role_name                     = "${each.value.name_prefix}-${each.key}"
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.external-dns[each.key].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${each.value["namespace"]}:${each.value["service_account_name"]}"]
-  tags                          = local.tags
+module "iam_eks_role_external-dns" {
+  source   = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
+  version  = "~> 4.0"
+  for_each = local.external-dns
+
+  create_role      = each.value["enabled"] && each.value["create_iam_resources_irsa"]
+  role_name        = "${each.value.name_prefix}-${each.key}"
+  role_policy_arns = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.external-dns[each.key].arn] : []
+
+  cluster_service_accounts = {
+    "${var.cluster-name}" = [
+      "${each.value["namespace"]}:${each.value["service_account_name"]}"
+    ],
+  }
+  tags = local.tags
 }
 
 resource "aws_iam_policy" "external-dns" {
