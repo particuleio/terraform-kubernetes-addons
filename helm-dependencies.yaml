@@ -102,7 +102,7 @@ dependencies:
     version: 0.18.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 5.3.2
+    version: 5.4.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: rabbitmq-cluster-operator
     version: 2.3.1
