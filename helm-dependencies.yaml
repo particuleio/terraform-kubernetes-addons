@@ -111,7 +111,7 @@ dependencies:
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.1.3
+    version: 2.1.4
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
     version: 0.28.0
