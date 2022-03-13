@@ -41,6 +41,9 @@ jobs:
 
     - uses: actions/setup-python@v3
 
+    - name: 'asdf:install'
+      uses: asdf-vm/actions/install@v1.1.0
+
     - name: Check modules
       uses: pre-commit/action@v2.0.3
       with:
