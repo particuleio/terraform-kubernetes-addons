@@ -1,0 +1,3 @@
+terraform 1.1.7
+tflint 0.34.1
+terraform-docs 0.16.0
