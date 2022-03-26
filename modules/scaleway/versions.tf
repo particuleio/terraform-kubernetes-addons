@@ -9,7 +9,7 @@ terraform {
     }
     flux = {
       source  = "fluxcd/flux"
-      version = "~> 0.11"
+      version = "<= 0.12"
     }
     github = {
       source  = "integrations/github"
@@ -17,7 +17,7 @@ terraform {
     }
     scaleway = {
       source  = "scaleway/scaleway"
-      version = "~> 2.0"
+      version = ">= 2.2.0"
     }
   }
 }
