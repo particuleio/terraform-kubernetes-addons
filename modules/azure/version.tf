@@ -1,7 +1,7 @@
 terraform {
   required_version = ">= 0.13"
   required_providers {
-    azurerm    = "~> 2.0"
+    azurerm    = ">= 2.0.0"
     helm       = "~> 2.0"
     kubernetes = "~> 2.0"
     kubectl = {
@@ -10,7 +10,7 @@ terraform {
     }
     flux = {
       source  = "fluxcd/flux"
-      version = "~> 0.11"
+      version = "<= 0.12"
     }
     github = {
       source  = "integrations/github"
