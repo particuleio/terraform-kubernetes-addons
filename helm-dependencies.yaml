@@ -137,3 +137,6 @@ dependencies:
   - name: victoria-metrics-k8s-stack
     version: 0.7.11
     repository: https://victoriametrics.github.io/helm-charts/
+  - name: tempo
+    version: 0.14.2
+    repository: https://grafana.github.io/helm-charts
