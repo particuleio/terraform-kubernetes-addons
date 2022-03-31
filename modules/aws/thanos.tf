@@ -267,7 +267,7 @@ module "thanos_bucket" {
   create_bucket = local.thanos["enabled"] && local.thanos["create_bucket"]
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   block_public_acls       = true
   block_public_policy     = true
