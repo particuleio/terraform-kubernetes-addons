@@ -255,3 +255,9 @@ variable "victoria-metrics-k8s-stack" {
   type        = any
   default     = {}
 }
+
+variable "tempo" {
+  description = "Customize tempo chart, see `tempo.tf` for supported values"
+  type        = any
+  default     = {}
+}
