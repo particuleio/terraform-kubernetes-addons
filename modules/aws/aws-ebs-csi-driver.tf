@@ -209,7 +209,7 @@ resource "aws_kms_key" "aws-ebs-csi-driver" {
 
 resource "aws_kms_alias" "aws-ebs-csi-driver" {
   count         = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.create_kms_key ? 1 : 0
-  name          = "alias/aws-ebs-csi-driver-${local.aws-ebs-csi-driver.override_kms_alias != null ? local.aws-ebs-csi-driver.override_kms_alias : var.cluster-name}"
+  name          = "alias/ebs-csi-driver-${local.aws-ebs-csi-driver.override_kms_alias != null ? local.aws-ebs-csi-driver.override_kms_alias : var.cluster-name}"
   target_key_id = aws_kms_key.aws-ebs-csi-driver.0.id
 }
 
