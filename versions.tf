@@ -9,7 +9,7 @@ terraform {
     }
     flux = {
       source  = "fluxcd/flux"
-      version = "<= 0.13"
+      version = "<= 0.14"
     }
     github = {
       source  = "integrations/github"
