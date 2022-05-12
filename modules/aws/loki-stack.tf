@@ -189,6 +189,8 @@ module "loki_bucket" {
     }
   }
 
+  tags = local.tags
+
   lifecycle_rule = local.loki-stack["bucket_lifecycle_rule"]
 }
 
