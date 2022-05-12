@@ -51,6 +51,7 @@ resource "kubernetes_namespace" "ingress-nginx" {
 
   metadata {
     labels = {
+      name                               = local.ingress-nginx["namespace"]
       "${local.labels_prefix}/component" = "ingress"
     }
 
