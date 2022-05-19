@@ -41,7 +41,7 @@ locals {
 
 module "iam_assumable_role_aws-efs-csi-driver" {
   source                     = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                    = "~> 4.0"
+  version                    = "~> 5.0"
   create_role                = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"]
   role_name                  = local.aws-efs-csi-driver["name_prefix"]
   provider_url               = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")

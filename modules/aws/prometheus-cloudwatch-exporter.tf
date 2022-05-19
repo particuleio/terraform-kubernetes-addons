@@ -32,7 +32,7 @@ locals {
 
 module "iam_assumable_role_prometheus-cloudwatch-exporter" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 4.0"
+  version                       = "~> 5.0"
   create_role                   = local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["create_iam_resources_irsa"]
   role_name                     = local.prometheus-cloudwatch-exporter["name_prefix"]
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
