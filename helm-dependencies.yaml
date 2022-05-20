@@ -114,7 +114,7 @@ dependencies:
     version: 2.1.8
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
-    version: 0.28.0
+    version: 0.29.0
     repository: https://strimzi.io/charts/
   - name: thanos
     version: 10.4.1
