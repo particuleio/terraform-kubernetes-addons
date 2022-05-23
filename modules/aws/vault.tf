@@ -86,7 +86,7 @@ locals {
 
 module "iam_assumable_role_vault" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 4.0"
+  version                       = "~> 5.0"
   create_role                   = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault["use_kms"]
   role_name                     = local.vault["name_prefix"]
   provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
