@@ -105,7 +105,7 @@ dependencies:
     version: 5.8.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: rabbitmq-cluster-operator
-    version: 2.6.3
+    version: 2.6.4
     repository: https://charts.bitnami.com/bitnami
   - name: scaleway-webhook
     version: v0.0.1
