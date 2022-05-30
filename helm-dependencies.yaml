@@ -15,10 +15,10 @@ dependencies:
     version: 2.2.6
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.1.16
+    version: 0.1.17
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.4.1
+    version: 1.4.2
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.18.4
@@ -39,10 +39,10 @@ dependencies:
     version: 1.9.0
     repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
-    version: 1.13.0
+    version: 1.13.1
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 4.1.1
+    version: 4.1.2
     repository: https://kubernetes.github.io/ingress-nginx
   - name: istio-operator
     version: 1.7.0
@@ -63,7 +63,7 @@ dependencies:
     version: 2.8.2
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 35.3.1
+    version: 35.4.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: v2.3.3
@@ -87,7 +87,7 @@ dependencies:
     version: 2.11.1
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 4.2.0
+    version: 4.2.1
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.8.2
@@ -96,7 +96,7 @@ dependencies:
     version: 2.2.1
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 3.3.0
+    version: 3.3.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.18.0
@@ -105,7 +105,7 @@ dependencies:
     version: 5.8.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: rabbitmq-cluster-operator
-    version: 2.6.3
+    version: 2.6.4
     repository: https://charts.bitnami.com/bitnami
   - name: scaleway-webhook
     version: v0.0.1
@@ -117,22 +117,22 @@ dependencies:
     version: 0.29.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 10.4.2
+    version: 10.5.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.23.1
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 10.19.5
+    version: 10.20.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.0.21
+    version: 6.1.0
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.20.0
+    version: 0.20.1
     repository: https://helm.releases.hashicorp.com
   - name: velero
-    version: 2.29.6
+    version: 2.29.7
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
     version: 0.9.2
