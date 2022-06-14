@@ -30,8 +30,6 @@ env:
   database: "off"
 admin:
   type: ClusterIP
-podSecurityPolicy:
-  enabled: true
 autoscaling:
   enabled: true
 replicaCount: 2

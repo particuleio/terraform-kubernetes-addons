@@ -34,14 +34,12 @@ controller:
   config:
     use-proxy-protocol: "true"
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-defaultBackend:
-  replicaCount: 2
-podSecurityPolicy:
-  enabled: false
   admissionWebhooks:
     patch:
       podAnnotations:
         linkerd.io/inject: disabled
+defaultBackend:
+  replicaCount: 2
 VALUES
 
 }

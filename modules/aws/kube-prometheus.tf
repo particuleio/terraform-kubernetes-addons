@@ -44,7 +44,7 @@ grafana:
         global:
           enabled: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
   rbac:
-    pspUseAppArmor: false
+    pspEnabled: false
   serviceAccount:
     create: true
     name: ${local.kube-prometheus-stack["grafana_service_account_name"]}

@@ -19,7 +19,7 @@ locals {
   values_kube-prometheus-stack = <<VALUES
 grafana:
   rbac:
-    pspUseAppArmor: false
+    pspEnabled: false
   adminPassword: ${join(",", random_string.grafana_password.*.result)}
   dashboardProviders:
     dashboardproviders.yaml:

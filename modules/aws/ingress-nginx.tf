@@ -37,8 +37,6 @@ controller:
   config:
     use-proxy-protocol: "true"
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-podSecurityPolicy:
-  enabled: true
   admissionWebhooks:
     patch:
       podAnnotations:
@@ -63,8 +61,6 @@ controller:
   publishService:
     enabled: true
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-podSecurityPolicy:
-  enabled: true
   admissionWebhooks:
     patch:
       podAnnotations:
@@ -89,8 +85,6 @@ controller:
   publishService:
     enabled: true
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-podSecurityPolicy:
-  enabled: true
   admissionWebhooks:
     patch:
       podAnnotations:
@@ -122,8 +116,6 @@ controller:
     use-forwarded-headers: "true"
     proxy-real-ip-cidr: "0.0.0.0/0"
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
-podSecurityPolicy:
-  enabled: true
   admissionWebhooks:
     patch:
       podAnnotations:
