@@ -25,7 +25,6 @@ autoDiscovery:
 awsRegion: ${data.aws_region.current.name}
 rbac:
   create: true
-  pspEnabled: true
   serviceAccount:
     name: ${local.cluster-autoscaler["service_account_name"]}
     annotations:

@@ -39,13 +39,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v4
 
     - name: 'asdf:install'
       uses: asdf-vm/actions/install@v1.1.0
 
     - name: Check modules
-      uses: pre-commit/action@v2.0.3
+      uses: pre-commit/action@v3.0.0
       with:
         extra_args: --show-diff-on-failure --all-files
 

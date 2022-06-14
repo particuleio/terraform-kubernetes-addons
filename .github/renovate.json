@@ -15,7 +15,8 @@
     "workarounds:all",
     ":automergeDigest",
     ":automergePatch",
-    ":automergeMinor"
+    ":automergeMinor",
+    ":dependencyDashboard"
   ],
   "baseBranches": ["main"],
   "enabledManagers": ["helmv3", "github-actions", "pre-commit", "terraform"],

@@ -26,9 +26,6 @@ locals {
 
   values_cert-manager = <<VALUES
 global:
-  podSecurityPolicy:
-    enabled: true
-    useAppArmor: false
   priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 serviceAccount:
   name: ${local.cert-manager["service_account_name"]}

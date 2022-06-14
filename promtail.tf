@@ -26,20 +26,8 @@ locals {
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     config:
-      lokiAddress: ${local.promtail["loki_address"]}
-      file: |
-        server:
-          log_level: info
-          http_listen_port: {{ .Values.config.serverPort }}
-        client:
-          url: {{ .Values.config.lokiAddress }}
-          tls_config:
-            {{- toYaml .Values.config.snippets.tls_config | nindent 4 }}
-        positions:
-          filename: /run/promtail/positions.yaml
-        scrape_configs:
-          {{- tpl .Values.config.snippets.scrapeConfigs $ | nindent 2 }}
-          {{- tpl .Values.config.snippets.extraScrapeConfigs . | nindent 2 }}
+      clients:
+        - url: ${local.promtail["loki_address"]}
     tolerations:
       - effect: NoSchedule
         operator: Exists
@@ -71,10 +59,11 @@ locals {
         mountPath: /tls
         readOnly: true
     config:
-      snippets:
-        tls_config:
-          cert_file: /tls/tls.crt
-          key_file: /tls/tls.key
+      clients:
+        - url: ${local.promtail["loki_address"]}
+          tls_config:
+            cert_file: /tls/tls.crt
+            key_file: /tls/tls.key
     VALUES
 }
 

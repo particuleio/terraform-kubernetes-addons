@@ -18,7 +18,6 @@ locals {
   values_flux = <<VALUES
 rbac:
   create: true
-  pspEnabled: false
 syncGarbageCollection:
   enabled: true
   dry: false
