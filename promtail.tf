@@ -39,6 +39,9 @@ locals {
 
   values_promtail_tls = <<-VALUES
     defaultVolumes:
+      - name: run
+        hostPath:
+          path: /run/promtail
       - name: containers
         hostPath:
           path: /var/lib/docker/containers
@@ -49,6 +52,8 @@ locals {
         secret:
           secretName: ${local.promtail["name"]}-tls
     defaultVolumeMounts:
+      - name: run
+        mountPath: /run/promtail
       - name: containers
         mountPath: /var/lib/docker/containers
         readOnly: true
