@@ -100,4 +100,3 @@ resource "kubernetes_network_policy" "sealed-secrets_allow_namespace" {
     policy_types = ["Ingress"]
   }
 }
-

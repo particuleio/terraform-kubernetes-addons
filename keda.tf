@@ -103,4 +103,3 @@ resource "kubernetes_network_policy" "keda_allow_namespace" {
     policy_types = ["Ingress"]
   }
 }
-
