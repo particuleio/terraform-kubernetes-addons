@@ -250,4 +250,3 @@ resource "kubernetes_network_policy" "flux2_allow_namespace" {
     policy_types = ["Ingress"]
   }
 }
-

@@ -59,6 +59,3 @@ resource "helm_release" "ingress-nginx" {
   }
 
 }
-
-
-

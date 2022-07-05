@@ -199,4 +199,3 @@ resource "kubernetes_network_policy" "kong_allow_monitoring" {
     policy_types = ["Ingress"]
   }
 }
-

@@ -9,13 +9,13 @@ dependencies:
     version: 0.2.0
     repository: https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
   - name: aws-ebs-csi-driver
-    version: 2.6.10
+    version: 2.8.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.2.6
+    version: 2.2.7
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.1.17
+    version: 0.1.18
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
     version: 1.4.2
@@ -27,13 +27,13 @@ dependencies:
     version: 0.3.11
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.8.0
+    version: v1.8.2
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
-    version: v0.3.0
+    version: v0.3.2
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.19.1
+    version: 9.19.2
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
     version: 1.9.0
@@ -60,13 +60,13 @@ dependencies:
     version: 18.1.1
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.9.1
+    version: 2.10.2
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 36.0.1
+    version: 36.2.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
-    version: v2.5.0
+    version: v2.5.1
     repository: https://kyverno.github.io/kyverno/
   - name: kyverno-crds
     version: v2.0.3
@@ -81,13 +81,13 @@ dependencies:
     repository: https://helm.linkerd.io/edge
     version: 21.12.4
   - name: loki-stack
-    version: 2.6.4
+    version: 2.6.5
     repository: https://grafana.github.io/helm-charts
   - name: loki
-    version: 2.12.1
+    version: 2.12.2
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 5.1.0
+    version: 6.0.2
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.8.2
@@ -99,41 +99,41 @@ dependencies:
     version: 3.3.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
-    version: 0.19.0
+    version: 0.19.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 5.8.1
+    version: 5.8.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: rabbitmq-cluster-operator
-    version: 2.6.6
+    version: 2.6.8
     repository: https://charts.bitnami.com/bitnami
   - name: scaleway-webhook
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.2.0
+    version: 2.3.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
     version: 0.29.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 10.5.2
+    version: 10.5.4
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.23.1
+    version: v3.23.2
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 10.20.1
+    version: 10.24.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.1.4
+    version: 6.1.5
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.20.1
     repository: https://helm.releases.hashicorp.com
   - name: velero
-    version: 2.29.8
+    version: 2.30.1
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.9.3
+    version: 0.9.5
     repository: https://victoriametrics.github.io/helm-charts/
