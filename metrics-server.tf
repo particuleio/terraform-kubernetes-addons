@@ -139,4 +139,3 @@ resource "kubernetes_network_policy" "metrics-server_allow_control_plane" {
     policy_types = ["Ingress"]
   }
 }
-
