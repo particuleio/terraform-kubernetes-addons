@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch:
 
 env:
   TERRAFORM_DOCS_VERSION: v0.16.0

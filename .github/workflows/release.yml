@@ -4,17 +4,12 @@ on:
   push:
     branches:
     - release
-  pull_request:
-    branches:
-      - release
-  workflow_dispatch:
 
 jobs:
-
   terraform-release:
     if: github.ref == 'refs/heads/release'
     name: 'terraform:release'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3
