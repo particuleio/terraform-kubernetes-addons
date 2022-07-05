@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    branches:
+    - release
+  pull_request:
+    branches:
+      - release
+  workflow_dispatch:
+
+jobs:
+
+  terraform-release:
+    if: github.ref == 'refs/heads/release'
+    name: 'terraform:release'
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Semantic Release
+      uses: cycjimmy/semantic-release-action@v2
+      with:
+        semantic_version: 7.0.0
+        extra_plugins: |
+          @semantic-release/changelog@6.0.0
+          @semantic-release/git@10.0.0
+          conventional-changelog-conventionalcommits@4.6.3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
