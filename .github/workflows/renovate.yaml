@@ -1,0 +1,30 @@
+name: Renovate
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  renovate-config-check:
+    name: 'renovate:config'
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/release'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        check-latest: true
+
+    - name: Install Renovate
+      run: npm install -g renovate
+
+    - name: Check Renovate configuraton
+      run: renovate-config-validator
