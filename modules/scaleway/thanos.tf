@@ -48,7 +48,7 @@ locals {
       pdb:
         create: true
         minAvailable: 1
-      stores: ${jsonencode(concat([for k, v in local.thanos-tls-querier : "dnssrv+_grpc._tcp.${v["name"]}-query.${local.thanos["namespace"]}.svc.cluster.local"], [for k, v in local.thanos-storegateway : "dnssrv+_grpc._tcp.${v["name"]}-storegateway.${local.thanos["namespace"]}.svc.cluster.local"]))}
+      stores: ${jsonencode(concat([for k, v in local.thanos-tls-querier : "dnssrv+_grpc._tcp.${v["name"]}-query-grpc.${local.thanos["namespace"]}.svc.cluster.local"], [for k, v in local.thanos-storegateway : "dnssrv+_grpc._tcp.${v["name"]}-storegateway.${local.thanos["namespace"]}.svc.cluster.local"]))}
     queryFrontend:
       extraFlags:
         - --query-frontend.compress-responses
