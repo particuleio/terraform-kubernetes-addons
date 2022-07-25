@@ -27,6 +27,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 1.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0, != 2.12 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 3.0 |
 
 ## Providers
 
@@ -41,7 +42,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.0, != 2.12 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 | <a name="provider_time"></a> [time](#provider\_time) | n/a |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 3.0 |
 
 ## Modules
 
