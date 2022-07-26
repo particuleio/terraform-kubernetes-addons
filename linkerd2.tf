@@ -193,7 +193,6 @@ resource "tls_private_key" "linkerd_trust_anchor" {
 
 resource "tls_self_signed_cert" "linkerd_trust_anchor" {
   count                 = local.linkerd2["enabled"] && local.linkerd2["trust_anchor_pem"] == null ? 1 : 0
-  key_algorithm         = tls_private_key.linkerd_trust_anchor.0.algorithm
   private_key_pem       = tls_private_key.linkerd_trust_anchor.0.private_key_pem
   validity_period_hours = 87600
   early_renewal_hours   = 78840
@@ -232,7 +231,6 @@ resource "tls_private_key" "webhook_issuer_tls" {
 
 resource "tls_self_signed_cert" "webhook_issuer_tls" {
   count                 = local.linkerd2["enabled"] ? 1 : 0
-  key_algorithm         = tls_private_key.webhook_issuer_tls.0.algorithm
   private_key_pem       = tls_private_key.webhook_issuer_tls.0.private_key_pem
   validity_period_hours = 87600
   early_renewal_hours   = 78840
