@@ -1,0 +1,19 @@
+name: Add everything to project
+
+on:
+  issues:
+    types:
+      - opened
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    name: Add to project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.3.0
+        with:
+          project-url: https://github.com/orgs/particuleio/projects/6
+          github-token: ${{ secrets.GITHUB_TOKEN }}
