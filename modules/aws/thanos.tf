@@ -347,7 +347,6 @@ resource "tls_private_key" "thanos-tls-querier-ca-key" {
 
 resource "tls_self_signed_cert" "thanos-tls-querier-ca-cert" {
   count             = local.thanos["generate_ca"] ? 1 : 0
-  key_algorithm     = "ECDSA"
   private_key_pem   = tls_private_key.thanos-tls-querier-ca-key[0].private_key_pem
   is_ca_certificate = true
 

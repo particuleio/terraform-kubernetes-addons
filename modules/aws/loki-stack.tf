@@ -202,7 +202,6 @@ resource "tls_private_key" "loki-stack-ca-key" {
 
 resource "tls_self_signed_cert" "loki-stack-ca-cert" {
   count             = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] ? 1 : 0
-  key_algorithm     = "ECDSA"
   private_key_pem   = tls_private_key.loki-stack-ca-key[0].private_key_pem
   is_ca_certificate = true
 
@@ -305,7 +304,6 @@ resource "tls_private_key" "promtail-key" {
 
 resource "tls_cert_request" "promtail-csr" {
   count           = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] && local.loki-stack["create_promtail_cert"] ? 1 : 0
-  key_algorithm   = "ECDSA"
   private_key_pem = tls_private_key.promtail-key[count.index].private_key_pem
 
   subject {
@@ -320,7 +318,6 @@ resource "tls_cert_request" "promtail-csr" {
 resource "tls_locally_signed_cert" "promtail-cert" {
   count              = local.loki-stack["enabled"] && local.loki-stack["generate_ca"] && local.loki-stack["create_promtail_cert"] ? 1 : 0
   cert_request_pem   = tls_cert_request.promtail-csr[count.index].cert_request_pem
-  ca_key_algorithm   = "ECDSA"
   ca_private_key_pem = tls_private_key.loki-stack-ca-key[count.index].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.loki-stack-ca-cert[count.index].cert_pem
 

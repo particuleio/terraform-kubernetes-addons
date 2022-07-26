@@ -152,7 +152,6 @@ resource "tls_private_key" "vault-tls-ca-key" {
 
 resource "tls_self_signed_cert" "vault-tls-ca-cert" {
   count             = local.vault["generate_ca"] ? 1 : 0
-  key_algorithm     = "ECDSA"
   private_key_pem   = tls_private_key.vault-tls-ca-key[0].private_key_pem
   is_ca_certificate = true
 
@@ -176,7 +175,6 @@ resource "tls_private_key" "vault-tls-client-key" {
 
 resource "tls_cert_request" "vault-tls-client-csr" {
   count           = local.vault["generate_ca"] ? 1 : 0
-  key_algorithm   = "ECDSA"
   private_key_pem = tls_private_key.vault-tls-client-key[count.index].private_key_pem
 
   subject {
@@ -191,7 +189,6 @@ resource "tls_cert_request" "vault-tls-client-csr" {
 resource "tls_locally_signed_cert" "vault-tls-client-cert" {
   count              = local.vault["generate_ca"] ? 1 : 0
   cert_request_pem   = tls_cert_request.vault-tls-client-csr[count.index].cert_request_pem
-  ca_key_algorithm   = "ECDSA"
   ca_private_key_pem = tls_private_key.vault-tls-ca-key[count.index].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.vault-tls-ca-cert[count.index].cert_pem
 
