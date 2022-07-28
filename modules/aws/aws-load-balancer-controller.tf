@@ -6,7 +6,7 @@ locals {
       chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].name
       repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].repository
       chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].version
-      namespace                 = "aws-load-balancer-controller"
+      namespace                 = local.aws-load-balancer-controller["namespace"] ? "aws-load-balancer-controller" : local.aws-load-balancer-controller["namespace"]
       service_account_name      = "aws-load-balancer-controller"
       create_iam_resources_irsa = true
       enabled                   = false
