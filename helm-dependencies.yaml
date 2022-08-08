@@ -135,5 +135,5 @@ dependencies:
     version: 2.30.2
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.10.2
+    version: 0.10.3
     repository: https://victoriametrics.github.io/helm-charts/
