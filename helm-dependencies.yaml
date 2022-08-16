@@ -81,7 +81,7 @@ dependencies:
     repository: https://helm.linkerd.io/edge
     version: 21.12.4
   - name: loki-stack
-    version: 2.6.9
+    version: 2.7.0
     repository: https://grafana.github.io/helm-charts
   - name: loki
     version: 2.14.1
