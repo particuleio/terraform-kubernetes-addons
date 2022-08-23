@@ -117,7 +117,7 @@ dependencies:
     version: 0.30.0
     repository: https://strimzi.io/charts/
   - name: thanos
-    version: 11.2.0
+    version: 11.2.1
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.24.0
