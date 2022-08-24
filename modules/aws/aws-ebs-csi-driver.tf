@@ -79,7 +79,7 @@ data "aws_iam_policy_document" "aws-ebs-csi-driver" {
 }
 
 data "aws_iam_policy_document" "aws-ebs-csi-driver_kms" {
-  count       = local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? 1 : 0
+  count       = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? 1 : 0
   source_json = templatefile("${path.module}/iam/aws-ebs-csi-driver_kms.json", { kmsKeyId = local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver.0.arn : local.aws-ebs-csi-driver.existing_kms_key_arn })
 }
 
