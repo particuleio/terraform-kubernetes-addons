@@ -39,7 +39,7 @@ dependencies:
     version: 1.11.0
     repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
-    version: 1.13.2
+    version: 1.13.3
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
     version: 4.2.3
