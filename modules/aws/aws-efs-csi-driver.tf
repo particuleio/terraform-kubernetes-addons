@@ -90,6 +90,7 @@ resource "aws_efs_file_system" "aws-efs-csi-driver" {
   count                           = local.aws-efs-csi-driver["enabled"] && lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? 1 : 0
   creation_token                  = local.aws-efs-csi-driver["name_prefix"]
   encrypted                       = lookup(local.aws-efs-csi-driver, "encrypted", "true")
+  kms_key_id                      = lookup(local.aws-efs-csi-driver, "kms_key_id", null)
   performance_mode                = lookup(local.aws-efs-csi-driver, "performance_mode", "generalPurpose")
   provisioned_throughput_in_mibps = lookup(local.aws-efs-csi-driver, "provisioned_throughput_in_mibps", 0)
   throughput_mode                 = lookup(local.aws-efs-csi-driver, "provisioned_throughput_in_mibps", 0) == 0 ? "bursting" : "provisioned"
@@ -149,7 +150,54 @@ resource "helm_release" "aws-efs-csi-driver" {
     local.values_aws-efs-csi-driver,
     local.aws-efs-csi-driver["extra_values"]
   ]
+
+  #TODO(bogdando): create a shared template and refer it in addons (copy-pasta until then)
+  dynamic "set" {
+    for_each = {
+      for c, v in local.images_data.aws-efs-csi-driver.containers :
+      c => v if v.rewrite_values.tag != null
+    }
+    content {
+      name  = set.value.rewrite_values.tag.name
+      value = try(local.aws-efs-csi-driver["containers_versions"][set.value.rewrite_values.tag.name], set.value.rewrite_values.tag.value)
+    }
+  }
+  dynamic "set" {
+    for_each = local.images_data.aws-efs-csi-driver.containers
+    content {
+      name = set.value.rewrite_values.image.name
+      value = set.value.ecr_prepare_images && set.value.source_provided ? "${
+        aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].repository_url}${set.value.rewrite_values.image.tail
+        }" : set.value.ecr_prepare_images ? "${
+        aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].name
+      }" : set.value.rewrite_values.image.value
+    }
+  }
+  dynamic "set" {
+    for_each = {
+      for c, v in local.images_data.aws-efs-csi-driver.containers :
+      c => v if v.rewrite_values.registry != null
+    }
+    content {
+      name = set.value.rewrite_values.registry.name
+      # when unset, it should be replaced with the one prepared on ECR
+      value = set.value.rewrite_values.registry.value != null ? set.value.rewrite_values.registry.value : split(
+        "/", aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].repository_url
+      )[0]
+    }
+  }
+
   namespace = local.aws-efs-csi-driver["create_ns"] ? kubernetes_namespace.aws-efs-csi-driver.*.metadata.0.name[count.index] : local.aws-efs-csi-driver["namespace"]
+
+  depends_on = [
+    skopeo_copy.this
+  ]
 }
 
 resource "kubernetes_storage_class" "aws-efs-csi-driver" {

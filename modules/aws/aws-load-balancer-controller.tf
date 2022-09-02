@@ -84,7 +84,54 @@ resource "helm_release" "aws-load-balancer-controller" {
     local.values_aws-load-balancer-controller,
     local.aws-load-balancer-controller["extra_values"]
   ]
+
+  #TODO(bogdando): create a shared template and refer it in addons (copy-pasta until then)
+  dynamic "set" {
+    for_each = {
+      for c, v in local.images_data.aws-load-balancer-controller.containers :
+      c => v if v.rewrite_values.tag != null
+    }
+    content {
+      name  = set.value.rewrite_values.tag.name
+      value = try(local.aws-load-balancer-controller["containers_versions"][set.value.rewrite_values.tag.name], set.value.rewrite_values.tag.value)
+    }
+  }
+  dynamic "set" {
+    for_each = local.images_data.aws-load-balancer-controller.containers
+    content {
+      name = set.value.rewrite_values.image.name
+      value = set.value.ecr_prepare_images && set.value.source_provided ? "${
+        aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].repository_url}${set.value.rewrite_values.image.tail
+        }" : set.value.ecr_prepare_images ? "${
+        aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].name
+      }" : set.value.rewrite_values.image.value
+    }
+  }
+  dynamic "set" {
+    for_each = {
+      for c, v in local.images_data.aws-load-balancer-controller.containers :
+      c => v if v.rewrite_values.registry != null
+    }
+    content {
+      name = set.value.rewrite_values.registry.name
+      # when unset, it should be replaced with the one prepared on ECR
+      value = set.value.rewrite_values.registry.value != null ? set.value.rewrite_values.registry.value : split(
+        "/", aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].repository_url
+      )[0]
+    }
+  }
+
   namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+
+  depends_on = [
+    skopeo_copy.this
+  ]
 }
 
 resource "kubernetes_network_policy" "aws-load-balancer-controller_default_deny" {

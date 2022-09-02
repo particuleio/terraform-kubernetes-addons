@@ -162,10 +162,53 @@ resource "helm_release" "ingress-nginx" {
     local.ingress-nginx["use_nlb_ip"] ? local.values_ingress-nginx_nlb_ip : local.ingress-nginx["use_nlb"] ? local.values_ingress-nginx_nlb : local.ingress-nginx["use_l7"] ? local.values_ingress-nginx_l7 : local.values_ingress-nginx_l4,
     local.ingress-nginx["extra_values"],
   ]
+
+  #TODO(bogdando): create a shared template and refer it in addons (copy-pasta until then)
+  dynamic "set" {
+    for_each = {
+      for c, v in local.images_data.ingress-nginx.containers :
+      c => v if v.rewrite_values.tag != null
+    }
+    content {
+      name  = set.value.rewrite_values.tag.name
+      value = try(local.ingress-nginx["containers_versions"][set.value.rewrite_values.tag.name], set.value.rewrite_values.tag.value)
+    }
+  }
+  dynamic "set" {
+    for_each = local.images_data.ingress-nginx.containers
+    content {
+      name = set.value.rewrite_values.image.name
+      value = set.value.ecr_prepare_images && set.value.source_provided ? "${
+        aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].repository_url}${set.value.rewrite_values.image.tail
+        }" : set.value.ecr_prepare_images ? "${
+        aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].name
+      }" : set.value.rewrite_values.image.value
+    }
+  }
+  dynamic "set" {
+    for_each = {
+      for c, v in local.images_data.ingress-nginx.containers :
+      c => v if v.rewrite_values.registry != null
+    }
+    content {
+      name = set.value.rewrite_values.registry.name
+      # when unset, it should be replaced with the one prepared on ECR
+      value = set.value.rewrite_values.registry.value != null ? set.value.rewrite_values.registry.value : split(
+        "/", aws_ecr_repository.this[
+          format("%s.%s", split(".", set.key)[0], split(".", set.key)[2])
+        ].repository_url
+      )[0]
+    }
+  }
+
   namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
 
   depends_on = [
-    kubectl_manifest.prometheus-operator_crds
+    kubectl_manifest.prometheus-operator_crds, skopeo_copy.this
   ]
 }
 
