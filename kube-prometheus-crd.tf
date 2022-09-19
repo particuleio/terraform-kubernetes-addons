@@ -1,6 +1,6 @@
 locals {
 
-  prometheus-operator_crd_version = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? yamldecode(data.http.prometheus-operator_version.0.body).appVersion : ""
+  prometheus-operator_crd_version = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? yamldecode(data.http.prometheus-operator_version.0.response_body).appVersion : ""
 
   prometheus-operator_crds = [
     "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml",
@@ -15,7 +15,7 @@ locals {
 
   prometheus-operator_chart = "https://raw.githubusercontent.com/prometheus-community/helm-charts/kube-prometheus-stack-${local.kube-prometheus-stack.chart_version}/charts/kube-prometheus-stack/Chart.yaml"
 
-  prometheus-operator_crds_apply = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? { for k, v in data.http.prometheus-operator_crds : lower(join("/", compact([yamldecode(v.body).apiVersion, yamldecode(v.body).kind, lookup(yamldecode(v.body).metadata, "namespace", ""), yamldecode(v.body).metadata.name]))) => v.body
+  prometheus-operator_crds_apply = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? { for k, v in data.http.prometheus-operator_crds : lower(join("/", compact([yamldecode(v.response_body).apiVersion, yamldecode(v.response_body).kind, lookup(yamldecode(v.response_body).metadata, "namespace", ""), yamldecode(v.response_body).metadata.name]))) => v.response_body
   } : null
 
 }

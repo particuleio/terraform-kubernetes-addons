@@ -9,15 +9,19 @@ terraform {
     }
     flux = {
       source  = "fluxcd/flux"
-      version = "<= 0.17"
+      version = "~> 0.18"
     }
     github = {
       source  = "integrations/github"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
     tls = {
       source  = "hashicorp/tls"
       version = "~> 4.0"
+    }
+    http = {
+      source  = "hashicorp/http"
+      version = ">= 3"
     }
   }
 }

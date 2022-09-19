@@ -22,7 +22,7 @@ data "http" "secrets-store-csi-driver-provider-aws" {
 
 data "kubectl_file_documents" "secrets-store-csi-driver-provider-aws" {
   count   = local.secrets-store-csi-driver-provider-aws.enabled ? 1 : 0
-  content = data.http.secrets-store-csi-driver-provider-aws[0].body
+  content = data.http.secrets-store-csi-driver-provider-aws[0].response_body
 }
 
 resource "kubectl_manifest" "secrets-store-csi-driver-provider-aws" {

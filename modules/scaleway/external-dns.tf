@@ -85,7 +85,7 @@ resource "helm_release" "external-dns" {
   namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

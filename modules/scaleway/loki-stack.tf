@@ -118,7 +118,7 @@ resource "helm_release" "loki-stack" {
   namespace = local.loki-stack["create_ns"] ? kubernetes_namespace.loki-stack.*.metadata.0.name[count.index] : local.loki-stack["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

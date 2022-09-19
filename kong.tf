@@ -83,7 +83,7 @@ resource "helm_release" "kong" {
   namespace = kubernetes_namespace.kong.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

@@ -150,7 +150,7 @@ resource "helm_release" "cluster-autoscaler" {
   namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

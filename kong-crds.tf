@@ -18,7 +18,7 @@ data "http" "kong_crds" {
 
 data "kubectl_file_documents" "kong_crds" {
   count   = local.kong.enabled && local.kong.manage_crds ? 1 : 0
-  content = data.http.kong_crds[0].body
+  content = data.http.kong_crds[0].response_body
 }
 
 resource "kubectl_manifest" "kong_crds" {

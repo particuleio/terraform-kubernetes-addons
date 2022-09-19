@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "cert-manager" {
       "route53:GetChange"
     ]
 
-    resources = ["arn:${var.arn-partition}:route53:::change/*"]
+    resources = ["arn:${local.arn-partition}:route53:::change/*"]
   }
 
   statement {
@@ -79,7 +79,7 @@ data "aws_iam_policy_document" "cert-manager" {
       "route53:ListResourceRecordSets"
     ]
 
-    resources = ["arn:${var.arn-partition}:route53:::hostedzone/*"]
+    resources = ["arn:${local.arn-partition}:route53:::hostedzone/*"]
 
   }
 
@@ -139,7 +139,7 @@ resource "helm_release" "cert-manager" {
   namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

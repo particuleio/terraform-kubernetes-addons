@@ -104,7 +104,7 @@ resource "helm_release" "flux" {
   namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

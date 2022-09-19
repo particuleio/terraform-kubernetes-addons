@@ -1,6 +1,6 @@
 variable "arn-partition" {
   description = "ARN partition"
-  default     = "aws"
+  default     = ""
   type        = string
 }
 

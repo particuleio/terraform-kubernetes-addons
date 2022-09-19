@@ -59,7 +59,7 @@ resource "helm_release" "keda" {
   namespace = local.keda["create_ns"] ? kubernetes_namespace.keda.*.metadata.0.name[count.index] : local.keda["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

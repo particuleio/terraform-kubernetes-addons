@@ -22,9 +22,10 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.72 |
-| <a name="requirement_flux"></a> [flux](#requirement\_flux) | <= 0.17 |
-| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 4.0 |
+| <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 0.18 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
+| <a name="requirement_http"></a> [http](#requirement\_http) | >= 3 |
 | <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 1.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0, != 2.12 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
@@ -34,10 +35,10 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.72 |
-| <a name="provider_flux"></a> [flux](#provider\_flux) | <= 0.17 |
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 4.0 |
+| <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 0.18 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 5.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
-| <a name="provider_http"></a> [http](#provider\_http) | n/a |
+| <a name="provider_http"></a> [http](#provider\_http) | >= 3 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 1.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.0, != 2.12 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
@@ -360,6 +361,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | [aws_iam_policy_document.velero](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.velero_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.velero_kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [flux_install.main](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/install) | data source |
 | [flux_sync.main](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/data-sources/sync) | data source |
@@ -381,7 +383,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_admiralty"></a> [admiralty](#input\_admiralty) | Customize admiralty chart, see `admiralty.tf` for supported values | `any` | `{}` | no |
-| <a name="input_arn-partition"></a> [arn-partition](#input\_arn-partition) | ARN partition | `string` | `"aws"` | no |
+| <a name="input_arn-partition"></a> [arn-partition](#input\_arn-partition) | ARN partition | `string` | `""` | no |
 | <a name="input_aws"></a> [aws](#input\_aws) | AWS provider customization | `any` | `{}` | no |
 | <a name="input_aws-ebs-csi-driver"></a> [aws-ebs-csi-driver](#input\_aws-ebs-csi-driver) | Customize aws-ebs-csi-driver helm chart, see `aws-ebs-csi-driver.tf` | `any` | `{}` | no |
 | <a name="input_aws-efs-csi-driver"></a> [aws-efs-csi-driver](#input\_aws-efs-csi-driver) | Customize aws-efs-csi-driver helm chart, see `aws-efs-csi-driver.tf` | `any` | `{}` | no |

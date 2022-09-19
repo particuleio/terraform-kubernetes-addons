@@ -381,7 +381,7 @@ data "aws_iam_policy_document" "kube-prometheus-stack_thanos" {
       "s3:ListBucket"
     ]
 
-    resources = ["arn:${var.arn-partition}:s3:::${local.kube-prometheus-stack["thanos_bucket"]}"]
+    resources = ["arn:${local.arn-partition}:s3:::${local.kube-prometheus-stack["thanos_bucket"]}"]
   }
 
   statement {
@@ -391,7 +391,7 @@ data "aws_iam_policy_document" "kube-prometheus-stack_thanos" {
       "s3:*Object"
     ]
 
-    resources = ["arn:${var.arn-partition}:s3:::${local.kube-prometheus-stack["thanos_bucket"]}/*"]
+    resources = ["arn:${local.arn-partition}:s3:::${local.kube-prometheus-stack["thanos_bucket"]}/*"]
   }
 }
 

@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "loki-stack" {
       "s3:ListBucket"
     ]
 
-    resources = ["arn:${var.arn-partition}:s3:::${local.loki-stack["bucket"]}"]
+    resources = ["arn:${local.arn-partition}:s3:::${local.loki-stack["bucket"]}"]
   }
 
   statement {
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "loki-stack" {
       "s3:*Object"
     ]
 
-    resources = ["arn:${var.arn-partition}:s3:::${local.loki-stack["bucket"]}/*"]
+    resources = ["arn:${local.arn-partition}:s3:::${local.loki-stack["bucket"]}/*"]
   }
 }
 
@@ -161,7 +161,7 @@ resource "helm_release" "loki-stack" {
   namespace = local.loki-stack["create_ns"] ? kubernetes_namespace.loki-stack.*.metadata.0.name[count.index] : local.loki-stack["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 
