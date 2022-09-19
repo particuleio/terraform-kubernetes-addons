@@ -59,7 +59,7 @@ resource "helm_release" "rabbitmq-operator" {
   namespace = local.rabbitmq-operator["create_ns"] ? kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index] : local.rabbitmq-operator["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

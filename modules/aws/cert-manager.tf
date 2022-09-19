@@ -139,7 +139,7 @@ resource "helm_release" "cert-manager" {
   namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

@@ -114,7 +114,7 @@ resource "helm_release" "promtail" {
   namespace = local.promtail["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack,
+    kubectl_manifest.prometheus-operator_crds,
     helm_release.loki-stack,
     kubernetes_secret.loki-stack-ca,
     kubernetes_secret.promtail-tls

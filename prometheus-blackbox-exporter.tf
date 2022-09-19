@@ -62,7 +62,7 @@ resource "helm_release" "prometheus-blackbox-exporter" {
   namespace = local.prometheus-blackbox-exporter["create_ns"] ? kubernetes_namespace.prometheus-blackbox-exporter.*.metadata.0.name[count.index] : local.prometheus-blackbox-exporter["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

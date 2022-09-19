@@ -62,7 +62,7 @@ resource "helm_release" "traefik" {
   namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack,
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

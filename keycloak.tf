@@ -60,7 +60,7 @@ resource "helm_release" "keycloak" {
   namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 

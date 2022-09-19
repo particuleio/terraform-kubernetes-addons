@@ -104,7 +104,7 @@ resource "helm_release" "prometheus-cloudwatch-exporter" {
   namespace = local.prometheus-cloudwatch-exporter["create_ns"] ? kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index] : local.prometheus-cloudwatch-exporter["namespace"]
 
   depends_on = [
-    helm_release.kube-prometheus-stack
+    kubectl_manifest.prometheus-operator_crds
   ]
 }
 
