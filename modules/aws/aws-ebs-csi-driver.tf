@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "aws-ebs-csi-driver_kms" {
 data "aws_iam_policy_document" "aws-ebs-csi-driver_default" {
   count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.create_iam_resources_irsa ? 1 : 0
   source_policy_documents = [
-    templatefile("${path.module}/iam/aws-ebs-csi-driver.json", { arn-partition = var.arn-partition }),
+    templatefile("${path.module}/iam/aws-ebs-csi-driver.json", { arn-partition = local.arn-partition }),
   ]
 }
 

@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "external-dns" {
       "route53:ChangeResourceRecordSets"
     ]
 
-    resources = ["arn:${var.arn-partition}:route53:::hostedzone/*"]
+    resources = ["arn:${local.arn-partition}:route53:::hostedzone/*"]
   }
 
   statement {

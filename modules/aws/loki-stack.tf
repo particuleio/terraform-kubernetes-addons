@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "loki-stack" {
       "s3:ListBucket"
     ]
 
-    resources = ["arn:${var.arn-partition}:s3:::${local.loki-stack["bucket"]}"]
+    resources = ["arn:${local.arn-partition}:s3:::${local.loki-stack["bucket"]}"]
   }
 
   statement {
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "loki-stack" {
       "s3:*Object"
     ]
 
-    resources = ["arn:${var.arn-partition}:s3:::${local.loki-stack["bucket"]}/*"]
+    resources = ["arn:${local.arn-partition}:s3:::${local.loki-stack["bucket"]}/*"]
   }
 }
 

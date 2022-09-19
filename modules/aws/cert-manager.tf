@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "cert-manager" {
       "route53:GetChange"
     ]
 
-    resources = ["arn:${var.arn-partition}:route53:::change/*"]
+    resources = ["arn:${local.arn-partition}:route53:::change/*"]
   }
 
   statement {
@@ -79,7 +79,7 @@ data "aws_iam_policy_document" "cert-manager" {
       "route53:ListResourceRecordSets"
     ]
 
-    resources = ["arn:${var.arn-partition}:route53:::hostedzone/*"]
+    resources = ["arn:${local.arn-partition}:route53:::hostedzone/*"]
 
   }
 
