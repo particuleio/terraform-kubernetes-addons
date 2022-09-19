@@ -79,13 +79,17 @@ data "aws_iam_policy_document" "aws-ebs-csi-driver" {
 }
 
 data "aws_iam_policy_document" "aws-ebs-csi-driver_kms" {
-  count       = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? 1 : 0
-  source_json = templatefile("${path.module}/iam/aws-ebs-csi-driver_kms.json", { kmsKeyId = local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver.0.arn : local.aws-ebs-csi-driver.existing_kms_key_arn })
+  count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? 1 : 0
+  source_policy_documents = [
+    templatefile("${path.module}/iam/aws-ebs-csi-driver_kms.json", { kmsKeyId = local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver.0.arn : local.aws-ebs-csi-driver.existing_kms_key_arn }),
+  ]
 }
 
 data "aws_iam_policy_document" "aws-ebs-csi-driver_default" {
-  count       = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.create_iam_resources_irsa ? 1 : 0
-  source_json = templatefile("${path.module}/iam/aws-ebs-csi-driver.json", { arn-partition = var.arn-partition })
+  count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.create_iam_resources_irsa ? 1 : 0
+  source_policy_documents = [
+    templatefile("${path.module}/iam/aws-ebs-csi-driver.json", { arn-partition = var.arn-partition }),
+  ]
 }
 
 resource "aws_iam_policy" "aws-ebs-csi-driver" {
