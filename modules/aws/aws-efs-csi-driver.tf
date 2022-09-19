@@ -61,8 +61,10 @@ data "aws_iam_policy_document" "aws-efs-csi-driver" {
 }
 
 data "aws_iam_policy_document" "aws-efs-csi-driver_default" {
-  count       = local.aws-efs-csi-driver.enabled && local.aws-efs-csi-driver.create_iam_resources_irsa ? 1 : 0
-  source_json = templatefile("${path.module}/iam/aws-efs-csi-driver.json", { arn-partition = var.arn-partition })
+  count = local.aws-efs-csi-driver.enabled && local.aws-efs-csi-driver.create_iam_resources_irsa ? 1 : 0
+  source_policy_documents = [
+    templatefile("${path.module}/iam/aws-efs-csi-driver.json", { arn-partition = var.arn-partition }),
+  ]
 }
 
 resource "aws_iam_policy" "aws-efs-csi-driver" {
