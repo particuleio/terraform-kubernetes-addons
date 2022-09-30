@@ -10,7 +10,7 @@ locals {
       namespace              = "monitoring"
       create_ns              = false
       enabled                = false
-      loki_address           = "http://${local.loki-stack["name"]}:3100/loki/api/v1/push"
+      loki_address           = "http://${local.loki-stack["name"]}-write:3100/loki/api/v1/push"
       use_tls                = false
       tls_crt                = null
       tls_key                = null
