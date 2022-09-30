@@ -127,7 +127,7 @@ resource "kubernetes_config_map" "loki-stack_grafana_ds" {
         name: Loki
         orgId: 1
         type: loki
-        url: http://${local.loki-stack["name"]}:3100
+        url: http://${local.loki-stack["name"]}-gateway
         version: 1
       VALUES
   }
