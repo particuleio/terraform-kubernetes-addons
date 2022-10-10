@@ -26,6 +26,11 @@ locals {
   )
 
   values_loki-stack = <<-VALUES
+    monitoring:
+      selfMonitoring:
+        enabled: false
+        grafanaAgent:
+          installOperator: false
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
@@ -35,23 +40,31 @@ locals {
         eks.amazonaws.com/role-arn: "${local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? module.iam_assumable_role_loki-stack.iam_role_arn : ""}"
     persistence:
       enabled: true
-    config:
-      schema_config:
+    loki:
+      auth_enabled: false
+      compactor:
+        shared_store: aws
+      storage:
+        bucketNames:
+          chunks: "${local.loki-stack["bucket"]}"
+          ruler: "${local.loki-stack["bucket"]}"
+          admin: "${local.loki-stack["bucket"]}"
+        s3:
+          region: eu-west-1
+      schemaConfig:
         configs:
-          - from: 2020-10-24
-            store: boltdb-shipper
-            object_store: s3
-            schema: v11
-            index:
-              prefix: loki_index_
-              period: 24h
+        - from: 2020-10-24
+          store: boltdb-shipper
+          object_store: aws
+          schema: v12
+          index:
+            prefix: loki_index_
+            period: 24h
       storage_config:
         aws:
           s3: "s3://${data.aws_region.current.name}/${local.loki-stack["bucket"]}"
         boltdb_shipper:
-          shared_store: s3
-      compactor:
-        shared_store: s3
+          shared_store: aws
     VALUES
 }
 
