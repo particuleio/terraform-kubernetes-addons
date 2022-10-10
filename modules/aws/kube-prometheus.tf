@@ -587,7 +587,16 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
   }
 }
 
-output "grafana_password" {
-  value     = element(concat(random_string.grafana_password.*.result, [""]), 0)
+output "kube-prometheus-stack" {
+  value = {
+    iam_assumable_role_kube-prometheus-stack_grafana = module.iam_assumable_role_kube-prometheus-stack_grafana
+    iam_assumable_role_kube-prometheus-stack_thanos  = module.iam_assumable_role_kube-prometheus-stack_thanos
+  }
+}
+
+output "kube-prometheus-stack_sensitive" {
+  value = {
+    grafana_password = element(concat(random_string.grafana_password.*.result, [""]), 0)
+  }
   sensitive = true
 }
