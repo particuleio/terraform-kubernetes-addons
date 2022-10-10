@@ -3,7 +3,7 @@ locals {
   csi-external-snapshotter = merge(
     {
       enabled = false
-      version = "v6.0.1"
+      version = "v6.1.0"
     },
     var.csi-external-snapshotter
   )
