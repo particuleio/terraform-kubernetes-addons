@@ -444,7 +444,8 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Description |
 |------|-------------|
-| <a name="output_grafana_password"></a> [grafana\_password](#output\_grafana\_password) | n/a |
+| <a name="output_kube-prometheus-stack"></a> [kube-prometheus-stack](#output\_kube-prometheus-stack) | n/a |
+| <a name="output_kube-prometheus-stack_sensitive"></a> [kube-prometheus-stack\_sensitive](#output\_kube-prometheus-stack\_sensitive) | n/a |
 | <a name="output_loki-stack-ca"></a> [loki-stack-ca](#output\_loki-stack-ca) | n/a |
 | <a name="output_promtail-cert"></a> [promtail-cert](#output\_promtail-cert) | n/a |
 | <a name="output_promtail-key"></a> [promtail-key](#output\_promtail-key) | n/a |
