@@ -9,10 +9,10 @@ dependencies:
     version: 1.2.4
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.12.0
+    version: 2.12.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.2.8
+    version: 2.2.9
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.21
@@ -63,7 +63,7 @@ dependencies:
     version: 2.13.1
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 40.5.0
+    version: 41.3.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: 2.6.0
@@ -123,16 +123,16 @@ dependencies:
     version: v3.24.1
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 12.0.7
+    version: 14.0.1
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.2.6
+    version: 6.2.7
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.22.0
     repository: https://helm.releases.hashicorp.com
   - name: velero
-    version: 2.31.8
+    version: 2.32.0
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
     version: 0.12.5
