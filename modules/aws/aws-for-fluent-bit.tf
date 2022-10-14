@@ -14,7 +14,7 @@ locals {
       iam_policy_override              = null
       default_network_policy           = true
       containers_log_retention_in_days = 180
-      kms_key_id                       = ""
+      kms_key_id                       = null
       name_prefix                      = "${var.cluster-name}-aws-for-fluent-bit"
     },
     var.aws-for-fluent-bit
