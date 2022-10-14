@@ -81,7 +81,7 @@ resource "aws_cloudwatch_log_group" "aws-for-fluent-bit" {
   count             = local.aws-for-fluent-bit["enabled"] ? 1 : 0
   name              = "/aws/eks/${var.cluster-name}/containers"
   retention_in_days = local.aws-for-fluent-bit["containers_log_retention_in_days"]
-  kms_key_id        = local.aws-for-fluent-bit["containers_log_retention_in_days"]
+  kms_key_id        = local.aws-for-fluent-bit["kms_key_id"]
 }
 
 resource "kubernetes_namespace" "aws-for-fluent-bit" {
