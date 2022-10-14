@@ -22,6 +22,8 @@ locals {
   )
 
   values_loki-stack = <<-VALUES
+    global
+      dnsService: coredns
     monitoring:
       selfMonitoring:
         enabled: false
