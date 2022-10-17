@@ -123,7 +123,7 @@ dependencies:
     version: v3.24.1
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 15.1.1
+    version: 15.2.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
     version: 6.2.7
