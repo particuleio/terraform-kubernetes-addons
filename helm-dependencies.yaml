@@ -48,7 +48,7 @@ dependencies:
     version: 1.7.0
     repository: https://clusterfrak-dynamics.github.io/istio/
   - name: k8gb
-    version: v0.9.0
+    version: v0.10.0
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
