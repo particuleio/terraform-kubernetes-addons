@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.13"
+  required_version = ">= 1.0"
   required_providers {
     aws        = ">= 3.72"
     helm       = "~> 2.0"
@@ -10,7 +10,7 @@ terraform {
     }
     flux = {
       source  = "fluxcd/flux"
-      version = "~> 0.19"
+      version = "~> 0.20"
     }
     github = {
       source  = "integrations/github"
