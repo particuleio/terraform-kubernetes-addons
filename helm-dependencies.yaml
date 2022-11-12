@@ -87,7 +87,7 @@ dependencies:
     version: 3.3.4
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.6.1
+    version: 6.6.2
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.8.2
