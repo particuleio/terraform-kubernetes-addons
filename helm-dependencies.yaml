@@ -66,7 +66,7 @@ dependencies:
     version: 41.9.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
-    version: 2.6.1
+    version: 2.6.2
     repository: https://kyverno.github.io/kyverno/
   - name: kyverno-crds
     version: v2.0.3
