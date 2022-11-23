@@ -26,6 +26,8 @@ locals {
   )
 
   values_loki-stack = <<-VALUES
+    test:
+      enabled: false
     monitoring:
       selfMonitoring:
         enabled: false
