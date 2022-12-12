@@ -255,3 +255,9 @@ variable "victoria-metrics-k8s-stack" {
   type        = any
   default     = {}
 }
+
+variable "actions-runner-controller" {
+  description = "Customize Actions Runner Controller chart, see `actions-runner-controller.tf` for supported values"
+  type        = any
+  default     = {}
+}

@@ -137,3 +137,6 @@ dependencies:
   - name: victoria-metrics-k8s-stack
     version: 0.13.2
     repository: https://victoriametrics.github.io/helm-charts/
+  - name: actions-runner-controller
+    version: 0.21.1
+    repository: https://actions-runner-controller.github.io/actions-runner-controller
