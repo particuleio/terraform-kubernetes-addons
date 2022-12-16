@@ -57,7 +57,7 @@ dependencies:
     version: 2.9.1
     repository: https://kedacore.github.io/charts
   - name: keycloak
-    version: 18.3.0
+    version: 18.4.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
     version: 2.13.1
