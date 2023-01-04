@@ -58,6 +58,12 @@ variable "eks" {
   default     = {}
 }
 
+variable "karpenter" {
+  description = "Customize karpenter chart, see `karpenter.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "prometheus-cloudwatch-exporter" {
   description = "Customize prometheus-cloudwatch-exporter chart, see `prometheus-cloudwatch-exporter.tf` for supported values"
   type        = any
