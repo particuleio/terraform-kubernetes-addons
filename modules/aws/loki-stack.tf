@@ -29,12 +29,12 @@ locals {
     test:
       enabled: false
     monitoring:
+      lokiCanary:
+        enabled: false    
       selfMonitoring:
         enabled: false
         grafanaAgent:
           installOperator: false
-        lokiCanary:
-          enabled: false
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
