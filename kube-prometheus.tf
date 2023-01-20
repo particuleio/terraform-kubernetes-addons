@@ -103,6 +103,13 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
 
     name = local.kube-prometheus-stack["namespace"]
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+      metadata[0].labels,
+    ]
+  }
 }
 
 resource "random_string" "grafana_password" {
