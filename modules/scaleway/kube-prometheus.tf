@@ -272,6 +272,13 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
 
     name = local.kube-prometheus-stack["namespace"]
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+      metadata[0].labels,
+    ]
+  }
 }
 
 resource "scaleway_object_bucket" "kube-prometheus-stack_thanos_bucket" {
