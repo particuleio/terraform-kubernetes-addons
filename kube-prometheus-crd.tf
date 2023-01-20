@@ -3,14 +3,14 @@ locals {
   prometheus-operator_crd_version = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? yamldecode(data.http.prometheus-operator_version.0.response_body).appVersion : ""
 
   prometheus-operator_crds = [
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml",
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml",
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml",
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml",
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml",
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml",
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml",
-    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml"
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml",
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml",
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml",
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml",
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml",
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml",
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml",
+    "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml"
   ]
 
   prometheus-operator_chart = "https://raw.githubusercontent.com/prometheus-community/helm-charts/kube-prometheus-stack-${local.kube-prometheus-stack.chart_version}/charts/kube-prometheus-stack/Chart.yaml"
