@@ -3,9 +3,9 @@ locals {
   external-dns = { for k, v in var.external-dns : k => merge(
     local.helm_defaults,
     {
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].version
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "external-dns")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "external-dns")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "external-dns")].version
       name                      = k
       namespace                 = k
       service_account_name      = "external-dns"
@@ -13,7 +13,7 @@ locals {
       create_iam_resources_irsa = true
       iam_policy_override       = null
       default_network_policy    = true
-      name_prefix               = "${var.cluster-name}"
+      name_prefix               = var.cluster-name
     },
     v,
   ) }

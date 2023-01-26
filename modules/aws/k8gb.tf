@@ -2,10 +2,10 @@ locals {
   k8gb = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "k8gb")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "k8gb")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "k8gb")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "k8gb")].version
       namespace              = "k8gb"
       enabled                = false
       create_ns              = true

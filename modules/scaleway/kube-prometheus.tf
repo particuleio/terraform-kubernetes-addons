@@ -2,10 +2,10 @@ locals {
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
-      name                    = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].name
-      chart                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].name
-      repository              = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].repository
-      chart_version           = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].version
+      name                    = local.helm_dependencies[index(local.helm_dependencies[*].name, "kube-prometheus-stack")].name
+      chart                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "kube-prometheus-stack")].name
+      repository              = local.helm_dependencies[index(local.helm_dependencies[*].name, "kube-prometheus-stack")].repository
+      chart_version           = local.helm_dependencies[index(local.helm_dependencies[*].name, "kube-prometheus-stack")].version
       namespace               = "monitoring"
       thanos_sidecar_enabled  = false
       thanos_create_bucket    = true

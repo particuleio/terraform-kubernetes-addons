@@ -2,10 +2,10 @@ locals {
   velero = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "velero")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "velero")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "velero")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "velero")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[*].name, "velero")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "velero")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "velero")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "velero")].version
       namespace                 = "velero"
       service_account_name      = "velero"
       enabled                   = false
@@ -77,15 +77,15 @@ module "iam_assumable_role_velero" {
 resource "aws_iam_policy" "velero" {
   count  = local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? 1 : 0
   name   = local.velero["name_prefix"]
-  policy = local.velero["iam_policy_override"] == null ? data.aws_iam_policy_document.velero.0.json : local.velero["iam_policy_override"]
+  policy = local.velero["iam_policy_override"] == null ? data.aws_iam_policy_document.velero[0].json : local.velero["iam_policy_override"]
   tags   = local.tags
 }
 
 data "aws_iam_policy_document" "velero" {
   count = local.velero.enabled && local.velero.create_iam_resources_irsa ? 1 : 0
   source_policy_documents = [
-    data.aws_iam_policy_document.velero_default.0.json,
-    local.velero.kms_key_arn_access_list != [] ? data.aws_iam_policy_document.velero_kms.0.json : jsonencode({})
+    data.aws_iam_policy_document.velero_default[0].json,
+    length(local.velero.kms_key_arn_access_list) != 0 ? data.aws_iam_policy_document.velero_kms[0].json : jsonencode({})
   ]
 }
 
@@ -127,7 +127,7 @@ data "aws_iam_policy_document" "velero_default" {
 }
 
 data "aws_iam_policy_document" "velero_kms" {
-  count = local.velero.enabled && local.velero.create_iam_resources_irsa && local.velero.kms_key_arn_access_list != [] ? 1 : 0
+  count = local.velero.enabled && local.velero.create_iam_resources_irsa && length(local.velero.kms_key_arn_access_list) != 0 ? 1 : 0
 
   statement {
     effect = "Allow"

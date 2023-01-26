@@ -26,7 +26,9 @@ User guides, feature documentation and examples are available [here](https://git
 | <a name="requirement_http"></a> [http](#requirement\_http) | >= 3 |
 | <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 1.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0, != 2.12 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3 |
 | <a name="requirement_scaleway"></a> [scaleway](#requirement\_scaleway) | >= 2.2.0 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | >= 0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
 
 ## Providers
@@ -39,9 +41,9 @@ User guides, feature documentation and examples are available [here](https://git
 | <a name="provider_http"></a> [http](#provider\_http) | >= 3 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 1.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.0, != 2.12 |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3 |
 | <a name="provider_scaleway"></a> [scaleway](#provider\_scaleway) | >= 2.2.0 |
-| <a name="provider_time"></a> [time](#provider\_time) | n/a |
+| <a name="provider_time"></a> [time](#provider\_time) | >= 0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
 
 ## Modules

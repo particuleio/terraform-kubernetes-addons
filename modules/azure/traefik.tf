@@ -3,10 +3,10 @@ locals {
   traefik = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "traefik")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "traefik")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "traefik")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "traefik")].version
       namespace              = "traefik"
       enabled                = false
       ingress_cidrs          = ["0.0.0.0/0"]

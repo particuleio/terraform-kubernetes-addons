@@ -2,10 +2,10 @@ locals {
   linkerd2 = merge(
     local.helm_defaults,
     {
-      name               = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].name
-      chart              = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].name
-      repository         = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].repository
-      chart_version      = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].version
+      name               = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].name
+      chart              = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].name
+      repository         = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].repository
+      chart_version      = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].version
       namespace          = "linkerd"
       create_ns          = true
       enabled            = false

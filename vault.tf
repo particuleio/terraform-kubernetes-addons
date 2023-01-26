@@ -2,10 +2,10 @@ locals {
   vault = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].version
       namespace              = "vault"
       enabled                = false
       create_ns              = true

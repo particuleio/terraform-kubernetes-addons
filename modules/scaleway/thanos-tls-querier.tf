@@ -3,9 +3,9 @@ locals {
   thanos-tls-querier = { for k, v in var.thanos-tls-querier : k => merge(
     local.helm_defaults,
     {
-      chart              = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].name
-      repository         = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].repository
-      chart_version      = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].version
+      chart              = local.helm_dependencies[index(local.helm_dependencies[*].name, "thanos")].name
+      repository         = local.helm_dependencies[index(local.helm_dependencies[*].name, "thanos")].repository
+      chart_version      = local.helm_dependencies[index(local.helm_dependencies[*].name, "thanos")].version
       name               = "${local.thanos["name"]}-tls-querier-${k}"
       enabled            = false
       generate_cert      = local.thanos["generate_ca"]
@@ -120,7 +120,7 @@ resource "helm_release" "thanos-tls-querier" {
     each.value["default_global_limits"] ? local.values_thanos_global_limits : null,
     each.value["extra_values"]
   ])
-  namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos[0].metadata[0].name[0] : local.thanos["namespace"]
+  namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos[*].metadata[0].name[0] : local.thanos["namespace"]
 
   depends_on = [
     helm_release.kube-prometheus-stack,

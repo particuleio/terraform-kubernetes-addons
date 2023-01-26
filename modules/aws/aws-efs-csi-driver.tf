@@ -2,10 +2,10 @@ locals {
   aws-efs-csi-driver = merge(
     local.helm_defaults,
     {
-      name          = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-efs-csi-driver")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-efs-csi-driver")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-efs-csi-driver")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-efs-csi-driver")].version
+      name          = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-efs-csi-driver")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-efs-csi-driver")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-efs-csi-driver")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-efs-csi-driver")].version
       namespace     = "kube-system"
       create_ns     = false
       service_account_names = {
@@ -56,7 +56,7 @@ module "iam_assumable_role_aws-efs-csi-driver" {
 data "aws_iam_policy_document" "aws-efs-csi-driver" {
   count = local.aws-efs-csi-driver.enabled && local.aws-efs-csi-driver.create_iam_resources_irsa ? 1 : 0
   source_policy_documents = [
-    data.aws_iam_policy_document.aws-efs-csi-driver_default.0.json
+    data.aws_iam_policy_document.aws-efs-csi-driver_default[0].json
   ]
 }
 
@@ -70,7 +70,7 @@ data "aws_iam_policy_document" "aws-efs-csi-driver_default" {
 resource "aws_iam_policy" "aws-efs-csi-driver" {
   count  = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? 1 : 0
   name   = local.aws-efs-csi-driver["name_prefix"]
-  policy = local.aws-efs-csi-driver["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-efs-csi-driver.0.json : local.aws-efs-csi-driver["iam_policy_override"]
+  policy = local.aws-efs-csi-driver["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-efs-csi-driver[0].json : local.aws-efs-csi-driver["iam_policy_override"]
   tags   = local.tags
 }
 
@@ -105,9 +105,9 @@ resource "aws_efs_file_system" "aws-efs-csi-driver" {
 
 resource "aws_efs_mount_target" "aws-efs-csi-driver" {
   count           = local.aws-efs-csi-driver["enabled"] ? length(local.aws-efs-csi-driver["subnets"]) : 0
-  file_system_id  = lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
+  file_system_id  = lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver[0].id : local.aws-efs-csi-driver["file_system_id"]
   subnet_id       = element(local.aws-efs-csi-driver["subnets"], count.index)
-  security_groups = [module.security-group-efs-csi-driver.0.security_group_id]
+  security_groups = [module.security-group-efs-csi-driver[0].security_group_id]
 }
 
 module "security-group-efs-csi-driver" {
@@ -163,7 +163,7 @@ resource "kubernetes_storage_class" "aws-efs-csi-driver" {
   storage_provisioner = "efs.csi.aws.com"
   parameters = {
     provisioningMode : "efs-ap"
-    fileSystemId : lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
+    fileSystemId : lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver[0].id : local.aws-efs-csi-driver["file_system_id"]
     directoryPerms : "700"
   }
 }

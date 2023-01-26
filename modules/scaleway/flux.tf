@@ -3,10 +3,10 @@ locals {
   flux = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "flux")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "flux")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "flux")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "flux")].version
       namespace              = "flux"
       service_account_name   = "flux"
       enabled                = false

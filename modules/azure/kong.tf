@@ -3,10 +3,10 @@ locals {
   kong = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "kong")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "kong")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "kong")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "kong")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "kong")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "kong")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "kong")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "kong")].version
       namespace              = "kong"
       enabled                = false
       default_network_policy = true

@@ -3,10 +3,10 @@ locals {
   sealed-secrets = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "sealed-secrets")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "sealed-secrets")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "sealed-secrets")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "sealed-secrets")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "sealed-secrets")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "sealed-secrets")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "sealed-secrets")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "sealed-secrets")].version
       namespace              = "sealed-secrets"
       enabled                = false
       default_network_policy = true

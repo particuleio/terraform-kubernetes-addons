@@ -2,10 +2,10 @@ locals {
   victoria-metrics-k8s-stack = merge(
     local.helm_defaults,
     {
-      name                             = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].name
-      chart                            = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].name
-      repository                       = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].repository
-      chart_version                    = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].version
+      name                             = local.helm_dependencies[index(local.helm_dependencies[*].name, "victoria-metrics-k8s-stack")].name
+      chart                            = local.helm_dependencies[index(local.helm_dependencies[*].name, "victoria-metrics-k8s-stack")].name
+      repository                       = local.helm_dependencies[index(local.helm_dependencies[*].name, "victoria-metrics-k8s-stack")].repository
+      chart_version                    = local.helm_dependencies[index(local.helm_dependencies[*].name, "victoria-metrics-k8s-stack")].version
       namespace                        = "monitoring"
       enabled                          = false
       allowed_cidrs                    = ["0.0.0.0/0"]

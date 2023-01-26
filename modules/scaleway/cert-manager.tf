@@ -3,10 +3,10 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[*].name, "cert-manager")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "cert-manager")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "cert-manager")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "cert-manager")].version
       namespace                 = "cert-manager"
       service_account_name      = "cert-manager"
       enabled                   = false
@@ -24,10 +24,10 @@ locals {
   cert-manager_scaleway_webhook_dns = merge(
     local.helm_defaults,
     {
-      name          = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].version
+      name          = local.helm_dependencies[index(local.helm_dependencies[*].name, "scaleway-webhook")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies[*].name, "scaleway-webhook")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies[*].name, "scaleway-webhook")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies[*].name, "scaleway-webhook")].version
       enabled       = local.cert-manager["acme_dns01_enabled"] && local.cert-manager["enabled"]
       secret_name   = "scaleway-credentials"
     },

@@ -2,10 +2,10 @@ locals {
   linkerd2 = merge(
     local.helm_defaults,
     {
-      name               = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].name
-      chart              = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].name
-      repository         = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].repository
-      chart_version      = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].version
+      name               = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].name
+      chart              = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].name
+      repository         = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].repository
+      chart_version      = local.helm_dependencies[index(local.helm_dependencies[*].name, "linkerd2")].version
       namespace          = "linkerd"
       create_ns          = true
       enabled            = false
@@ -25,7 +25,7 @@ locals {
       issuer:
         scheme: kubernetes.io/tls
     identityTrustAnchorsPEM: |
-      ${indent(2, local.linkerd2.enabled ? local.linkerd2["trust_anchor_pem"] == null ? tls_self_signed_cert.linkerd_trust_anchor.0.cert_pem : local.linkerd2["trust_anchor_pem"] : "")}
+      ${indent(2, local.linkerd2.enabled ? local.linkerd2["trust_anchor_pem"] == null ? tls_self_signed_cert.linkerd_trust_anchor[0].cert_pem : local.linkerd2["trust_anchor_pem"] : "")}
     proxyInjector:
       externalSecret: true
       caBundle: |
@@ -193,7 +193,7 @@ resource "tls_private_key" "linkerd_trust_anchor" {
 
 resource "tls_self_signed_cert" "linkerd_trust_anchor" {
   count                 = local.linkerd2["enabled"] && local.linkerd2["trust_anchor_pem"] == null ? 1 : 0
-  private_key_pem       = tls_private_key.linkerd_trust_anchor.0.private_key_pem
+  private_key_pem       = tls_private_key.linkerd_trust_anchor[0].private_key_pem
   validity_period_hours = 87600
   early_renewal_hours   = 78840
   is_ca_certificate     = true
@@ -216,8 +216,8 @@ resource "kubernetes_secret" "linkerd_trust_anchor" {
   }
 
   data = {
-    "tls.crt" = tls_self_signed_cert.linkerd_trust_anchor.0.cert_pem
-    "tls.key" = tls_private_key.linkerd_trust_anchor.0.private_key_pem
+    "tls.crt" = tls_self_signed_cert.linkerd_trust_anchor[0].cert_pem
+    "tls.key" = tls_private_key.linkerd_trust_anchor[0].private_key_pem
   }
 
   type = "kubernetes.io/tls"

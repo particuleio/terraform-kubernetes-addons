@@ -2,10 +2,10 @@ locals {
   strimzi-kafka-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "strimzi-kafka-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "strimzi-kafka-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "strimzi-kafka-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "strimzi-kafka-operator")].version
       namespace              = "strimzi-kafka-operator"
       enabled                = false
       create_ns              = true

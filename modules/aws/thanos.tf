@@ -3,10 +3,10 @@ locals {
   thanos = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[*].name, "thanos")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "thanos")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "thanos")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "thanos")].version
       namespace                 = "monitoring"
       create_iam_resources_irsa = true
       iam_policy_override       = null

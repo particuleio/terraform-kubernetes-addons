@@ -2,10 +2,10 @@ locals {
   aws-ebs-csi-driver = merge(
     local.helm_defaults,
     {
-      name          = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].version
+      name          = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-ebs-csi-driver")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-ebs-csi-driver")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-ebs-csi-driver")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-ebs-csi-driver")].version
       namespace     = "kube-system"
       create_ns     = false
       service_account_names = {
@@ -73,15 +73,15 @@ module "iam_assumable_role_aws-ebs-csi-driver" {
 data "aws_iam_policy_document" "aws-ebs-csi-driver" {
   count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.create_iam_resources_irsa ? 1 : 0
   source_policy_documents = [
-    data.aws_iam_policy_document.aws-ebs-csi-driver_default.0.json,
-    local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? data.aws_iam_policy_document.aws-ebs-csi-driver_kms.0.json : jsonencode({})
+    data.aws_iam_policy_document.aws-ebs-csi-driver_default[0].json,
+    local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? data.aws_iam_policy_document.aws-ebs-csi-driver_kms[0].json : jsonencode({})
   ]
 }
 
 data "aws_iam_policy_document" "aws-ebs-csi-driver_kms" {
   count = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.use_encryption ? 1 : 0
   source_policy_documents = [
-    templatefile("${path.module}/iam/aws-ebs-csi-driver_kms.json", { kmsKeyId = local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver.0.arn : local.aws-ebs-csi-driver.existing_kms_key_arn }),
+    templatefile("${path.module}/iam/aws-ebs-csi-driver_kms.json", { kmsKeyId = local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver[0].arn : local.aws-ebs-csi-driver.existing_kms_key_arn }),
   ]
 }
 
@@ -95,7 +95,7 @@ data "aws_iam_policy_document" "aws-ebs-csi-driver_default" {
 resource "aws_iam_policy" "aws-ebs-csi-driver" {
   count  = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? 1 : 0
   name   = local.aws-ebs-csi-driver["name_prefix"]
-  policy = local.aws-ebs-csi-driver["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-ebs-csi-driver.0.json : local.aws-ebs-csi-driver["iam_policy_override"]
+  policy = local.aws-ebs-csi-driver["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-ebs-csi-driver[0].json : local.aws-ebs-csi-driver["iam_policy_override"]
   tags   = local.tags
 }
 
@@ -158,7 +158,7 @@ resource "kubernetes_storage_class" "aws-ebs-csi-driver" {
   parameters = merge(
     {
       encrypted = local.aws-ebs-csi-driver.use_encryption
-      kmsKeyId  = local.aws-ebs-csi-driver.use_encryption ? local.aws-ebs-csi-driver.use_kms ? local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver.0.arn : local.aws-ebs-csi-driver.existing_kms_key_arn : "" : ""
+      kmsKeyId  = local.aws-ebs-csi-driver.use_encryption ? local.aws-ebs-csi-driver.use_kms ? local.aws-ebs-csi-driver.create_kms_key ? aws_kms_key.aws-ebs-csi-driver[0].arn : local.aws-ebs-csi-driver.existing_kms_key_arn : "" : ""
     },
     local.aws-ebs-csi-driver.extra_sc_parameters
   )
@@ -214,7 +214,7 @@ resource "aws_kms_key" "aws-ebs-csi-driver" {
 resource "aws_kms_alias" "aws-ebs-csi-driver" {
   count         = local.aws-ebs-csi-driver.enabled && local.aws-ebs-csi-driver.use_kms && local.aws-ebs-csi-driver.create_kms_key ? 1 : 0
   name          = "alias/aws-ebs-csi-driver-${local.aws-ebs-csi-driver.override_kms_alias != null ? local.aws-ebs-csi-driver.override_kms_alias : var.cluster-name}"
-  target_key_id = aws_kms_key.aws-ebs-csi-driver.0.id
+  target_key_id = aws_kms_key.aws-ebs-csi-driver[0].id
 }
 
 resource "kubectl_manifest" "aws-ebs-csi-driver_vsc" {

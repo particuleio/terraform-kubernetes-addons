@@ -2,10 +2,10 @@ locals {
   aws-load-balancer-controller = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-load-balancer-controller")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-load-balancer-controller")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-load-balancer-controller")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-load-balancer-controller")].version
       namespace                 = "aws-load-balancer-controller"
       service_account_name      = "aws-load-balancer-controller"
       create_iam_resources_irsa = true

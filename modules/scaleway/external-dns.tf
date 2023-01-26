@@ -3,10 +3,10 @@ locals {
   external-dns = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "external-dns")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "external-dns")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "external-dns")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "external-dns")].version
       namespace              = "external-dns"
       service_account_name   = "external-dns"
       enabled                = false

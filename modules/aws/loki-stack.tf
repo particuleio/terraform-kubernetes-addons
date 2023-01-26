@@ -2,10 +2,10 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[*].name, "loki")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "loki")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "loki")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "loki")].version
       namespace                 = "monitoring"
       create_iam_resources_irsa = true
       iam_policy_override       = null

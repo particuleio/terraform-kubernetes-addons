@@ -3,9 +3,9 @@ locals {
   thanos-memcached = merge(
     local.helm_defaults,
     {
-      chart         = local.helm_dependencies[index(local.helm_dependencies[0].name, "memcached")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies[0].name, "memcached")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies[0].name, "memcached")].version
+      chart         = local.helm_dependencies[index(local.helm_dependencies[*].name, "memcached")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies[*].name, "memcached")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies[*].name, "memcached")].version
       name          = "thanos-memcached"
       namespace     = local.thanos["namespace"]
       enabled       = false

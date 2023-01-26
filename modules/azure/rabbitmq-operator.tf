@@ -2,10 +2,10 @@ locals {
   rabbitmq-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "rabbitmq-cluster-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "rabbitmq-cluster-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "rabbitmq-cluster-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "rabbitmq-cluster-operator")].version
       namespace              = "rabbitmq-operator"
       create_ns              = true
       enabled                = false

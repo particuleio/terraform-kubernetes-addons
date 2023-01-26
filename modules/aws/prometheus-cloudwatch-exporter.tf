@@ -2,10 +2,10 @@ locals {
   prometheus-cloudwatch-exporter = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[*].name, "prometheus-cloudwatch-exporter")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "prometheus-cloudwatch-exporter")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "prometheus-cloudwatch-exporter")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "prometheus-cloudwatch-exporter")].version
       namespace                 = "monitoring"
       create_ns                 = false
       enabled                   = false

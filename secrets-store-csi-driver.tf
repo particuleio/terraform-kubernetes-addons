@@ -2,10 +2,10 @@ locals {
   secrets-store-csi-driver = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "secrets-store-csi-driver")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "secrets-store-csi-driver")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "secrets-store-csi-driver")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "secrets-store-csi-driver")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "secrets-store-csi-driver")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "secrets-store-csi-driver")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "secrets-store-csi-driver")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "secrets-store-csi-driver")].version
       namespace              = "kube-system"
       enabled                = false
       create_ns              = false

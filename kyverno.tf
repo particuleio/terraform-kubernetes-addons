@@ -2,10 +2,10 @@ locals {
   kyverno = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno")].version
       namespace              = "kyverno"
       create_ns              = false
       enabled                = false
@@ -20,10 +20,10 @@ VALUES
   kyverno-crds = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno-crds")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno-crds")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno-crds")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "kyverno-crds")].version
       namespace              = "kyverno"
       create_ns              = false
       enabled                = local.kyverno["enabled"] && !local.kyverno["skip_crds"]

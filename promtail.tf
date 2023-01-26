@@ -3,10 +3,10 @@ locals {
   promtail = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "promtail")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "promtail")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "promtail")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "promtail")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "promtail")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "promtail")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "promtail")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "promtail")].version
       namespace              = "monitoring"
       create_ns              = false
       enabled                = false

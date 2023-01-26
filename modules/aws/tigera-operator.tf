@@ -2,10 +2,10 @@ locals {
   tigera-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "tigera-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "tigera-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "tigera-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "tigera-operator")].version
       namespace              = "tigera-operator"
       create_ns              = true
       enabled                = false

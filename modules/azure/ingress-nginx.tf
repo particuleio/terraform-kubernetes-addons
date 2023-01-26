@@ -3,10 +3,10 @@ locals {
   ingress-nginx = merge(
     local.helm_defaults,
     {
-      name          = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].version
+      name          = local.helm_dependencies[index(local.helm_dependencies[*].name, "ingress-nginx")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies[*].name, "ingress-nginx")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies[*].name, "ingress-nginx")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies[*].name, "ingress-nginx")].version
       namespace     = "ingress-nginx"
     },
     var.ingress-nginx

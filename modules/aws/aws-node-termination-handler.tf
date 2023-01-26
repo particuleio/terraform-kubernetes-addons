@@ -2,10 +2,10 @@ locals {
   aws-node-termination-handler = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-node-termination-handler")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-node-termination-handler")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-node-termination-handler")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "aws-node-termination-handler")].version
       namespace              = "aws-node-termination-handler"
       enabled                = false
       default_network_policy = true

@@ -2,10 +2,10 @@ locals {
   metrics-server = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "metrics-server")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "metrics-server")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "metrics-server")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "metrics-server")].version
       namespace              = "metrics-server"
       enabled                = false
       default_network_policy = true

@@ -2,10 +2,10 @@ locals {
   admiralty = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "admiralty")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "admiralty")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "admiralty")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "admiralty")].version
       namespace              = "admiralty"
       enabled                = false
       create_ns              = true

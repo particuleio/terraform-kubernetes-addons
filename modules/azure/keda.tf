@@ -2,10 +2,10 @@ locals {
   keda = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "keda")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "keda")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "keda")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "keda")].version
       namespace              = "keda"
       create_ns              = false
       enabled                = false

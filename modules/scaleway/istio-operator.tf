@@ -2,10 +2,10 @@ locals {
   istio-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "istio-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "istio-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "istio-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "istio-operator")].version
       namespace              = "istio-system"
       enabled                = false
       version                = "1.7.4"

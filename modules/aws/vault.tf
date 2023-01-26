@@ -2,10 +2,10 @@ locals {
   vault = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[*].name, "vault")].version
       namespace                 = "vault"
       service_account_name      = "vault"
       create_iam_resources_irsa = true
@@ -79,7 +79,7 @@ locals {
             service_registration "kubernetes" {}
             seal "awskms" {
               region     = "${local.vault.enabled && local.vault.use_kms ? local.vault.create_kms_key ? data.aws_region.current.name : element(split(":", local.vault.existing_kms_key_arn), 3) : ""}"
-              kms_key_id = "${local.vault.enabled && local.vault.use_kms ? local.vault.create_kms_key ? aws_kms_key.vault.0.id : element(split("/", local.vault.existing_kms_key_arn), 1) : ""}"
+              kms_key_id = "${local.vault.enabled && local.vault.use_kms ? local.vault.create_kms_key ? aws_kms_key.vault[0].id : element(split("/", local.vault.existing_kms_key_arn), 1) : ""}"
             }
     VALUES
 }
@@ -99,7 +99,7 @@ module "iam_assumable_role_vault" {
 resource "aws_iam_policy" "vault" {
   count  = local.vault["enabled"] && local.vault["create_iam_resources_irsa"] && local.vault.use_kms ? 1 : 0
   name   = local.vault["name_prefix"]
-  policy = local.vault["iam_policy_override"] == null ? data.aws_iam_policy_document.vault.0.json : local.vault["iam_policy_override"]
+  policy = local.vault["iam_policy_override"] == null ? data.aws_iam_policy_document.vault[0].json : local.vault["iam_policy_override"]
   tags   = local.tags
 }
 
@@ -115,7 +115,7 @@ data "aws_iam_policy_document" "vault" {
       "kms:DescribeKey"
     ]
 
-    resources = [local.vault.create_kms_key ? aws_kms_key.vault.0.arn : local.vault.existing_kms_key_arn]
+    resources = [local.vault.create_kms_key ? aws_kms_key.vault[0].arn : local.vault.existing_kms_key_arn]
   }
 }
 
@@ -128,7 +128,7 @@ resource "aws_kms_key" "vault" {
 resource "aws_kms_alias" "vault" {
   count         = local.vault.enabled && local.vault.use_kms && local.vault.create_kms_key ? 1 : 0
   name          = "alias/vault-${local.vault.override_kms_alias != null ? local.vault.override_kms_alias : var.cluster-name}"
-  target_key_id = aws_kms_key.vault.0.id
+  target_key_id = aws_kms_key.vault[0].id
 }
 
 resource "kubernetes_namespace" "vault" {

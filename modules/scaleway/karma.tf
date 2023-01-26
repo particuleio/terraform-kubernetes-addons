@@ -2,10 +2,10 @@ locals {
   karma = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "karma")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "karma")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "karma")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "karma")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[*].name, "karma")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[*].name, "karma")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[*].name, "karma")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[*].name, "karma")].version
       namespace              = "monitoring"
       create_ns              = false
       enabled                = false
