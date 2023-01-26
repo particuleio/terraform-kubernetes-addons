@@ -2,10 +2,10 @@ locals {
   prometheus-adapter = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-adapter")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-adapter")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-adapter")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-adapter")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-adapter")].version
       namespace              = "monitoring"
       create_ns              = false
       enabled                = false
@@ -59,7 +59,7 @@ resource "helm_release" "prometheus-adapter" {
     local.values_prometheus-adapter,
     local.prometheus-adapter["extra_values"]
   ]
-  namespace = local.prometheus-adapter["create_ns"] ? kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index] : local.prometheus-adapter["namespace"]
+  namespace = local.prometheus-adapter["create_ns"] ? kubernetes_namespace.prometheus-adapter[0].metadata[0].name[count.index] : local.prometheus-adapter["namespace"]
 
   depends_on = [
     helm_release.kube-prometheus-stack
@@ -70,8 +70,8 @@ resource "kubernetes_network_policy" "prometheus-adapter_default_deny" {
   count = local.prometheus-adapter["create_ns"] && local.prometheus-adapter["enabled"] && local.prometheus-adapter["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.prometheus-adapter[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.prometheus-adapter[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -85,8 +85,8 @@ resource "kubernetes_network_policy" "prometheus-adapter_allow_namespace" {
   count = local.prometheus-adapter["create_ns"] && local.prometheus-adapter["enabled"] && local.prometheus-adapter["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.prometheus-adapter[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.prometheus-adapter[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -97,7 +97,7 @@ resource "kubernetes_network_policy" "prometheus-adapter_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.prometheus-adapter.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.prometheus-adapter[0].metadata[0].name[count.index]
           }
         }
       }

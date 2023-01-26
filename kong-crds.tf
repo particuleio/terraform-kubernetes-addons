@@ -4,7 +4,7 @@ locals {
 
   kong_crds = "https://raw.githubusercontent.com/Kong/charts/${local.kong_crd_version}/charts/kong/crds/custom-resource-definitions.yaml"
 
-  kong_crds_apply = local.kong.enabled && local.kong.manage_crds ? [for v in data.kubectl_file_documents.kong_crds.0.documents : {
+  kong_crds_apply = local.kong.enabled && local.kong.manage_crds ? [for v in data.kubectl_file_documents.kong_crds[0].documents : {
     data : yamldecode(v)
     content : v
     }

@@ -2,10 +2,10 @@ locals {
   keda = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "keda")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "keda")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "keda")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "keda")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "keda")].version
       namespace              = "keda"
       create_ns              = false
       enabled                = false
@@ -56,7 +56,7 @@ resource "helm_release" "keda" {
     local.values_keda,
     local.keda["extra_values"]
   ]
-  namespace = local.keda["create_ns"] ? kubernetes_namespace.keda.*.metadata.0.name[count.index] : local.keda["namespace"]
+  namespace = local.keda["create_ns"] ? kubernetes_namespace.keda[0].metadata[0].name[count.index] : local.keda["namespace"]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -67,8 +67,8 @@ resource "kubernetes_network_policy" "keda_default_deny" {
   count = local.keda["create_ns"] && local.keda["enabled"] && local.keda["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.keda.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.keda.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.keda[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.keda[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -82,8 +82,8 @@ resource "kubernetes_network_policy" "keda_allow_namespace" {
   count = local.keda["create_ns"] && local.keda["enabled"] && local.keda["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.keda.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.keda.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.keda[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.keda[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -94,7 +94,7 @@ resource "kubernetes_network_policy" "keda_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.keda.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.keda[0].metadata[0].name[count.index]
           }
         }
       }

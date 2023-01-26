@@ -2,10 +2,10 @@ locals {
   loki-stack = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "loki")].version
       namespace              = "monitoring"
       create_ns              = false
       enabled                = false
@@ -132,7 +132,7 @@ resource "helm_release" "loki-stack" {
     local.values_loki-stack,
     local.loki-stack["extra_values"]
   ]
-  namespace = local.loki-stack["create_ns"] ? kubernetes_namespace.loki-stack.*.metadata.0.name[count.index] : local.loki-stack["namespace"]
+  namespace = local.loki-stack["create_ns"] ? kubernetes_namespace.loki-stack[0].metadata[0].name[count.index] : local.loki-stack["namespace"]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -166,8 +166,8 @@ resource "kubernetes_network_policy" "loki-stack_default_deny" {
   count = local.loki-stack["create_ns"] && local.loki-stack["enabled"] && local.loki-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.loki-stack[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.loki-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -181,8 +181,8 @@ resource "kubernetes_network_policy" "loki-stack_allow_namespace" {
   count = local.loki-stack["create_ns"] && local.loki-stack["enabled"] && local.loki-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.loki-stack[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.loki-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -193,7 +193,7 @@ resource "kubernetes_network_policy" "loki-stack_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.loki-stack[0].metadata[0].name[count.index]
           }
         }
       }
@@ -207,8 +207,8 @@ resource "kubernetes_network_policy" "loki-stack_allow_ingress" {
   count = local.loki-stack["create_ns"] && local.loki-stack["enabled"] && local.loki-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.loki-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.loki-stack[0].metadata[0].name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.loki-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -233,7 +233,7 @@ resource "kubernetes_secret" "loki-stack-ca" {
   count = local.loki-stack["enabled"] && (local.loki-stack["generate_ca"] || local.loki-stack["trusted_ca_content"] != null) ? 1 : 0
   metadata {
     name      = "${local.loki-stack["name"]}-ca"
-    namespace = local.loki-stack["create_ns"] ? kubernetes_namespace.loki-stack.*.metadata.0.name[count.index] : local.loki-stack["namespace"]
+    namespace = local.loki-stack["create_ns"] ? kubernetes_namespace.loki-stack[0].metadata[0].name[count.index] : local.loki-stack["namespace"]
   }
 
   data = {

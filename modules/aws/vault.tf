@@ -2,10 +2,10 @@ locals {
   vault = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "vault")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "vault")].version
       namespace                 = "vault"
       service_account_name      = "vault"
       create_iam_resources_irsa = true
@@ -175,7 +175,7 @@ resource "helm_release" "vault" {
     local.vault.use_kms ? local.values_vault : local.values_vault_no_kms,
     local.vault["extra_values"]
   ])
-  namespace = local.vault["create_ns"] ? kubernetes_namespace.vault.*.metadata.0.name[count.index] : local.vault["namespace"]
+  namespace = local.vault["create_ns"] ? kubernetes_namespace.vault[0].metadata[0].name[count.index] : local.vault["namespace"]
 }
 
 resource "kubernetes_network_policy" "vault_default_deny" {
@@ -223,8 +223,8 @@ resource "kubernetes_network_policy" "vault_allow_control_plane" {
   count = local.vault["enabled"] && local.vault["default_network_policy"] && local.vault.create_ns ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.vault.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.vault.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.vault[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.vault[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -317,7 +317,7 @@ resource "kubernetes_secret" "vault-ca" {
   count = local.vault["enabled"] && (local.vault["generate_ca"] || local.vault["trusted_ca_content"] != null) ? 1 : 0
   metadata {
     name      = "${local.vault["name"]}-ca"
-    namespace = local.vault["create_ns"] ? kubernetes_namespace.vault.*.metadata.0.name[count.index] : local.vault["namespace"]
+    namespace = local.vault["create_ns"] ? kubernetes_namespace.vault[0].metadata[0].name[count.index] : local.vault["namespace"]
   }
 
   data = {

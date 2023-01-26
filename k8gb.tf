@@ -2,10 +2,10 @@ locals {
   k8gb = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "k8gb")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "k8gb")].version
       namespace              = "k8gb"
       enabled                = false
       create_ns              = true
@@ -55,7 +55,7 @@ resource "helm_release" "k8gb" {
     local.values_k8gb,
     local.k8gb["extra_values"]
   ]
-  namespace = local.k8gb["create_ns"] ? kubernetes_namespace.k8gb.*.metadata.0.name[count.index] : local.k8gb["namespace"]
+  namespace = local.k8gb["create_ns"] ? kubernetes_namespace.k8gb[0].metadata[0].name[count.index] : local.k8gb["namespace"]
 }
 
 resource "kubernetes_network_policy" "k8gb_default_deny" {

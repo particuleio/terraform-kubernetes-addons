@@ -2,10 +2,10 @@ locals {
   prometheus-cloudwatch-exporter = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-cloudwatch-exporter")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-cloudwatch-exporter")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-cloudwatch-exporter")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "prometheus-cloudwatch-exporter")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "prometheus-cloudwatch-exporter")].version
       namespace                 = "monitoring"
       create_ns                 = false
       enabled                   = false
@@ -101,7 +101,7 @@ resource "helm_release" "prometheus-cloudwatch-exporter" {
     local.values_prometheus-cloudwatch-exporter,
     local.prometheus-cloudwatch-exporter["extra_values"]
   ]
-  namespace = local.prometheus-cloudwatch-exporter["create_ns"] ? kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index] : local.prometheus-cloudwatch-exporter["namespace"]
+  namespace = local.prometheus-cloudwatch-exporter["create_ns"] ? kubernetes_namespace.prometheus-cloudwatch-exporter[0].metadata[0].name[count.index] : local.prometheus-cloudwatch-exporter["namespace"]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -112,8 +112,8 @@ resource "kubernetes_network_policy" "prometheus-cloudwatch-exporter_default_den
   count = local.prometheus-cloudwatch-exporter["create_ns"] && local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.prometheus-cloudwatch-exporter[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.prometheus-cloudwatch-exporter[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -127,8 +127,8 @@ resource "kubernetes_network_policy" "prometheus-cloudwatch-exporter_allow_names
   count = local.prometheus-cloudwatch-exporter["create_ns"] && local.prometheus-cloudwatch-exporter["enabled"] && local.prometheus-cloudwatch-exporter["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.prometheus-cloudwatch-exporter[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.prometheus-cloudwatch-exporter[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -139,7 +139,7 @@ resource "kubernetes_network_policy" "prometheus-cloudwatch-exporter_allow_names
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.prometheus-cloudwatch-exporter.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.prometheus-cloudwatch-exporter[0].metadata[0].name[count.index]
           }
         }
       }

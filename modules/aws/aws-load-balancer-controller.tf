@@ -2,10 +2,10 @@ locals {
   aws-load-balancer-controller = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-load-balancer-controller")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-load-balancer-controller")].version
       namespace                 = "aws-load-balancer-controller"
       service_account_name      = "aws-load-balancer-controller"
       create_iam_resources_irsa = true
@@ -84,15 +84,15 @@ resource "helm_release" "aws-load-balancer-controller" {
     local.values_aws-load-balancer-controller,
     local.aws-load-balancer-controller["extra_values"]
   ]
-  namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]
 }
 
 resource "kubernetes_network_policy" "aws-load-balancer-controller_default_deny" {
   count = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -106,8 +106,8 @@ resource "kubernetes_network_policy" "aws-load-balancer-controller_allow_namespa
   count = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -118,7 +118,7 @@ resource "kubernetes_network_policy" "aws-load-balancer-controller_allow_namespa
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]
           }
         }
       }
@@ -132,8 +132,8 @@ resource "kubernetes_network_policy" "aws-load-balancer-controller_allow_control
   count = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.aws-load-balancer-controller.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.aws-load-balancer-controller[0].metadata[0].name[count.index]
   }
 
   spec {

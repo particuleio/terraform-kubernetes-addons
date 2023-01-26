@@ -2,10 +2,10 @@ locals {
   rabbitmq-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "rabbitmq-cluster-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "rabbitmq-cluster-operator")].version
       namespace              = "rabbitmq-operator"
       create_ns              = true
       enabled                = false
@@ -56,7 +56,7 @@ resource "helm_release" "rabbitmq-operator" {
     local.values_rabbitmq-operator,
     local.rabbitmq-operator["extra_values"]
   ]
-  namespace = local.rabbitmq-operator["create_ns"] ? kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index] : local.rabbitmq-operator["namespace"]
+  namespace = local.rabbitmq-operator["create_ns"] ? kubernetes_namespace.rabbitmq-operator[0].metadata[0].name[count.index] : local.rabbitmq-operator["namespace"]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -67,8 +67,8 @@ resource "kubernetes_network_policy" "rabbitmq-operator_default_deny" {
   count = local.rabbitmq-operator["create_ns"] && local.rabbitmq-operator["enabled"] && local.rabbitmq-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.rabbitmq-operator[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.rabbitmq-operator[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -82,8 +82,8 @@ resource "kubernetes_network_policy" "rabbitmq-operator_allow_namespace" {
   count = local.rabbitmq-operator["create_ns"] && local.rabbitmq-operator["enabled"] && local.rabbitmq-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.rabbitmq-operator[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.rabbitmq-operator[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -94,7 +94,7 @@ resource "kubernetes_network_policy" "rabbitmq-operator_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.rabbitmq-operator.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.rabbitmq-operator[0].metadata[0].name[count.index]
           }
         }
       }

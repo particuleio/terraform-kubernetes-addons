@@ -2,10 +2,10 @@ locals {
   metrics-server = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "metrics-server")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "metrics-server")].version
       namespace              = "metrics-server"
       enabled                = false
       default_network_policy = true
@@ -59,15 +59,15 @@ resource "helm_release" "metrics-server" {
     local.values_metrics-server,
     local.metrics-server["extra_values"]
   ]
-  namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]
 }
 
 resource "kubernetes_network_policy" "metrics-server_default_deny" {
   count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -81,8 +81,8 @@ resource "kubernetes_network_policy" "metrics-server_allow_namespace" {
   count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -93,7 +93,7 @@ resource "kubernetes_network_policy" "metrics-server_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]
           }
         }
       }
@@ -107,8 +107,8 @@ resource "kubernetes_network_policy" "metrics-server_allow_control_plane" {
   count = local.metrics-server["enabled"] && local.metrics-server["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.metrics-server.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.metrics-server[0].metadata[0].name[count.index]
   }
 
   spec {

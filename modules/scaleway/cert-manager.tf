@@ -3,10 +3,10 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].version
       namespace                 = "cert-manager"
       service_account_name      = "cert-manager"
       enabled                   = false
@@ -24,10 +24,10 @@ locals {
   cert-manager_scaleway_webhook_dns = merge(
     local.helm_defaults,
     {
-      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "scaleway-webhook")].version
+      name          = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies[0].name, "scaleway-webhook")].version
       enabled       = local.cert-manager["acme_dns01_enabled"] && local.cert-manager["enabled"]
       secret_name   = "scaleway-credentials"
     },
@@ -90,7 +90,7 @@ resource "helm_release" "cert-manager" {
     local.values_cert-manager,
     local.cert-manager["extra_values"]
   ]
-  namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -119,7 +119,7 @@ resource "helm_release" "scaleway-webhook-dns" {
   skip_crds             = local.cert-manager_scaleway_webhook_dns["skip_crds"]
   verify                = local.cert-manager_scaleway_webhook_dns["verify"]
   values                = []
-  namespace             = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+  namespace             = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds,
@@ -172,8 +172,8 @@ resource "kubernetes_network_policy" "cert-manager_default_deny" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -187,8 +187,8 @@ resource "kubernetes_network_policy" "cert-manager_allow_namespace" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -199,7 +199,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
           }
         }
       }
@@ -213,8 +213,8 @@ resource "kubernetes_network_policy" "cert-manager_allow_monitoring" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -244,8 +244,8 @@ resource "kubernetes_network_policy" "cert-manager_allow_control_plane" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {

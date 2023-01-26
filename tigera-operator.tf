@@ -2,10 +2,10 @@ locals {
   tigera-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "tigera-operator")].version
       namespace              = "tigera" #https://github.com/projectcalico/calico/issues/4812
       create_ns              = true
       enabled                = false
@@ -56,7 +56,7 @@ resource "helm_release" "tigera-operator" {
     local.values_tigera-operator,
     local.tigera-operator["extra_values"]
   ]
-  namespace = local.tigera-operator["create_ns"] ? kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index] : local.tigera-operator["namespace"]
+  namespace = local.tigera-operator["create_ns"] ? kubernetes_namespace.tigera-operator[0].metadata[0].name[count.index] : local.tigera-operator["namespace"]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -67,8 +67,8 @@ resource "kubernetes_network_policy" "tigera-operator_default_deny" {
   count = local.tigera-operator["create_ns"] && local.tigera-operator["enabled"] && local.tigera-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.tigera-operator[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.tigera-operator[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -82,8 +82,8 @@ resource "kubernetes_network_policy" "tigera-operator_allow_namespace" {
   count = local.tigera-operator["create_ns"] && local.tigera-operator["enabled"] && local.tigera-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.tigera-operator[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.tigera-operator[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -94,7 +94,7 @@ resource "kubernetes_network_policy" "tigera-operator_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.tigera-operator[0].metadata[0].name[count.index]
           }
         }
       }

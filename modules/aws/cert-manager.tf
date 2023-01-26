@@ -3,10 +3,10 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "cert-manager")].version
       namespace                 = "cert-manager"
       service_account_name      = "cert-manager"
       create_iam_resources_irsa = true
@@ -136,7 +136,7 @@ resource "helm_release" "cert-manager" {
     local.values_cert-manager,
     local.cert-manager["extra_values"]
   ]
-  namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -174,8 +174,8 @@ resource "kubernetes_network_policy" "cert-manager_default_deny" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -189,8 +189,8 @@ resource "kubernetes_network_policy" "cert-manager_allow_namespace" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -201,7 +201,7 @@ resource "kubernetes_network_policy" "cert-manager_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
           }
         }
       }
@@ -215,8 +215,8 @@ resource "kubernetes_network_policy" "cert-manager_allow_monitoring" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -246,8 +246,8 @@ resource "kubernetes_network_policy" "cert-manager_allow_control_plane" {
   count = local.cert-manager["enabled"] && local.cert-manager["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.cert-manager.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.cert-manager[0].metadata[0].name[count.index]
   }
 
   spec {

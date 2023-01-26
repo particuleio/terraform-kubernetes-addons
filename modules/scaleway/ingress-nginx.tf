@@ -3,10 +3,10 @@ locals {
   ingress-nginx = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "ingress-nginx")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "ingress-nginx")].version
       namespace              = "ingress-nginx"
       enabled                = false
       default_network_policy = true
@@ -82,7 +82,7 @@ resource "helm_release" "ingress-nginx" {
     local.values_ingress-nginx_l4,
     local.ingress-nginx["extra_values"],
   ]
-  namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -93,8 +93,8 @@ resource "kubernetes_network_policy" "ingress-nginx_default_deny" {
   count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -108,8 +108,8 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_namespace" {
   count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -120,7 +120,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]
           }
         }
       }
@@ -134,8 +134,8 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_ingress" {
   count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -175,8 +175,8 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_monitoring" {
   count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -206,8 +206,8 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
   count = local.ingress-nginx["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.ingress-nginx[0].metadata[0].name[count.index]
   }
 
   spec {

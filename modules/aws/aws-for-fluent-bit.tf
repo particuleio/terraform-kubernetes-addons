@@ -3,10 +3,10 @@ locals {
   aws-for-fluent-bit = merge(
     local.helm_defaults,
     {
-      name                             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].name
-      chart                            = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].name
-      repository                       = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].repository
-      chart_version                    = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-for-fluent-bit")].version
+      name                             = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-for-fluent-bit")].name
+      chart                            = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-for-fluent-bit")].name
+      repository                       = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-for-fluent-bit")].repository
+      chart_version                    = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-for-fluent-bit")].version
       namespace                        = "aws-for-fluent-bit"
       service_account_name             = "aws-for-fluent-bit"
       create_iam_resources_irsa        = true
@@ -121,15 +121,15 @@ resource "helm_release" "aws-for-fluent-bit" {
     local.values_aws-for-fluent-bit,
     local.aws-for-fluent-bit["extra_values"]
   ]
-  namespace = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.aws-for-fluent-bit[0].metadata[0].name[count.index]
 }
 
 resource "kubernetes_network_policy" "aws-for-fluent-bit_default_deny" {
   count = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-for-fluent-bit[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.aws-for-fluent-bit[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -143,8 +143,8 @@ resource "kubernetes_network_policy" "aws-for-fluent-bit_allow_namespace" {
   count = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-for-fluent-bit[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.aws-for-fluent-bit[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -155,7 +155,7 @@ resource "kubernetes_network_policy" "aws-for-fluent-bit_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.aws-for-fluent-bit.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.aws-for-fluent-bit[0].metadata[0].name[count.index]
           }
         }
       }

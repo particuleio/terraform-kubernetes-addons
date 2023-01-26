@@ -2,10 +2,10 @@ locals {
   keycloak = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "keycloak")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "keycloak")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "keycloak")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "keycloak")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "keycloak")].version
       namespace              = "keycloak"
       enabled                = false
       default_network_policy = true
@@ -57,7 +57,7 @@ resource "helm_release" "keycloak" {
     local.values_keycloak,
     local.keycloak["extra_values"]
   ]
-  namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.keycloak[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -68,8 +68,8 @@ resource "kubernetes_network_policy" "keycloak_default_deny" {
   count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.keycloak[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.keycloak[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -83,8 +83,8 @@ resource "kubernetes_network_policy" "keycloak_allow_namespace" {
   count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.keycloak[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.keycloak[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -95,7 +95,7 @@ resource "kubernetes_network_policy" "keycloak_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.keycloak[0].metadata[0].name[count.index]
           }
         }
       }
@@ -109,8 +109,8 @@ resource "kubernetes_network_policy" "keycloak_allow_monitoring" {
   count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.keycloak[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.keycloak[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -140,8 +140,8 @@ resource "kubernetes_network_policy" "keycloak_allow_ingress" {
   count = local.keycloak["enabled"] && local.keycloak["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.keycloak.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.keycloak.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.keycloak[0].metadata[0].name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.keycloak[0].metadata[0].name[count.index]
   }
 
   spec {

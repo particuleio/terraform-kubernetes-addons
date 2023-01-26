@@ -2,10 +2,10 @@ locals {
   kyverno = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno")].version
       namespace              = "kyverno"
       create_ns              = false
       enabled                = false
@@ -20,10 +20,10 @@ VALUES
   kyverno-crds = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "kyverno-crds")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "kyverno-crds")].version
       namespace              = "kyverno"
       create_ns              = false
       enabled                = local.kyverno["enabled"] && !local.kyverno["skip_crds"]
@@ -70,7 +70,7 @@ resource "helm_release" "kyverno" {
     local.values_kyverno,
     local.kyverno["extra_values"]
   ]
-  namespace = local.kyverno["create_ns"] ? kubernetes_namespace.kyverno.*.metadata.0.name[count.index] : local.kyverno["namespace"]
+  namespace = local.kyverno["create_ns"] ? kubernetes_namespace.kyverno[0].metadata[0].name[count.index] : local.kyverno["namespace"]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds,
@@ -103,15 +103,15 @@ resource "helm_release" "kyverno-crds" {
     local.values_kyverno,
     local.kyverno["extra_values"]
   ]
-  namespace = local.kyverno["create_ns"] ? kubernetes_namespace.kyverno.*.metadata.0.name[count.index] : local.kyverno["namespace"]
+  namespace = local.kyverno["create_ns"] ? kubernetes_namespace.kyverno[0].metadata[0].name[count.index] : local.kyverno["namespace"]
 }
 
 resource "kubernetes_network_policy" "kyverno_default_deny" {
   count = local.kyverno["create_ns"] && local.kyverno["enabled"] && local.kyverno["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.kyverno.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.kyverno.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.kyverno[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.kyverno[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -125,8 +125,8 @@ resource "kubernetes_network_policy" "kyverno_allow_namespace" {
   count = local.kyverno["create_ns"] && local.kyverno["enabled"] && local.kyverno["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.kyverno.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.kyverno.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.kyverno[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.kyverno[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -137,7 +137,7 @@ resource "kubernetes_network_policy" "kyverno_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kyverno.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.kyverno[0].metadata[0].name[count.index]
           }
         }
       }

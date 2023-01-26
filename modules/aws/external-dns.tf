@@ -3,9 +3,9 @@ locals {
   external-dns = { for k, v in var.external-dns : k => merge(
     local.helm_defaults,
     {
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].version
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].version
       name                      = k
       namespace                 = k
       service_account_name      = "external-dns"
@@ -120,7 +120,7 @@ resource "helm_release" "external-dns" {
     local.values_external-dns[each.key]["values"],
     each.value["extra_values"]
   ]
-  namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
+  namespace = kubernetes_namespace.external-dns[each.key].metadata[0].name
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -131,8 +131,8 @@ resource "kubernetes_network_policy" "external-dns_default_deny" {
   for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-default-deny"
-    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
+    name      = "${kubernetes_namespace.external-dns[each.key].metadata[0].name}-default-deny"
+    namespace = kubernetes_namespace.external-dns[each.key].metadata[0].name
   }
 
   spec {
@@ -146,8 +146,8 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
   for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-namespace"
-    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
+    name      = "${kubernetes_namespace.external-dns[each.key].metadata[0].name}-allow-namespace"
+    namespace = kubernetes_namespace.external-dns[each.key].metadata[0].name
   }
 
   spec {
@@ -158,7 +158,7 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.external-dns[each.key].metadata.0.name
+            name = kubernetes_namespace.external-dns[each.key].metadata[0].name
           }
         }
       }
@@ -172,8 +172,8 @@ resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
   for_each = { for k, v in local.external-dns : k => v if v["enabled"] && v["default_network_policy"] }
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns[each.key].metadata.0.name}-allow-monitoring"
-    namespace = kubernetes_namespace.external-dns[each.key].metadata.0.name
+    name      = "${kubernetes_namespace.external-dns[each.key].metadata[0].name}-allow-monitoring"
+    namespace = kubernetes_namespace.external-dns[each.key].metadata[0].name
   }
 
   spec {

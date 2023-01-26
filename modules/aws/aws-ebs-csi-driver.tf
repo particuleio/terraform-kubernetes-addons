@@ -2,10 +2,10 @@ locals {
   aws-ebs-csi-driver = merge(
     local.helm_defaults,
     {
-      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-ebs-csi-driver")].version
+      name          = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-ebs-csi-driver")].version
       namespace     = "kube-system"
       create_ns     = false
       service_account_names = {
@@ -136,7 +136,7 @@ resource "helm_release" "aws-ebs-csi-driver" {
     local.values_aws-ebs-csi-driver,
     local.aws-ebs-csi-driver["extra_values"]
   ]
-  namespace = local.aws-ebs-csi-driver["create_ns"] ? kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index] : local.aws-ebs-csi-driver["namespace"]
+  namespace = local.aws-ebs-csi-driver["create_ns"] ? kubernetes_namespace.aws-ebs-csi-driver[0].metadata[0].name[count.index] : local.aws-ebs-csi-driver["namespace"]
 
   depends_on = [
     kubectl_manifest.csi-external-snapshotter
@@ -168,8 +168,8 @@ resource "kubernetes_network_policy" "aws-ebs-csi-driver_default_deny" {
   count = local.aws-ebs-csi-driver["create_ns"] && local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-ebs-csi-driver[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.aws-ebs-csi-driver[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -183,8 +183,8 @@ resource "kubernetes_network_policy" "aws-ebs-csi-driver_allow_namespace" {
   count = local.aws-ebs-csi-driver["create_ns"] && local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-ebs-csi-driver[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.aws-ebs-csi-driver[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -195,7 +195,7 @@ resource "kubernetes_network_policy" "aws-ebs-csi-driver_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.aws-ebs-csi-driver.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.aws-ebs-csi-driver[0].metadata[0].name[count.index]
           }
         }
       }

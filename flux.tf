@@ -3,10 +3,10 @@ locals {
   flux = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "flux")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "flux")].version
       namespace              = "flux"
       service_account_name   = "flux"
       enabled                = false
@@ -44,8 +44,8 @@ resource "kubernetes_role" "flux" {
   count = local.flux["enabled"] ? 1 : 0
 
   metadata {
-    name      = "flux-${kubernetes_namespace.flux.*.metadata.0.name[count.index]}"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
+    name      = "flux-${kubernetes_namespace.flux[0].metadata[0].name[count.index]}"
+    namespace = kubernetes_namespace.flux[0].metadata[0].name[count.index]
   }
 
   rule {
@@ -59,14 +59,14 @@ resource "kubernetes_role_binding" "flux" {
   count = local.flux["enabled"] ? 1 : 0
 
   metadata {
-    name      = "flux-${kubernetes_namespace.flux.*.metadata.0.name[count.index]}-binding"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
+    name      = "flux-${kubernetes_namespace.flux[0].metadata[0].name[count.index]}-binding"
+    namespace = kubernetes_namespace.flux[0].metadata[0].name[count.index]
   }
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role.flux.*.metadata.0.name[count.index]
+    name      = kubernetes_role.flux[0].metadata[0].name[count.index]
   }
 
   subject {
@@ -101,7 +101,7 @@ resource "helm_release" "flux" {
     local.values_flux,
     local.flux["extra_values"]
   ]
-  namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.flux[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -112,8 +112,8 @@ resource "kubernetes_network_policy" "flux_default_deny" {
   count = local.flux["enabled"] && local.flux["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.flux.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.flux[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.flux[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -127,8 +127,8 @@ resource "kubernetes_network_policy" "flux_allow_namespace" {
   count = local.flux["enabled"] && local.flux["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.flux.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.flux[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.flux[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -139,7 +139,7 @@ resource "kubernetes_network_policy" "flux_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.flux.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.flux[0].metadata[0].name[count.index]
           }
         }
       }
@@ -153,8 +153,8 @@ resource "kubernetes_network_policy" "flux_allow_monitoring" {
   count = local.flux["enabled"] && local.flux["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.flux.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.flux.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.flux[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.flux[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -170,7 +170,7 @@ resource "kubernetes_network_policy" "flux_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
           }
         }
       }

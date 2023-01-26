@@ -2,10 +2,10 @@ locals {
   istio-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "istio-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "istio-operator")].version
       namespace              = "istio-system"
       enabled                = false
       version                = "1.7.4"
@@ -57,15 +57,15 @@ resource "helm_release" "istio-operator" {
     local.values_istio-operator,
     local.istio-operator["extra_values"]
   ]
-  namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.istio-operator[0].metadata[0].name[count.index]
 }
 
 resource "kubernetes_network_policy" "istio-operator_default_deny" {
   count = local.istio-operator["enabled"] && local.istio-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.istio-operator[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.istio-operator[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -79,8 +79,8 @@ resource "kubernetes_network_policy" "istio-operator_allow_namespace" {
   count = local.istio-operator["enabled"] && local.istio-operator["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.istio-operator[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.istio-operator[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -91,7 +91,7 @@ resource "kubernetes_network_policy" "istio-operator_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.istio-operator.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.istio-operator[0].metadata[0].name[count.index]
           }
         }
       }

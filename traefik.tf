@@ -3,10 +3,10 @@ locals {
   traefik = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "traefik")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "traefik")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "traefik")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "traefik")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "traefik")].version
       namespace              = "traefik"
       enabled                = false
       ingress_cidrs          = ["0.0.0.0/0"]
@@ -59,7 +59,7 @@ resource "helm_release" "traefik" {
     local.values_traefik,
     local.traefik["extra_values"],
   ])
-  namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.traefik[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -70,8 +70,8 @@ resource "kubernetes_network_policy" "traefik_default_deny" {
   count = local.traefik["enabled"] && local.traefik["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.traefik[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.traefik[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -85,8 +85,8 @@ resource "kubernetes_network_policy" "traefik_allow_namespace" {
   count = local.traefik["enabled"] && local.traefik["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.traefik[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.traefik[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -97,7 +97,7 @@ resource "kubernetes_network_policy" "traefik_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.traefik[0].metadata[0].name[count.index]
           }
         }
       }
@@ -111,8 +111,8 @@ resource "kubernetes_network_policy" "traefik_allow_monitoring" {
   count = local.traefik["enabled"] && local.traefik["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.traefik[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.traefik[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -137,8 +137,8 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
   count = local.traefik["enabled"] && local.traefik["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.traefik.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.traefik.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.traefik[0].metadata[0].name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.traefik[0].metadata[0].name[count.index]
   }
 
   spec {

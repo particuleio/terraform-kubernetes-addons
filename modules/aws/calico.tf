@@ -3,10 +3,10 @@ locals {
   calico = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-calico")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-calico")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-calico")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-calico")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-calico")].version
       namespace              = "kube-system"
       enabled                = false
       default_network_policy = true
@@ -58,15 +58,15 @@ resource "helm_release" "calico" {
     local.values_calico,
     local.calico["extra_values"]
   ]
-  namespace = local.calico["create_ns"] ? kubernetes_namespace.calico.*.metadata.0.name[count.index] : local.calico["namespace"]
+  namespace = local.calico["create_ns"] ? kubernetes_namespace.calico[0].metadata[0].name[count.index] : local.calico["namespace"]
 }
 
 resource "kubernetes_network_policy" "calico_default_deny" {
   count = local.calico["enabled"] && local.calico["default_network_policy"] && local.calico["create_ns"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.calico.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.calico.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.calico[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.calico[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -80,8 +80,8 @@ resource "kubernetes_network_policy" "calico_allow_namespace" {
   count = local.calico["enabled"] && local.calico["default_network_policy"] && local.calico["create_ns"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.calico.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.calico.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.calico[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.calico[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -92,7 +92,7 @@ resource "kubernetes_network_policy" "calico_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.calico.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.calico[0].metadata[0].name[count.index]
           }
         }
       }

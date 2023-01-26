@@ -2,10 +2,10 @@ locals {
   strimzi-kafka-operator = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "strimzi-kafka-operator")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "strimzi-kafka-operator")].version
       namespace              = "strimzi-kafka-operator"
       enabled                = false
       create_ns              = true
@@ -56,7 +56,7 @@ resource "helm_release" "strimzi-kafka-operator" {
     local.values_strimzi-kafka-operator,
     local.strimzi-kafka-operator["extra_values"]
   ]
-  namespace = local.strimzi-kafka-operator["create_ns"] ? kubernetes_namespace.strimzi-kafka-operator.*.metadata.0.name[count.index] : local.strimzi-kafka-operator["namespace"]
+  namespace = local.strimzi-kafka-operator["create_ns"] ? kubernetes_namespace.strimzi-kafka-operator[0].metadata[0].name[count.index] : local.strimzi-kafka-operator["namespace"]
 }
 
 resource "kubernetes_network_policy" "strimzi-kafka-operator_default_deny" {

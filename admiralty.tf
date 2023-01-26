@@ -2,10 +2,10 @@ locals {
   admiralty = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "admiralty")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "admiralty")].version
       namespace              = "admiralty"
       enabled                = false
       create_ns              = true
@@ -55,7 +55,7 @@ resource "helm_release" "admiralty" {
     local.values_admiralty,
     local.admiralty["extra_values"]
   ]
-  namespace = local.admiralty["create_ns"] ? kubernetes_namespace.admiralty.*.metadata.0.name[count.index] : local.admiralty["namespace"]
+  namespace = local.admiralty["create_ns"] ? kubernetes_namespace.admiralty[0].metadata[0].name[count.index] : local.admiralty["namespace"]
 }
 
 resource "kubernetes_network_policy" "admiralty_default_deny" {

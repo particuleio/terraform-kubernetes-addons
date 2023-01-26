@@ -2,10 +2,10 @@ locals {
   linkerd2 = merge(
     local.helm_defaults,
     {
-      name               = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2")].name
-      chart              = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2")].name
-      repository         = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2")].repository
-      chart_version      = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2")].version
+      name               = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].name
+      chart              = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].name
+      repository         = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].repository
+      chart_version      = local.helm_dependencies[index(local.helm_dependencies[0].name, "linkerd2")].version
       namespace          = "linkerd"
       create_ns          = true
       enabled            = false
@@ -25,15 +25,15 @@ locals {
       issuer:
         scheme: kubernetes.io/tls
     identityTrustAnchorsPEM: |
-      ${indent(2, local.linkerd2.enabled ? local.linkerd2["trust_anchor_pem"] == null ? tls_self_signed_cert.linkerd_trust_anchor.0.cert_pem : local.linkerd2["trust_anchor_pem"] : "")}
+      ${indent(2, local.linkerd2.enabled ? local.linkerd2["trust_anchor_pem"] == null ? tls_self_signed_cert.linkerd_trust_anchor[0].cert_pem : local.linkerd2["trust_anchor_pem"] : "")}
     proxyInjector:
       externalSecret: true
       caBundle: |
-        ${indent(4, local.linkerd2.enabled ? tls_self_signed_cert.webhook_issuer_tls.0.cert_pem : "")}
+        ${indent(4, local.linkerd2.enabled ? tls_self_signed_cert.webhook_issuer_tls[0].cert_pem : "")}
     profileValidator:
       externalSecret: true
       caBundle: |
-        ${indent(4, local.linkerd2.enabled ? tls_self_signed_cert.webhook_issuer_tls.0.cert_pem : "")}
+        ${indent(4, local.linkerd2.enabled ? tls_self_signed_cert.webhook_issuer_tls[0].cert_pem : "")}
     VALUES
 
   values_linkerd2_ha = <<-VALUES
@@ -193,7 +193,7 @@ resource "tls_private_key" "linkerd_trust_anchor" {
 
 resource "tls_self_signed_cert" "linkerd_trust_anchor" {
   count                 = local.linkerd2["enabled"] && local.linkerd2["trust_anchor_pem"] == null ? 1 : 0
-  private_key_pem       = tls_private_key.linkerd_trust_anchor.0.private_key_pem
+  private_key_pem       = tls_private_key.linkerd_trust_anchor[0].private_key_pem
   validity_period_hours = 87600
   early_renewal_hours   = 78840
   is_ca_certificate     = true
@@ -212,12 +212,12 @@ resource "kubernetes_secret" "linkerd_trust_anchor" {
   count = local.linkerd2["enabled"] && local.linkerd2["trust_anchor_pem"] == null ? 1 : 0
   metadata {
     name      = "linkerd-trust-anchor"
-    namespace = local.linkerd2.create_ns ? kubernetes_namespace.linkerd2.0.metadata[0].name : local.linkerd2.namespace
+    namespace = local.linkerd2.create_ns ? kubernetes_namespace.linkerd2[0].metadata[0].name : local.linkerd2.namespace
   }
 
   data = {
-    "tls.crt" = tls_self_signed_cert.linkerd_trust_anchor.0.cert_pem
-    "tls.key" = tls_private_key.linkerd_trust_anchor.0.private_key_pem
+    "tls.crt" = tls_self_signed_cert.linkerd_trust_anchor[0].cert_pem
+    "tls.key" = tls_private_key.linkerd_trust_anchor[0].private_key_pem
   }
 
   type = "kubernetes.io/tls"
@@ -231,7 +231,7 @@ resource "tls_private_key" "webhook_issuer_tls" {
 
 resource "tls_self_signed_cert" "webhook_issuer_tls" {
   count                 = local.linkerd2["enabled"] ? 1 : 0
-  private_key_pem       = tls_private_key.webhook_issuer_tls.0.private_key_pem
+  private_key_pem       = tls_private_key.webhook_issuer_tls[0].private_key_pem
   validity_period_hours = 87600
   early_renewal_hours   = 78840
   is_ca_certificate     = true
@@ -250,12 +250,12 @@ resource "kubernetes_secret" "webhook_issuer_tls" {
   count = local.linkerd2["enabled"] ? 1 : 0
   metadata {
     name      = "webhook-issuer-tls"
-    namespace = local.linkerd2.create_ns ? kubernetes_namespace.linkerd2.0.metadata[0].name : local.linkerd2.namespace
+    namespace = local.linkerd2.create_ns ? kubernetes_namespace.linkerd2[0].metadata[0].name : local.linkerd2.namespace
   }
 
   data = {
-    "tls.crt" = tls_self_signed_cert.webhook_issuer_tls.0.cert_pem
-    "tls.key" = tls_private_key.webhook_issuer_tls.0.private_key_pem
+    "tls.crt" = tls_self_signed_cert.webhook_issuer_tls[0].cert_pem
+    "tls.key" = tls_private_key.webhook_issuer_tls[0].private_key_pem
   }
 
   type = "kubernetes.io/tls"
@@ -306,7 +306,7 @@ resource "helm_release" "linkerd2" {
     local.linkerd2["extra_values"],
     local.linkerd2.ha ? local.values_linkerd2_ha : null
   ])
-  namespace = local.linkerd2["create_ns"] ? kubernetes_namespace.linkerd2.*.metadata.0.name[count.index] : local.linkerd2["namespace"]
+  namespace = local.linkerd2["create_ns"] ? kubernetes_namespace.linkerd2[0].metadata[0].name[count.index] : local.linkerd2["namespace"]
 
   depends_on = [
     helm_release.linkerd2-cni

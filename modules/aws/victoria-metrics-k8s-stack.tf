@@ -2,10 +2,10 @@ locals {
   victoria-metrics-k8s-stack = merge(
     local.helm_defaults,
     {
-      name                             = local.helm_dependencies[index(local.helm_dependencies.*.name, "victoria-metrics-k8s-stack")].name
-      chart                            = local.helm_dependencies[index(local.helm_dependencies.*.name, "victoria-metrics-k8s-stack")].name
-      repository                       = local.helm_dependencies[index(local.helm_dependencies.*.name, "victoria-metrics-k8s-stack")].repository
-      chart_version                    = local.helm_dependencies[index(local.helm_dependencies.*.name, "victoria-metrics-k8s-stack")].version
+      name                             = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].name
+      chart                            = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].name
+      repository                       = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].repository
+      chart_version                    = local.helm_dependencies[index(local.helm_dependencies[0].name, "victoria-metrics-k8s-stack")].version
       namespace                        = "monitoring"
       enabled                          = false
       allowed_cidrs                    = ["0.0.0.0/0"]
@@ -25,7 +25,7 @@ kubeEtcd:
 kubeProxy:
   enabled: false
 grafana:
-  adminPassword: ${join(",", random_string.grafana_password.*.result)}
+  adminPassword: ${join(",", random_string.grafana_password[0].result)}
 prometheus-node-exporter:
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 victoria-metrics-operator:
@@ -97,7 +97,7 @@ resource "helm_release" "victoria-metrics-k8s-stack" {
     local.values_dashboard_node_exporter,
     local.victoria-metrics-k8s-stack["extra_values"]
   ])
-  namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]
 
   depends_on = [
     helm_release.ingress-nginx,
@@ -108,8 +108,8 @@ resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_default_deny" {
   count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -123,8 +123,8 @@ resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_allow_namespace
   count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -135,7 +135,7 @@ resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_allow_namespace
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]
           }
         }
       }
@@ -149,8 +149,8 @@ resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_allow_ingress" 
   count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -175,8 +175,8 @@ resource "kubernetes_network_policy" "victoria-metrics-k8s-stack_allow_control_p
   count = local.victoria-metrics-k8s-stack["enabled"] && local.victoria-metrics-k8s-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.victoria-metrics-k8s-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.victoria-metrics-k8s-stack[0].metadata[0].name[count.index]
   }
 
   spec {

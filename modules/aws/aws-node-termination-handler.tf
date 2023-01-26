@@ -2,10 +2,10 @@ locals {
   aws-node-termination-handler = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "aws-node-termination-handler")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "aws-node-termination-handler")].version
       namespace              = "aws-node-termination-handler"
       enabled                = false
       default_network_policy = true
@@ -64,8 +64,8 @@ resource "kubernetes_network_policy" "aws-node-termination-handler_default_deny"
   count = local.aws-node-termination-handler["enabled"] && local.aws-node-termination-handler["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-node-termination-handler[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.aws-node-termination-handler[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -79,8 +79,8 @@ resource "kubernetes_network_policy" "aws-node-termination-handler_allow_namespa
   count = local.aws-node-termination-handler["enabled"] && local.aws-node-termination-handler["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.aws-node-termination-handler[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.aws-node-termination-handler[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -91,7 +91,7 @@ resource "kubernetes_network_policy" "aws-node-termination-handler_allow_namespa
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.aws-node-termination-handler.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.aws-node-termination-handler[0].metadata[0].name[count.index]
           }
         }
       }

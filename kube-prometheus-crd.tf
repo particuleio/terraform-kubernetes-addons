@@ -1,6 +1,6 @@
 locals {
 
-  prometheus-operator_crd_version = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? yamldecode(data.http.prometheus-operator_version.0.response_body).appVersion : ""
+  prometheus-operator_crd_version = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? yamldecode(data.http.prometheus-operator_version[0].response_body).appVersion : ""
 
   prometheus-operator_crds = [
     "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${local.prometheus-operator_crd_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml",

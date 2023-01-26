@@ -3,10 +3,10 @@ locals {
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "kube-prometheus-stack")].version
       namespace              = "monitoring"
       enabled                = false
       allowed_cidrs          = ["0.0.0.0/0"]
@@ -20,7 +20,7 @@ locals {
 grafana:
   rbac:
     pspEnabled: false
-  adminPassword: ${join(",", random_string.grafana_password.*.result)}
+  adminPassword: ${join(",", random_string.grafana_password[0].result)}
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
@@ -147,7 +147,7 @@ resource "helm_release" "kube-prometheus-stack" {
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
     local.values_dashboard_node_exporter
   ])
-  namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
 
   depends_on = [
     helm_release.ingress-nginx,
@@ -159,8 +159,8 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_default_deny" {
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -174,8 +174,8 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_namespace" {
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -186,7 +186,7 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
           }
         }
       }
@@ -200,8 +200,8 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_ingress" {
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]}-allow-ingress"
-    namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]}-allow-ingress"
+    namespace = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -226,8 +226,8 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]}-allow-control-plane"
-    namespace = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -260,6 +260,6 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
 }
 
 output "grafana_password" {
-  value     = element(concat(random_string.grafana_password.*.result, [""]), 0)
+  value     = element(concat(random_string.grafana_password[0].result, [""]), 0)
   sensitive = true
 }

@@ -3,10 +3,10 @@ locals {
   thanos = merge(
     local.helm_defaults,
     {
-      name                    = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
-      chart                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
-      repository              = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].repository
-      chart_version           = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].version
+      name                    = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].name
+      chart                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].name
+      repository              = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].repository
+      chart_version           = local.helm_dependencies[index(local.helm_dependencies[0].name, "thanos")].version
       namespace               = "monitoring"
       iam_policy_override     = null
       create_ns               = false
@@ -256,7 +256,7 @@ resource "helm_release" "thanos" {
     local.thanos-memcached["enabled"] ? local.values_thanos_caching : null,
     local.thanos["extra_values"]
   ])
-  namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[count.index] : local.thanos["namespace"]
+  namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos[0].metadata[0].name[count.index] : local.thanos["namespace"]
 
   depends_on = [
     helm_release.kube-prometheus-stack,
@@ -291,7 +291,7 @@ resource "kubernetes_secret" "thanos-ca" {
   count = local.thanos["enabled"] && (local.thanos["generate_ca"] || local.thanos["trusted_ca_content"] != null) ? 1 : 0
   metadata {
     name      = "${local.thanos["name"]}-ca"
-    namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos.*.metadata.0.name[count.index] : local.thanos["namespace"]
+    namespace = local.thanos["create_ns"] ? kubernetes_namespace.thanos[0].metadata[0].name[count.index] : local.thanos["namespace"]
   }
 
   data = {

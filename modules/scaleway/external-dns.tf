@@ -3,10 +3,10 @@ locals {
   external-dns = merge(
     local.helm_defaults,
     {
-      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].name
-      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].repository
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "external-dns")].version
+      name                   = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies[0].name, "external-dns")].version
       namespace              = "external-dns"
       service_account_name   = "external-dns"
       enabled                = false
@@ -82,7 +82,7 @@ resource "helm_release" "external-dns" {
     local.values_external-dns,
     local.external-dns["extra_values"]
   ]
-  namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.external-dns[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -106,8 +106,8 @@ resource "kubernetes_network_policy" "external-dns_default_deny" {
   count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.external-dns[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.external-dns[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -121,8 +121,8 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
   count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.external-dns[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.external-dns[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -133,7 +133,7 @@ resource "kubernetes_network_policy" "external-dns_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.external-dns[0].metadata[0].name[count.index]
           }
         }
       }
@@ -147,8 +147,8 @@ resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
   count = local.external-dns["enabled"] && local.external-dns["default_network_policy"] && local.kube-prometheus-stack["enabled"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.external-dns.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.external-dns.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.external-dns[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.external-dns[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -164,7 +164,7 @@ resource "kubernetes_network_policy" "external-dns_allow_monitoring" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.kube-prometheus-stack.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.kube-prometheus-stack[0].metadata[0].name[count.index]
           }
         }
       }

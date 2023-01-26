@@ -2,10 +2,10 @@ locals {
   cluster-autoscaler = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cluster-autoscaler")].version
+      name                      = local.helm_dependencies[index(local.helm_dependencies[0].name, "cluster-autoscaler")].name
+      chart                     = local.helm_dependencies[index(local.helm_dependencies[0].name, "cluster-autoscaler")].name
+      repository                = local.helm_dependencies[index(local.helm_dependencies[0].name, "cluster-autoscaler")].repository
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies[0].name, "cluster-autoscaler")].version
       namespace                 = "cluster-autoscaler"
       service_account_name      = "cluster-autoscaler"
       create_iam_resources_irsa = true
@@ -147,7 +147,7 @@ resource "helm_release" "cluster-autoscaler" {
     local.values_cluster-autoscaler,
     local.cluster-autoscaler["extra_values"]
   ]
-  namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
+  namespace = kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]
 
   depends_on = [
     kubectl_manifest.prometheus-operator_crds
@@ -158,8 +158,8 @@ resource "kubernetes_network_policy" "cluster-autoscaler_default_deny" {
   count = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]}-default-deny"
-    namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]}-default-deny"
+    namespace = kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -173,8 +173,8 @@ resource "kubernetes_network_policy" "cluster-autoscaler_allow_namespace" {
   count = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]}-allow-namespace"
-    namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]}-allow-namespace"
+    namespace = kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]
   }
 
   spec {
@@ -185,7 +185,7 @@ resource "kubernetes_network_policy" "cluster-autoscaler_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
+            name = kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]
           }
         }
       }
@@ -199,8 +199,8 @@ resource "kubernetes_network_policy" "cluster-autoscaler_allow_monitoring" {
   count = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]}-allow-monitoring"
-    namespace = kubernetes_namespace.cluster-autoscaler.*.metadata.0.name[count.index]
+    name      = "${kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.cluster-autoscaler[0].metadata[0].name[count.index]
   }
 
   spec {
