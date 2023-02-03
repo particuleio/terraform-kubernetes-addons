@@ -4,6 +4,8 @@ repos:
   hooks:
     - id: terraform_fmt
     - id: terraform_validate
+      args:
+        - --hook-config=--retry-once-with-cleanup=true
     - id: terraform_docs
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0
