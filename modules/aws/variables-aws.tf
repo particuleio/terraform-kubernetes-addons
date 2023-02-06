@@ -81,3 +81,9 @@ variable "velero" {
   type        = any
   default     = {}
 }
+
+variable "yet-another-cloudwatch-exporter" {
+  description = "Customize yet-another-cloudwatch-exporter chart, see `yet-another-cloudwatch-exporter.tf` for supported values"
+  type        = any
+  default     = {}
+}
