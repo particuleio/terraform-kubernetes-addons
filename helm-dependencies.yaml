@@ -12,7 +12,7 @@ dependencies:
     version: 2.16.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.3.6
+    version: 2.3.7
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.22
@@ -36,7 +36,7 @@ dependencies:
     version: 9.23.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 1.12.0
+    version: 1.12.1
     repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
     version: 1.13.3
@@ -60,10 +60,10 @@ dependencies:
     version: 18.4.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.16.0
+    version: 2.16.2
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 44.3.1
+    version: 44.4.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: kyverno
     version: 2.7.0
@@ -84,7 +84,7 @@ dependencies:
     version: 2.9.9
     repository: https://grafana.github.io/helm-charts
   - name: loki
-    version: 4.4.2
+    version: 4.6.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 6.8.2
@@ -93,13 +93,13 @@ dependencies:
     version: 3.8.3
     repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
-    version: 2.3.2
+    version: 2.3.3
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
     version: 4.1.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
-    version: 0.22.0
+    version: 0.23.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
     version: 7.5.0
@@ -114,7 +114,7 @@ dependencies:
     version: 2.7.3
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: strimzi-kafka-operator
-    version: 0.33.0
+    version: 0.33.1
     repository: https://strimzi.io/charts/
   - name: thanos
     version: 12.0.3

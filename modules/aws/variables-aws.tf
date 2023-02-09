@@ -64,6 +64,12 @@ variable "prometheus-cloudwatch-exporter" {
   default     = {}
 }
 
+variable "s3-logging" {
+  description = "Logging configuration for bucket created by this module"
+  type        = any
+  default     = {}
+}
+
 variable "secrets-store-csi-driver-provider-aws" {
   description = "Enable secrets-store-csi-driver-provider-aws"
   type        = any

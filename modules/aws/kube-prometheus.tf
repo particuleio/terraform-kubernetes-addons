@@ -411,6 +411,10 @@ module "kube-prometheus-stack_thanos_bucket" {
   bucket = local.kube-prometheus-stack["thanos_bucket"]
   acl    = "private"
 
+  versioning = {
+    status = true
+  }
+
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
@@ -418,6 +422,12 @@ module "kube-prometheus-stack_thanos_bucket" {
       }
     }
   }
+
+  logging = local.s3-logging.enabled ? {
+    target_bucket = local.s3-logging.create_bucket ? module.s3_logging_bucket.s3_bucket_id : local.s3-logging.custom_bucket_id
+    target_prefix = "${var.cluster-name}/${local.kube-prometheus-stack.name}/"
+  } : {}
+
   tags = local.tags
 }
 
