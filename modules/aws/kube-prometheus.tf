@@ -423,10 +423,10 @@ module "kube-prometheus-stack_thanos_bucket" {
     }
   }
 
-  logging = {
-    target_bucket = module.s3_logging_bucket.s3_bucket_id
-    target_prefix = "${local.kube-prometheus-stack.name}/"
-  }
+  logging = local.s3-logging.enabled ? {
+    target_bucket = local.s3-logging.create_bucket ? module.s3_logging_bucket.s3_bucket_id : local.s3-logging.custom_bucket_id
+    target_prefix = "${var.cluster-name}/${local.kube-prometheus-stack.name}/"
+  } : {}
 
   tags = local.tags
 }

@@ -1,4 +1,16 @@
+locals {
+  s3-logging = merge(
+    {
+      enabled          = false
+      create_bucket    = true
+      custom_bucket_id = null
+    },
+    var.s3-logging
+  )
+}
+
 module "s3_logging_bucket" {
+  create_bucket = local.s3-logging.enabled && local.s3-logging.create_bucket
 
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 3.0"
