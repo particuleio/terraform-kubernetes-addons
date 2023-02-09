@@ -8,16 +8,65 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].version
       namespace              = "tigera-operator"
       create_ns              = true
+      manage_crds            = true
       enabled                = false
       default_network_policy = true
     },
     var.tigera-operator
   )
 
+  tigera-operator_crds = "https://raw.githubusercontent.com/projectcalico/calico/${local.tigera-operator.chart_version}/manifests/operator-crds.yaml"
+
+  calico_crds = "https://raw.githubusercontent.com/projectcalico/calico/${local.tigera-operator.chart_version}/manifests/crds.yaml"
+
+  tigera-operator_crds_apply = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? [for v in data.kubectl_file_documents.tigera-operator_crds.0.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ] : null
+
+  calico_crds_apply = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? [for v in data.kubectl_file_documents.tigera-operator_crds.0.documents : {
+    data : yamldecode(v)
+    content : v
+    }
+  ] : null
+
   values_tigera-operator = <<-VALUES
     installation:
       kubernetesProvider: EKS
     VALUES
+}
+
+data "http" "tigera-operator_crds" {
+  count = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
+  url   = local.tigera-operator_crds
+}
+
+data "http" "calico_crds" {
+  count = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
+  url   = local.calico_crds
+}
+
+data "kubectl_file_documents" "tigera-operator_crds" {
+  count   = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
+  content = data.http.tigera-operator_crds[0].response_body
+}
+
+data "kubectl_file_documents" "calico_crds" {
+  count   = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
+  content = data.http.calico_crds[0].response_body
+}
+
+resource "kubectl_manifest" "tigera-operator_crds" {
+  for_each          = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? { for v in local.tigera-operator_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
+  yaml_body         = each.value
+  server_side_apply = true
+}
+
+resource "kubectl_manifest" "calico_crds" {
+  for_each          = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? { for v in local.calico_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
+  yaml_body         = each.value
+  server_side_apply = true
 }
 
 resource "kubernetes_namespace" "tigera-operator" {
