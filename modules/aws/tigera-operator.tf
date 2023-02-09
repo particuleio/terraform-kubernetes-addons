@@ -61,12 +61,14 @@ resource "kubectl_manifest" "tigera-operator_crds" {
   for_each          = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? { for v in local.tigera-operator_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
   yaml_body         = each.value
   server_side_apply = true
+  force_conflicts   = true
 }
 
 resource "kubectl_manifest" "calico_crds" {
   for_each          = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? { for v in local.calico_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
   yaml_body         = each.value
   server_side_apply = true
+  force_conflicts   = true
 }
 
 resource "kubernetes_namespace" "tigera-operator" {
