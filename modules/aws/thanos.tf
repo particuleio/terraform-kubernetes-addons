@@ -279,6 +279,10 @@ module "thanos_bucket" {
   bucket = local.thanos["bucket"]
   acl    = "private"
 
+  versioning = {
+    status = true
+  }
+
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
@@ -286,6 +290,12 @@ module "thanos_bucket" {
       }
     }
   }
+
+  logging = {
+    target_bucket = module.s3_logging_bucket.s3_bucket_id
+    target_prefix = "${local.thanos.name}/"
+  }
+
   tags = local.tags
 }
 

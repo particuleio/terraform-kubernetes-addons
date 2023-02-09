@@ -30,7 +30,7 @@ locals {
       enabled: false
     monitoring:
       lokiCanary:
-        enabled: false    
+        enabled: false
       selfMonitoring:
         enabled: false
         grafanaAgent:
@@ -198,12 +198,21 @@ module "loki_bucket" {
   bucket = local.loki-stack["bucket"]
   acl    = "private"
 
+  versioning = {
+    status = true
+  }
+
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
         sse_algorithm = "AES256"
       }
     }
+  }
+
+  logging = {
+    target_bucket = module.s3_logging_bucket.s3_bucket_id
+    target_prefix = "${local.loki-stack.name}/"
   }
 
   tags = local.tags
