@@ -34,4 +34,5 @@ resource "kubectl_manifest" "prometheus-operator_crds" {
   for_each          = (local.victoria-metrics-k8s-stack.enabled && local.victoria-metrics-k8s-stack.install_prometheus_operator_crds) || (local.kube-prometheus-stack.enabled && local.kube-prometheus-stack.manage_crds) ? local.prometheus-operator_crds_apply : {}
   yaml_body         = each.value
   server_side_apply = true
+  force_conflicts   = true
 }
