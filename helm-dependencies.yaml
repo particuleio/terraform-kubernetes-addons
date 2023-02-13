@@ -60,7 +60,7 @@ dependencies:
     version: 18.4.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.16.2
+    version: 2.16.3
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
     version: 45.0.0
@@ -99,7 +99,7 @@ dependencies:
     version: 4.1.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
-    version: 0.23.0
+    version: 0.24.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
     version: 7.5.0
@@ -123,10 +123,10 @@ dependencies:
     version: v3.25.0
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 20.8.0
+    version: 21.0.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.3.5
+    version: 6.3.6
     repository: https://charts.bitnami.com/bitnami
   - name: vault
     version: 0.23.0
@@ -135,8 +135,8 @@ dependencies:
     version: 3.1.2
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.14.7
+    version: 0.14.8
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
-    version: 0.12.0
+    version: 0.14.0
     repository: https://nerdswords.github.io/yet-another-cloudwatch-exporter
