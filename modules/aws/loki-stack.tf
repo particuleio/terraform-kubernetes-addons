@@ -237,6 +237,7 @@ resource "tls_self_signed_cert" "loki-stack-ca-cert" {
   }
 
   validity_period_hours = 87600
+  early_renewal_hours   = 720
 
   allowed_uses = [
     "cert_signing"
@@ -348,6 +349,7 @@ resource "tls_locally_signed_cert" "promtail-cert" {
   ca_cert_pem        = tls_self_signed_cert.loki-stack-ca-cert[count.index].cert_pem
 
   validity_period_hours = 8760
+  early_renewal_hours   = 720
 
   allowed_uses = [
     "key_encipherment",
