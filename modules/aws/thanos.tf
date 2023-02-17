@@ -366,6 +366,7 @@ resource "tls_self_signed_cert" "thanos-tls-querier-ca-cert" {
   }
 
   validity_period_hours = 87600
+  early_renewal_hours   = 720
 
   allowed_uses = [
     "cert_signing"
