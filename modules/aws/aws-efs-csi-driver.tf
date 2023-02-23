@@ -92,7 +92,7 @@ resource "aws_efs_file_system" "aws-efs-csi-driver" {
   encrypted                       = lookup(local.aws-efs-csi-driver, "encrypted", "true")
   performance_mode                = lookup(local.aws-efs-csi-driver, "performance_mode", "generalPurpose")
   provisioned_throughput_in_mibps = lookup(local.aws-efs-csi-driver, "provisioned_throughput_in_mibps", 0)
-  throughput_mode                 = lookup(local.aws-efs-csi-driver, "provisioned_throughput_in_mibps", 0) == 0 ? "bursting" : "provisioned"
+  throughput_mode                 = lookup(local.aws-efs-csi-driver, "throughput_mode", "bursting")
   dynamic "lifecycle_policy" {
     for_each = lookup(local.aws-efs-csi-driver, "lifecycle_policy", [])
     content {
