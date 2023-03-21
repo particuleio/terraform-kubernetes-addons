@@ -10,6 +10,7 @@ locals {
       service_account_name      = "aws-load-balancer-controller"
       create_iam_resources_irsa = true
       enabled                   = false
+      additional_iam_statements = null
       iam_policy_override       = null
       default_network_policy    = true
       allowed_cidrs             = ["0.0.0.0/0"]
@@ -43,8 +44,16 @@ module "iam_assumable_role_aws-load-balancer-controller" {
 resource "aws_iam_policy" "aws-load-balancer-controller" {
   count  = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? 1 : 0
   name   = local.aws-load-balancer-controller["name_prefix"]
-  policy = local.aws-load-balancer-controller["iam_policy_override"] == null ? templatefile("${path.module}/iam/aws-load-balancer-controller.json", { arn-partition = local.arn-partition }) : local.aws-load-balancer-controller["iam_policy_override"]
+  policy = local.aws-load-balancer-controller["iam_policy_override"] == null ? data.aws_iam_policy_document.aws-load-balancer-controller[0].json : local.aws-load-balancer-controller["iam_policy_override"]
   tags   = local.tags
+}
+
+data "aws_iam_policy_document" "aws-load-balancer-controller" {
+  count = local.aws-load-balancer-controller.enabled && local.aws-load-balancer-controller.create_iam_resources_irsa ? 1 : 0
+  source_policy_documents = compact([
+    templatefile("${path.module}/iam/aws-load-balancer-controller.json", { arn-partition = local.arn-partition }),
+    try(local.aws-load-balancer-controller.additional_iam_statements, "")
+  ])
 }
 
 resource "kubernetes_namespace" "aws-load-balancer-controller" {
