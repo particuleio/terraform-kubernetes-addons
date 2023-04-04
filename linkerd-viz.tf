@@ -149,6 +149,8 @@ resource "helm_release" "linkerd-viz" {
     local.linkerd-viz.ha ? local.values_linkerd-viz_ha : null
   ])
   namespace = local.linkerd-viz["create_ns"] ? kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index] : local.linkerd-viz["namespace"]
+
+  depends_on = [helm_release.linkerd-control-plane]
 }
 
 resource "kubernetes_network_policy" "linkerd-viz_default_deny" {
