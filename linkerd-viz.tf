@@ -8,7 +8,7 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd-viz")].version
       namespace              = "linkerd-viz"
       create_ns              = true
-      enabled                = local.linkerd2.enabled
+      enabled                = local.linkerd.enabled
       default_network_policy = true
       ha                     = true
     },

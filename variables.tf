@@ -130,6 +130,12 @@ variable "linkerd-viz" {
   default     = {}
 }
 
+variable "linkerd" {
+  description = "Customize linkerd chart, see `linkerd.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "loki-stack" {
   description = "Customize loki-stack chart, see `loki-stack.tf` for supported values"
   type        = any

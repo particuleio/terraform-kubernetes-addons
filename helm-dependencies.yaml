@@ -71,12 +71,15 @@ dependencies:
   - name: kyverno-crds
     version: v2.0.3
     repository: https://kyverno.github.io/kyverno/
-  - name: linkerd2
-    repository: https://helm.linkerd.io/edge
-    version: 21.12.3
   - name: linkerd2-cni
     repository: https://helm.linkerd.io/edge
     version: 21.12.4
+  - name: linkerd-control-plane
+    repository: https://helm.linkerd.io/stable
+    version: 1.9.6
+  - name: linkerd-crds
+    repository: https://helm.linkerd.io/stable
+    version: 1.4.0
   - name: linkerd-viz
     repository: https://helm.linkerd.io/edge
     version: 21.12.4

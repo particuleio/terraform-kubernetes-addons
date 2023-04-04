@@ -8,7 +8,7 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].version
       namespace              = "linkerd-cni"
       create_ns              = true
-      enabled                = local.linkerd2.enabled
+      enabled                = local.linkerd.enabled
       cni_conflist_filename  = "10-calico.conflist"
       default_network_policy = true
     },
