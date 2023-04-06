@@ -1,3 +1,4 @@
 .terragrunt-cache
 .terraform
 .terraform.lock.hcl
+.idea

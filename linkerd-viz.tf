@@ -8,7 +8,7 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd-viz")].version
       namespace              = "linkerd-viz"
       create_ns              = true
-      enabled                = local.linkerd2.enabled
+      enabled                = local.linkerd.enabled
       default_network_policy = true
       ha                     = true
     },
@@ -16,49 +16,87 @@ locals {
   )
 
   values_linkerd-viz = <<VALUES
-namespace: ${local.linkerd-viz.namespace}
-installNamespace: false
-VALUES
+    namespace: ${local.linkerd-viz.namespace}
+    installNamespace: false
+
+    VALUES
 
   values_linkerd-viz_ha = <<VALUES
+    #
+    # The below is taken from: https://github.com/linkerd/linkerd2/blob/main/viz/charts/linkerd-viz/values-ha.yaml
+    #
 
-enablePodAntiAffinity: true
+    # This values.yaml file contains the values needed to enable HA mode.
+    # Usage:
+    #   helm install -f values.yaml -f values-ha.yaml
 
-resources: &ha_resources
-  cpu: &ha_resources_cpu
-    limit: ""
-    request: 100m
-  memory:
-    limit: 250Mi
-    request: 50Mi
+    enablePodAntiAffinity: true
 
-# tap configuration
-tap:
-  replicas: 3
-  resources: *ha_resources
+    # nodeAffinity:
 
-# web configuration
-dashboard:
-  resources: *ha_resources
+    resources: &ha_resources
+      cpu: &ha_resources_cpu
+        limit: ""
+        request: 100m
+      memory:
+        limit: 250Mi
+        request: 50Mi
 
-# grafana configuration
-grafana:
-  resources:
-    cpu: *ha_resources_cpu
-    memory:
-      limit: 1024Mi
-      request: 50Mi
+    # tap configuration
+    tap:
+      replicas: 3
+      resources: *ha_resources
 
-# prometheus configuration
-prometheus:
-  resources:
-    cpu:
-      limit: ""
-      request: 300m
-    memory:
-      limit: 8192Mi
-      request: 300Mi
-VALUES
+    # web configuration
+    dashboard:
+      resources: *ha_resources
+
+    # prometheus configuration
+    prometheus:
+      resources:
+        cpu:
+          limit: ""
+          request: 300m
+        memory:
+          limit: 8192Mi
+          request: 300Mi
+    VALUES
+
+  linkerd-viz_manifests = {
+    prometheus-servicemonitor = <<-VALUES
+      apiVersion: monitoring.coreos.com/v1
+      kind: ServiceMonitor
+      metadata:
+        labels:
+          k8s-app: linkerd-prometheus
+          release: monitoring
+        name: linkerd-federate
+        namespace: ${local.linkerd-viz.namespace}
+      spec:
+        endpoints:
+        - interval: 30s
+          scrapeTimeout: 30s
+          params:
+            match[]:
+            - '{job="linkerd-proxy"}'
+            - '{job="linkerd-controller"}'
+          path: /federate
+          port: admin-http
+          honorLabels: true
+          relabelings:
+          - action: keep
+            regex: '^prometheus$'
+            sourceLabels:
+            - '__meta_kubernetes_pod_container_name'
+        jobLabel: app
+        namespaceSelector:
+          matchNames:
+          - ${local.linkerd-viz.namespace}
+        selector:
+          matchLabels:
+            component: prometheus
+      VALUES
+  }
 }
 
 resource "kubernetes_namespace" "linkerd-viz" {
@@ -77,6 +115,11 @@ resource "kubernetes_namespace" "linkerd-viz" {
 
     name = local.linkerd-viz["namespace"]
   }
+}
+
+resource "kubectl_manifest" "linkerd-viz" {
+  for_each  = local.linkerd-viz.enabled && local.kube-prometheus-stack.enabled ? local.linkerd-viz_manifests : {}
+  yaml_body = each.value
 }
 
 resource "helm_release" "linkerd-viz" {
