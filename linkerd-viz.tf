@@ -10,6 +10,7 @@ locals {
       create_ns              = true
       enabled                = local.linkerd.enabled
       default_network_policy = true
+      allowed_cidrs          = ["0.0.0.0/0"]
       ha                     = true
     },
     var.linkerd-viz
@@ -185,6 +186,64 @@ resource "kubernetes_network_policy" "linkerd-viz_allow_namespace" {
         namespace_selector {
           match_labels = {
             name = kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "linkerd-viz_allow_control_plane" {
+  count = local.linkerd-viz["enabled"] && local.linkerd-viz["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      ports {
+        port     = "8089"
+        protocol = "TCP"
+      }
+
+      dynamic "from" {
+        for_each = local.linkerd-viz["allowed_cidrs"]
+        content {
+          ip_block {
+            cidr = from.value
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "linkerd-viz_allow_monitoring" {
+  count = local.linkerd-viz["enabled"] && local.linkerd-viz["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }
