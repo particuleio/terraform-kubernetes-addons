@@ -138,7 +138,7 @@ dependencies:
     version: 3.1.6
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.14.16
+    version: 0.14.17
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
