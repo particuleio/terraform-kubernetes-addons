@@ -17,9 +17,7 @@ locals {
   )
 
   values_linkerd-viz = <<VALUES
-    namespace: ${local.linkerd-viz.namespace}
-    installNamespace: false
-
+    linkerdNamespace: ${local.linkerd["namespace"]}
     VALUES
 
   values_linkerd-viz_ha = <<VALUES
