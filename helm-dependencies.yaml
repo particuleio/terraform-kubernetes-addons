@@ -27,7 +27,7 @@ dependencies:
     version: 0.3.11
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.11.0
+    version: v1.11.1
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
     version: v0.5.0
@@ -60,7 +60,7 @@ dependencies:
     version: 18.4.0
     repository: https://codecentric.github.io/helm-charts
   - name: kong
-    version: 2.17.1
+    version: 2.19.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
     version: 45.9.1
@@ -72,16 +72,16 @@ dependencies:
     version: v2.0.3
     repository: https://kyverno.github.io/kyverno/
   - name: linkerd2-cni
-    version: 30.3.6
+    version: 30.8.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-control-plane
-    version: 1.9.6
+    version: 1.12.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-crds
-    version: 1.4.0
+    version: 1.6.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-viz
-    version: 30.3.6
+    version: 30.8.0
     repository: https://helm.linkerd.io/stable
   - name: loki-stack
     version: 2.9.10
@@ -126,19 +126,19 @@ dependencies:
     version: v3.25.1
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 22.0.0
+    version: 22.1.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
     version: 6.3.14
     repository: https://charts.bitnami.com/bitnami
   - name: vault
-    version: 0.23.0
+    version: 0.24.0
     repository: https://helm.releases.hashicorp.com
   - name: velero
-    version: 3.1.5
+    version: 3.1.6
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.14.16
+    version: 0.14.17
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
