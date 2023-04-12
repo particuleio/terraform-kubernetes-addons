@@ -16,22 +16,6 @@ locals {
   )
 
   values_linkerd2-cni = <<VALUES
-    namespace: ${local.linkerd2-cni.namespace}
-    extraInitContainers:
-      - name: wait-for-other-cni
-        image: busybox:1.33
-        command:
-          - /bin/sh
-          - -xc
-          - |
-            for i in $(seq 1 180); do
-              test -f /host/etc/cni/net.d/${local.linkerd2-cni.cni_conflist_filename} && exit 0
-              sleep 1
-            done
-            exit 1
-        volumeMounts:
-          - mountPath: /host/etc/cni/net.d
-            name: cni-net-dir
     VALUES
 }
 
