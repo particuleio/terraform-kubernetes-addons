@@ -8,57 +8,94 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd-viz")].version
       namespace              = "linkerd-viz"
       create_ns              = true
-      enabled                = local.linkerd2.enabled
+      enabled                = local.linkerd.enabled
       default_network_policy = true
+      allowed_cidrs          = ["0.0.0.0/0"]
       ha                     = true
     },
     var.linkerd-viz
   )
 
   values_linkerd-viz = <<VALUES
-namespace: ${local.linkerd-viz.namespace}
-installNamespace: false
-VALUES
+    linkerdNamespace: ${local.linkerd["namespace"]}
+    VALUES
 
   values_linkerd-viz_ha = <<VALUES
+    #
+    # The below is taken from: https://github.com/linkerd/linkerd2/blob/main/viz/charts/linkerd-viz/values-ha.yaml
+    #
 
-enablePodAntiAffinity: true
+    # This values.yaml file contains the values needed to enable HA mode.
+    # Usage:
+    #   helm install -f values.yaml -f values-ha.yaml
 
-resources: &ha_resources
-  cpu: &ha_resources_cpu
-    limit: ""
-    request: 100m
-  memory:
-    limit: 250Mi
-    request: 50Mi
+    enablePodAntiAffinity: true
 
-# tap configuration
-tap:
-  replicas: 3
-  resources: *ha_resources
+    # nodeAffinity:
 
-# web configuration
-dashboard:
-  resources: *ha_resources
+    resources: &ha_resources
+      cpu: &ha_resources_cpu
+        limit: ""
+        request: 100m
+      memory:
+        limit: 250Mi
+        request: 50Mi
 
-# grafana configuration
-grafana:
-  resources:
-    cpu: *ha_resources_cpu
-    memory:
-      limit: 1024Mi
-      request: 50Mi
+    # tap configuration
+    tap:
+      replicas: 3
+      resources: *ha_resources
 
-# prometheus configuration
-prometheus:
-  resources:
-    cpu:
-      limit: ""
-      request: 300m
-    memory:
-      limit: 8192Mi
-      request: 300Mi
-VALUES
+    # web configuration
+    dashboard:
+      resources: *ha_resources
+
+    # prometheus configuration
+    prometheus:
+      resources:
+        cpu:
+          limit: ""
+          request: 300m
+        memory:
+          limit: 8192Mi
+          request: 300Mi
+    VALUES
+
+  linkerd-viz_manifests = {
+    prometheus-servicemonitor = <<-VALUES
+      apiVersion: monitoring.coreos.com/v1
+      kind: ServiceMonitor
+      metadata:
+        labels:
+          k8s-app: linkerd-prometheus
+          release: monitoring
+        name: linkerd-federate
+        namespace: ${local.linkerd-viz.namespace}
+      spec:
+        endpoints:
+        - interval: 30s
+          scrapeTimeout: 30s
+          params:
+            match[]:
+            - '{job="linkerd-proxy"}'
+            - '{job="linkerd-controller"}'
+          path: /federate
+          port: admin-http
+          honorLabels: true
+          relabelings:
+          - action: keep
+            regex: '^prometheus$'
+            sourceLabels:
+            - '__meta_kubernetes_pod_container_name'
+        jobLabel: app
+        namespaceSelector:
+          matchNames:
+          - ${local.linkerd-viz.namespace}
+        selector:
+          matchLabels:
+            component: prometheus
+      VALUES
+  }
 }
 
 resource "kubernetes_namespace" "linkerd-viz" {
@@ -77,6 +114,11 @@ resource "kubernetes_namespace" "linkerd-viz" {
 
     name = local.linkerd-viz["namespace"]
   }
+}
+
+resource "kubectl_manifest" "linkerd-viz" {
+  for_each  = local.linkerd-viz.enabled && local.kube-prometheus-stack.enabled ? local.linkerd-viz_manifests : {}
+  yaml_body = each.value
 }
 
 resource "helm_release" "linkerd-viz" {
@@ -106,6 +148,8 @@ resource "helm_release" "linkerd-viz" {
     local.linkerd-viz.ha ? local.values_linkerd-viz_ha : null
   ])
   namespace = local.linkerd-viz["create_ns"] ? kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index] : local.linkerd-viz["namespace"]
+
+  depends_on = [helm_release.linkerd-control-plane]
 }
 
 resource "kubernetes_network_policy" "linkerd-viz_default_deny" {
@@ -140,6 +184,64 @@ resource "kubernetes_network_policy" "linkerd-viz_allow_namespace" {
         namespace_selector {
           match_labels = {
             name = kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "linkerd-viz_allow_control_plane" {
+  count = local.linkerd-viz["enabled"] && local.linkerd-viz["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]}-allow-control-plane"
+    namespace = kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      ports {
+        port     = "8089"
+        protocol = "TCP"
+      }
+
+      dynamic "from" {
+        for_each = local.linkerd-viz["allowed_cidrs"]
+        content {
+          ip_block {
+            cidr = from.value
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "linkerd-viz_allow_monitoring" {
+  count = local.linkerd-viz["enabled"] && local.linkerd-viz["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]}-allow-monitoring"
+    namespace = kubernetes_namespace.linkerd-viz.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "${local.labels_prefix}/component" = "monitoring"
           }
         }
       }

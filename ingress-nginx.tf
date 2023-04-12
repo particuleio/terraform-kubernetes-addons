@@ -230,3 +230,29 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
     policy_types = ["Ingress"]
   }
 }
+
+resource "kubernetes_network_policy" "ingress-nginx_allow_linkerd_viz" {
+  count = local.ingress-nginx["enabled"] && local.linkerd-viz["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-linkerd-viz"
+    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            name = local.linkerd-viz["namespace"]
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}

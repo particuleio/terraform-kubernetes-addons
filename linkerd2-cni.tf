@@ -8,7 +8,7 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "linkerd2-cni")].version
       namespace              = "linkerd-cni"
       create_ns              = true
-      enabled                = local.linkerd2.enabled
+      enabled                = local.linkerd.enabled
       cni_conflist_filename  = "10-calico.conflist"
       default_network_policy = true
     },
@@ -16,27 +16,7 @@ locals {
   )
 
   values_linkerd2-cni = <<VALUES
-namespace: ${local.linkerd2-cni.namespace}
-installNamespace: false
-tolerations:
-  - operator: "Exists"
-
-extraInitContainers:
-  - name: wait-for-other-cni
-    image: busybox:1.33
-    command:
-      - /bin/sh
-      - -xc
-      - |
-        for i in $(seq 1 180); do
-          test -f /host/etc/cni/net.d/${local.linkerd2-cni.cni_conflist_filename} && exit 0
-          sleep 1
-        done
-        exit 1
-    volumeMounts:
-      - mountPath: /host/etc/cni/net.d
-        name: cni-net-dir
-VALUES
+    VALUES
 }
 
 resource "kubernetes_namespace" "linkerd2-cni" {
