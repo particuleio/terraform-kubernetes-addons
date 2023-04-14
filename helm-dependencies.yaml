@@ -72,7 +72,7 @@ dependencies:
     version: v2.0.3
     repository: https://kyverno.github.io/kyverno/
   - name: linkerd2-cni
-    version: 30.8.0
+    version: 30.8.1
     repository: https://helm.linkerd.io/stable
   - name: linkerd-control-plane
     version: 1.12.1
