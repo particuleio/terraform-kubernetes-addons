@@ -11,6 +11,8 @@ locals {
       enabled                = false
       default_network_policy = true
       ingress_cidrs          = ["0.0.0.0/0"]
+      linkerd-viz-enabled    = false
+      linkerd-viz-namespace  = "linkerd-viz"
       allowed_cidrs          = ["0.0.0.0/0"]
     },
     var.ingress-nginx
@@ -232,7 +234,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
 }
 
 resource "kubernetes_network_policy" "ingress-nginx_allow_linkerd_viz" {
-  count = local.ingress-nginx["enabled"] && local.linkerd-viz["enabled"] && local.ingress-nginx["default_network_policy"] ? 1 : 0
+  count = local.ingress-nginx["enabled"] && (local.linkerd-viz["enabled"] || local.ingress-nginx["linkerd-viz-enabled"]) && local.ingress-nginx["default_network_policy"] ? 1 : 0
 
   metadata {
     name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-linkerd-viz"
@@ -247,7 +249,7 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_linkerd_viz" {
       from {
         namespace_selector {
           match_labels = {
-            name = local.linkerd-viz["namespace"]
+            name = local.linkerd-viz["enabled"] ? local.linkerd-viz["namespace"] : local.ingress-nginx["linkerd-viz-namespace"]
           }
         }
       }
