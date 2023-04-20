@@ -13,6 +13,8 @@ locals {
       use_l7                 = false
       enabled                = false
       default_network_policy = true
+      linkerd-viz-enabled    = false
+      linkerd-viz-namespace  = "linkerd-viz"
       ingress_cidrs          = ["0.0.0.0/0"]
       allowed_cidrs          = ["0.0.0.0/0"]
     },
@@ -310,6 +312,32 @@ resource "kubernetes_network_policy" "ingress-nginx_allow_control_plane" {
         content {
           ip_block {
             cidr = from.value
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
+resource "kubernetes_network_policy" "ingress-nginx_allow_linkerd_viz" {
+  count = local.ingress-nginx["enabled"] && (local.linkerd-viz["enabled"] || local.ingress-nginx["linkerd-viz-enabled"]) && local.ingress-nginx["default_network_policy"] ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]}-allow-linkerd-viz"
+    namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
+  }
+
+  spec {
+    pod_selector {
+    }
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            name = local.linkerd-viz["enabled"] ? local.linkerd-viz["namespace"] : local.ingress-nginx["linkerd-viz-namespace"]
           }
         }
       }

@@ -62,7 +62,7 @@ locals {
     VALUES
 
   linkerd-viz_manifests = {
-    prometheus-servicemonitor = <<-VALUES
+    prometheus-servicemonitor         = <<-VALUES
       apiVersion: monitoring.coreos.com/v1
       kind: ServiceMonitor
       metadata:
@@ -94,6 +94,18 @@ locals {
         selector:
           matchLabels:
             component: prometheus
+      VALUES
+    allow-prometheus-admin-federation = <<-VALUES
+      apiVersion: policy.linkerd.io/v1beta1
+      kind: ServerAuthorization
+      metadata:
+        namespace: ${local.linkerd-viz.namespace}
+        name: prometheus-admin-federation
+      spec:
+        server:
+          name: prometheus-admin
+        client:
+          unauthenticated: true
       VALUES
   }
 }
