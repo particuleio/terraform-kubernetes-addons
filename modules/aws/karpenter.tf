@@ -19,6 +19,19 @@ locals {
     var.karpenter
   )
 
+  karpenter-crd = merge(
+    local.helm_defaults,
+    {
+      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].name
+      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].name
+      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].repository
+      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].version
+      namespace     = "karpenter"
+      enabled       = local.karpenter.enabled
+    },
+    var.karpenter-crd
+  )
+
   values_karpenter = <<-VALUES
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
@@ -65,34 +78,32 @@ resource "kubernetes_namespace" "karpenter" {
   }
 }
 
-#
-# karpenter-crds is not yet push to ECR public
-#
-#resource "helm_release" "karpenter_crds" {
-#  count                 = local.karpenter["enabled"] ? 1 : 0
-#  repository            = local.karpenter["repository"]
-#  name                  = local.karpenter["name"]
-#  chart                 = "${local.karpenter["chart"]}-crds"
-#  version               = local.karpenter["chart_version"]
-#  timeout               = local.karpenter["timeout"]
-#  force_update          = local.karpenter["force_update"]
-#  recreate_pods         = local.karpenter["recreate_pods"]
-#  wait                  = local.karpenter["wait"]
-#  atomic                = local.karpenter["atomic"]
-#  cleanup_on_fail       = local.karpenter["cleanup_on_fail"]
-#  dependency_update     = local.karpenter["dependency_update"]
-#  disable_crd_hooks     = local.karpenter["disable_crd_hooks"]
-#  disable_webhooks      = local.karpenter["disable_webhooks"]
-#  render_subchart_notes = local.karpenter["render_subchart_notes"]
-#  replace               = local.karpenter["replace"]
-#  reset_values          = local.karpenter["reset_values"]
-#  reuse_values          = local.karpenter["reuse_values"]
-#  skip_crds             = local.karpenter["skip_crds"]
-#  verify                = local.karpenter["verify"]
-#
-#  namespace = kubernetes_namespace.karpenter.*.metadata.0.name[count.index]
-#
-#}
+
+resource "helm_release" "karpenter_crd" {
+  count                 = local.karpenter-crd["enabled"] ? 1 : 0
+  repository            = local.karpenter-crd["repository"]
+  name                  = local.karpenter-crd["name"]
+  chart                 = local.karpenter-crd["chart"]
+  version               = local.karpenter-crd["chart_version"]
+  timeout               = local.karpenter-crd["timeout"]
+  force_update          = local.karpenter-crd["force_update"]
+  recreate_pods         = local.karpenter-crd["recreate_pods"]
+  wait                  = local.karpenter-crd["wait"]
+  atomic                = local.karpenter-crd["atomic"]
+  cleanup_on_fail       = local.karpenter-crd["cleanup_on_fail"]
+  dependency_update     = local.karpenter-crd["dependency_update"]
+  disable_crd_hooks     = local.karpenter-crd["disable_crd_hooks"]
+  disable_webhooks      = local.karpenter-crd["disable_webhooks"]
+  render_subchart_notes = local.karpenter-crd["render_subchart_notes"]
+  replace               = local.karpenter-crd["replace"]
+  reset_values          = local.karpenter-crd["reset_values"]
+  reuse_values          = local.karpenter-crd["reuse_values"]
+  skip_crds             = local.karpenter-crd["skip_crds"]
+  verify                = local.karpenter-crd["verify"]
+
+  namespace = kubernetes_namespace.karpenter.*.metadata.0.name[count.index]
+
+}
 
 resource "helm_release" "karpenter" {
   count                 = local.karpenter["enabled"] ? 1 : 0
@@ -121,10 +132,10 @@ resource "helm_release" "karpenter" {
     local.values_karpenter,
     local.karpenter["extra_values"]
   ]
-  namespace = kubernetes_namespace.karpenter.*.metadata.0.name[count.index]
+  namespace = local.karpenter["create_ns"] ? kubernetes_namespace.karpenter.*.metadata.0.name[count.index] : local.karpenter["namespace"]
 
   depends_on = [
-    #helm_release.karpenter_crds
+    helm_release.karpenter_crd
   ]
 
   set {
