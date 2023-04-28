@@ -15,4 +15,4 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Validate Renovate Config
-      uses: rinchsan/renovate-config-validator@v0
+      uses: rinchsan/renovate-config-validator@v0.0.12
