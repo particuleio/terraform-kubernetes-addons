@@ -122,7 +122,7 @@ resource "kubernetes_network_policy" "metrics-server_allow_control_plane" {
 
     ingress {
       ports {
-        port     = "4443"
+        port     = "10250"
         protocol = "TCP"
       }
 

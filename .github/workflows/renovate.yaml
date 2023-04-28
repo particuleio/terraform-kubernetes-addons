@@ -14,13 +14,5 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-        check-latest: true
-
-    - name: Install Renovate
-      run: npm install -g renovate
-
-    - name: Check Renovate configuraton
-      run: renovate-config-validator
+    - name: Validate Renovate Config
+      uses: suzuki-shunsuke/github-action-renovate-config-validator@v0.1.3
