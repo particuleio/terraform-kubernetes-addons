@@ -27,16 +27,20 @@ metrics:
   serviceMonitor:
     enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 configuration:
-  provider: aws
+  namespace: ${local.velero.namespace}
   features: EnableCSI
   backupStorageLocation:
-    bucket: ${local.velero.bucket}
-    default: true
-    config:
-      region: ${data.aws_region.current.name}
+    - name: aws
+      provider: aws
+      bucket: ${local.velero.bucket}
+      default: true
+      config:
+        region: ${data.aws_region.current.name}
   volumeSnapshotLocation:
-    config:
-      region: ${data.aws_region.current.name}
+    - name: aws
+      provider: aws
+      config:
+        region: ${data.aws_region.current.name}
 serviceAccount:
   server:
     name: ${local.velero["service_account_name"]}
@@ -47,13 +51,13 @@ credentials:
   useSecret: false
 initContainers:
    - name: velero-plugin-for-aws
-     image: velero/velero-plugin-for-aws:v1.5.1
+     image: velero/velero-plugin-for-aws:v1.7.0
      imagePullPolicy: IfNotPresent
      volumeMounts:
        - mountPath: /target
          name: plugins
    - name: velero-plugin-for-csi
-     image: velero/velero-plugin-for-csi:v0.3.1
+     image: velero/velero-plugin-for-csi:v0.5.0
      imagePullPolicy: IfNotPresent
      volumeMounts:
        - mountPath: /target
