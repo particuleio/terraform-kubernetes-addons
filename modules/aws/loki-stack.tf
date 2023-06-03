@@ -189,7 +189,7 @@ module "loki_bucket" {
   version = "~> 3.0"
 
   control_object_ownership = true
-  object_ownership         = "BucketOwnerEnforced"
+  object_ownership         = "ObjectWriter"
 
   force_destroy = local.loki-stack["bucket_force_destroy"]
 

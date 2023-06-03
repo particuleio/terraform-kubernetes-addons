@@ -19,20 +19,15 @@ locals {
     var.karpenter
   )
 
-  karpenter-crd = merge(
-    local.helm_defaults,
-    {
-      name          = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].name
-      chart         = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].name
-      repository    = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].repository
-      chart_version = local.helm_dependencies[index(local.helm_dependencies.*.name, "karpenter-crd")].version
-      namespace     = "karpenter"
-      enabled       = local.karpenter.enabled
-    },
-    var.karpenter-crd
-  )
-
   values_karpenter = <<-VALUES
+    settings:
+      aws:
+        enablePodENI: true
+    controller:
+      resources:
+        requests:
+          cpu: 1
+          memory: 1Gi
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     VALUES
@@ -48,6 +43,36 @@ provider "aws" {
   alias  = "ecr_public"
 }
 
+
+data "aws_iam_policy_document" "karpenter_additional" {
+  count = local.karpenter["enabled"] ? 1 : 0
+
+  statement {
+    sid    = "Karpenter"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*",
+      "kms:DescribeKey",
+      "kms:CreateGrant",
+      "kms:Describe",
+      "kms:Get*",
+      "kms:List*",
+      "kms:RevokeGrant"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "karpenter_additional" {
+  count       = local.karpenter["enabled"] ? 1 : 0
+  name        = "${var.cluster-name}-karpenter-additional"
+  description = "Karpenter additional policy for KMS"
+  policy      = data.aws_iam_policy_document.karpenter_additional[0].json
+}
+
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "~> 19.0"
@@ -55,6 +80,11 @@ module "karpenter" {
   create = local.karpenter["enabled"]
 
   cluster_name = var.cluster-name
+
+  policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    KarpeneterAdditional         = local.karpenter["enabled"] ? aws_iam_policy.karpenter_additional[0].arn : ""
+  }
 
   irsa_use_name_prefix            = false
   irsa_oidc_provider_arn          = local.karpenter["irsa_oidc_provider_arn"]
@@ -76,33 +106,6 @@ resource "kubernetes_namespace" "karpenter" {
 
     name = local.karpenter["namespace"]
   }
-}
-
-
-resource "helm_release" "karpenter_crd" {
-  count                 = local.karpenter-crd["enabled"] ? 1 : 0
-  repository            = local.karpenter-crd["repository"]
-  name                  = local.karpenter-crd["name"]
-  chart                 = local.karpenter-crd["chart"]
-  version               = local.karpenter-crd["chart_version"]
-  timeout               = local.karpenter-crd["timeout"]
-  force_update          = local.karpenter-crd["force_update"]
-  recreate_pods         = local.karpenter-crd["recreate_pods"]
-  wait                  = local.karpenter-crd["wait"]
-  atomic                = local.karpenter-crd["atomic"]
-  cleanup_on_fail       = local.karpenter-crd["cleanup_on_fail"]
-  dependency_update     = local.karpenter-crd["dependency_update"]
-  disable_crd_hooks     = local.karpenter-crd["disable_crd_hooks"]
-  disable_webhooks      = local.karpenter-crd["disable_webhooks"]
-  render_subchart_notes = local.karpenter-crd["render_subchart_notes"]
-  replace               = local.karpenter-crd["replace"]
-  reset_values          = local.karpenter-crd["reset_values"]
-  reuse_values          = local.karpenter-crd["reuse_values"]
-  skip_crds             = local.karpenter-crd["skip_crds"]
-  verify                = local.karpenter-crd["verify"]
-
-  namespace = kubernetes_namespace.karpenter.*.metadata.0.name[count.index]
-
 }
 
 resource "helm_release" "karpenter" {
@@ -134,18 +137,9 @@ resource "helm_release" "karpenter" {
   ]
   namespace = local.karpenter["create_ns"] ? kubernetes_namespace.karpenter.*.metadata.0.name[count.index] : local.karpenter["namespace"]
 
-  depends_on = [
-    helm_release.karpenter_crd
-  ]
-
   set {
     name  = "settings.aws.clusterName"
     value = var.cluster-name
-  }
-
-  set {
-    name  = "settings.aws.clusterEndpoint"
-    value = var.eks["cluster_endpoint"]
   }
 
   set {
@@ -162,6 +156,7 @@ resource "helm_release" "karpenter" {
     name  = "settings.aws.interruptionQueueName"
     value = module.karpenter.queue_name
   }
+
 }
 
 resource "kubernetes_network_policy" "karpenter_default_deny" {
@@ -271,4 +266,8 @@ resource "kubernetes_network_policy" "karpenter_allow_control_plane" {
 
     policy_types = ["Ingress"]
   }
+}
+
+output "karpenter_iam" {
+  value = module.karpenter
 }

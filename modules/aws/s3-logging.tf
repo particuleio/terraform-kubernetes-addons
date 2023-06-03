@@ -16,7 +16,7 @@ module "s3_logging_bucket" {
   version = "~> 3.0"
 
   control_object_ownership = true
-  object_ownership         = "BucketOwnerEnforced"
+  object_ownership         = "ObjectWriter"
 
   bucket = "${var.cluster-name}-eks-addons-s3-logging"
   acl    = "private"

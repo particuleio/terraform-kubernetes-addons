@@ -25,6 +25,7 @@ locals {
       sg_egress_ipv6_cidr_blocks                     = null
       sg_auto_ingress_with_self                      = []
       sg_input_ingress_with_source_security_group_id = []
+      subnets                                        = []
       name_prefix                                    = "${var.cluster-name}-aws-efs-csi-driver"
     },
     var.aws-efs-csi-driver
