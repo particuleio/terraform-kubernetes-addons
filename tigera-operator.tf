@@ -8,12 +8,14 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].version
       namespace              = "tigera-operator"
       create_ns              = true
-      manage_crds            = true
+      manage_crds            = false
       enabled                = false
       default_network_policy = true
     },
     var.tigera-operator
   )
+
+  # Managing CRDs manually should not be needed anymore since https://github.com/projectcalico/calico/pull/7216
 
   tigera-operator_crds = "https://raw.githubusercontent.com/projectcalico/calico/${local.tigera-operator.chart_version}/manifests/operator-crds.yaml"
 
