@@ -1,1 +1,0 @@
-../../istio-operator.tf

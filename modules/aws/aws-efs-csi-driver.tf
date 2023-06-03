@@ -25,6 +25,7 @@ locals {
       sg_egress_ipv6_cidr_blocks                     = null
       sg_auto_ingress_with_self                      = []
       sg_input_ingress_with_source_security_group_id = []
+      subnets                                        = []
       name_prefix                                    = "${var.cluster-name}-aws-efs-csi-driver"
     },
     var.aws-efs-csi-driver
@@ -113,7 +114,7 @@ resource "aws_efs_mount_target" "aws-efs-csi-driver" {
 module "security-group-efs-csi-driver" {
   count                                 = local.aws-efs-csi-driver["enabled"] ? 1 : 0
   source                                = "terraform-aws-modules/security-group/aws//modules/nfs"
-  version                               = "~> 4.0"
+  version                               = "~> 5.0"
   name                                  = local.aws-efs-csi-driver["name_prefix"]
   description                           = "NFS access to ${local.aws-efs-csi-driver["name_prefix"]}"
   vpc_id                                = local.aws-efs-csi-driver["sg_vpc_id"]

@@ -9,43 +9,18 @@ locals {
       enabled                  = false
       create_ns                = true
       namespace                = "flux-system"
-      target_path              = "production"
-      default_network_policy   = true
-      version                  = "v0.41.2"
-      github_url               = "ssh://git@<host>/<org>/<repository>"
+      path                     = "gitops/clusters/${var.cluster-name}"
+      version                  = "v2.0.0-rc.5"
       create_github_repository = false
-      github_token             = ""
       repository               = "gitops"
       repository_visibility    = "public"
       branch                   = "main"
-      flux_sync_branch         = ""
-      default_components       = ["source-controller", "kustomize-controller", "helm-controller", "notification-controller"]
-      components               = []
-      provider                 = "github"
-      auto_image_update        = false
-      custom_kustomize         = ""
-      ignore_fields_apply      = []
-      ignore_fields_sync       = []
-
-      known_hosts = [
-        "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=",
-        "gitlab.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY="
-      ]
+      components_extra         = ["image-reflector-controller", "image-automation-controller"]
+      read_only                = false
+      default_network_policy   = true
     },
     var.flux2
   )
-
-  apply = local.flux2["enabled"] ? [for v in data.kubectl_file_documents.apply[0].documents : {
-    data : yamldecode(v)
-    content : v
-    }
-  ] : null
-
-  sync = local.flux2["enabled"] ? [for v in data.kubectl_file_documents.sync[0].documents : {
-    data : yamldecode(v)
-    content : v
-    }
-  ] : null
 }
 
 resource "kubernetes_namespace" "flux2" {
@@ -72,126 +47,58 @@ resource "tls_private_key" "identity" {
   ecdsa_curve = "P521"
 }
 
-data "flux_install" "main" {
-  count          = local.flux2["enabled"] ? 1 : 0
-  namespace      = local.flux2["namespace"]
-  target_path    = local.flux2["target_path"]
-  network_policy = false
-  version        = local.flux2["version"]
-  components     = distinct(concat(local.flux2["default_components"], local.flux2["components"], local.flux2["auto_image_update"] ? ["image-reflector-controller", "image-automation-controller"] : []))
+data "github_repository" "main" {
+  count = local.flux2["enabled"] && !local.flux2["create_github_repository"] ? 1 : 0
+  name  = local.flux2["repository"]
 }
 
-# Split multi-doc YAML with
-# https://registry.terraform.io/providers/gavinbunney/kubectl/latest
-data "kubectl_file_documents" "apply" {
-  count   = local.flux2["enabled"] ? 1 : 0
-  content = data.flux_install.main[0].content
-}
-
-# Apply manifests on the cluster
-resource "kubectl_manifest" "apply" {
-  for_each      = local.flux2["enabled"] ? { for v in local.apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-  depends_on    = [kubernetes_namespace.flux2]
-  yaml_body     = each.value
-  ignore_fields = local.flux2.ignore_fields_apply
-}
-
-# Generate manifests
-data "flux_sync" "main" {
-  count       = local.flux2["enabled"] ? 1 : 0
-  target_path = local.flux2["target_path"]
-  url         = local.flux2["github_url"]
-  branch      = local.flux2["flux_sync_branch"] != "" ? local.flux2["flux_sync_branch"] : local.flux2["branch"]
-  namespace   = local.flux2["namespace"]
-}
-
-# Split multi-doc YAML with
-# https://registry.terraform.io/providers/gavinbunney/kubectl/latest
-data "kubectl_file_documents" "sync" {
-  count   = local.flux2["enabled"] ? 1 : 0
-  content = data.flux_sync.main[0].content
-}
-
-# Apply manifests on the cluster
-resource "kubectl_manifest" "sync" {
-  for_each = local.flux2["enabled"] ? { for v in local.sync : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-  depends_on = [
-    kubernetes_namespace.flux2,
-    kubectl_manifest.apply
-  ]
-  yaml_body     = each.value
-  ignore_fields = local.flux2.ignore_fields_sync
-}
-
-# Generate a Kubernetes secret with the Git credentials
-resource "kubernetes_secret" "main" {
-  count      = local.flux2["enabled"] ? 1 : 0
-  depends_on = [kubectl_manifest.apply]
-
-  metadata {
-    name      = data.flux_sync.main[0].name
-    namespace = data.flux_sync.main[0].namespace
-  }
-
-  data = {
-    "identity.pub" = tls_private_key.identity[0].public_key_pem
-    identity       = tls_private_key.identity[0].private_key_pem
-    known_hosts    = join("\n", local.flux2["known_hosts"])
-  }
-}
-
-# GitHub
 resource "github_repository" "main" {
-  count      = local.flux2["enabled"] && local.flux2["create_github_repository"] && (local.flux2["provider"] == "github") ? 1 : 0
+  count      = local.flux2["enabled"] && local.flux2["create_github_repository"] ? 1 : 0
   name       = local.flux2["repository"]
   visibility = local.flux2["repository_visibility"]
   auto_init  = true
 }
 
-data "github_repository" "main" {
-  count = local.flux2["enabled"] && !local.flux2["create_github_repository"] && (local.flux2["provider"] == "github") ? 1 : 0
-  name  = local.flux2["repository"]
-}
-
 resource "github_branch_default" "main" {
-  count      = local.flux2["enabled"] && local.flux2["create_github_repository"] && (local.flux2["provider"] == "github") ? 1 : 0
+  count      = local.flux2["enabled"] && local.flux2["create_github_repository"] ? 1 : 0
   repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
   branch     = local.flux2["branch"]
 }
 
 resource "github_repository_deploy_key" "main" {
-  count      = local.flux2["enabled"] && (local.flux2["provider"] == "github") ? 1 : 0
+  count      = local.flux2["enabled"] ? 1 : 0
   title      = "flux-${local.flux2["create_github_repository"] ? github_repository.main[0].name : local.flux2["repository"]}-${local.flux2["branch"]}"
   repository = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
   key        = tls_private_key.identity[0].public_key_openssh
-  read_only  = !local.flux2["auto_image_update"]
+  read_only  = local.flux2["read_only"]
 }
 
-resource "github_repository_file" "install" {
-  count               = local.flux2["enabled"] && (local.flux2["provider"] == "github") ? 1 : 0
-  repository          = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
-  file                = data.flux_install.main[0].path
-  content             = data.flux_install.main[0].content
-  branch              = local.flux2["branch"]
-  overwrite_on_create = true
-}
+resource "flux_bootstrap_git" "flux" {
+  count = local.flux2["enabled"] ? 1 : 0
 
-resource "github_repository_file" "sync" {
-  count               = local.flux2["enabled"] && (local.flux2["provider"] == "github") ? 1 : 0
-  repository          = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
-  file                = data.flux_sync.main[0].path
-  content             = data.flux_sync.main[0].content
-  branch              = local.flux2["branch"]
-  overwrite_on_create = true
-}
+  depends_on = [
+    github_repository_deploy_key.main,
+    kubernetes_namespace.flux2
+  ]
 
-resource "github_repository_file" "kustomize" {
-  count               = local.flux2["enabled"] && (local.flux2["provider"] == "github") ? 1 : 0
-  repository          = local.flux2["create_github_repository"] ? github_repository.main[0].name : data.github_repository.main[0].name
-  file                = data.flux_sync.main[0].kustomize_path
-  content             = local.flux2.custom_kustomize == "" ? data.flux_sync.main[0].kustomize_content : local.flux2.custom_kustomize
-  branch              = local.flux2["branch"]
-  overwrite_on_create = true
+  path                    = local.flux2["path"]
+  version                 = local.flux2["version"]
+  namespace               = local.flux2["namespace"]
+  cluster_domain          = try(local.flux2["cluster_domain"], null)
+  components              = try(local.flux2["components"], null)
+  components_extra        = try(local.flux2["components_extra"], null)
+  disable_secret_creation = try(local.flux2["disable_secret_creation"], null)
+  image_pull_secret       = try(local.flux2["image_pull_secrets"], null)
+  interval                = try(local.flux2["interval"], null)
+  kustomization_override  = try(local.flux2["kustomization_override"], null)
+  log_level               = try(local.flux2["log_level"], null)
+  network_policy          = try(local.flux2["network_policy"], null)
+  recurse_submodules      = try(local.flux2["recurse_submodules"], null)
+  registry                = try(local.flux2["registry"], null)
+  secret_name             = try(local.flux2["secret_name"], null)
+  toleration_keys         = try(local.flux2["toleration_keys"], null)
+  watch_all_namespaces    = try(local.flux2["watch_all_namespaces"], null)
+
 }
 
 resource "kubernetes_network_policy" "flux2_allow_monitoring" {

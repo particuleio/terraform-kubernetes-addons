@@ -18,7 +18,7 @@ locals {
       thanos_bucket                     = "thanos-store-${var.cluster-name}"
       thanos_bucket_force_destroy       = false
       thanos_store_config               = null
-      thanos_version                    = "v0.30.2"
+      thanos_version                    = "v0.31.0"
       enabled                           = false
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true
@@ -401,10 +401,8 @@ module "kube-prometheus-stack_thanos_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 3.0"
 
-  block_public_acls       = true
-  block_public_policy     = true
-  restrict_public_buckets = true
-  ignore_public_acls      = true
+  control_object_ownership = true
+  object_ownership         = "ObjectWriter"
 
   force_destroy = local.kube-prometheus-stack["thanos_bucket_force_destroy"]
 
