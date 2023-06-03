@@ -40,12 +40,6 @@ variable "external-dns" {
   default     = {}
 }
 
-variable "flux" {
-  description = "Customize Flux chart, see `flux.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
 variable "flux2" {
   description = "Customize Flux chart, see `flux2.tf` for supported values"
   type        = any
@@ -54,12 +48,6 @@ variable "flux2" {
 
 variable "helm_defaults" {
   description = "Customize default Helm behavior"
-  type        = any
-  default     = {}
-}
-
-variable "istio-operator" {
-  description = "Customize istio operator deployment, see `istio_operator.tf` for supported values"
   type        = any
   default     = {}
 }
@@ -82,12 +70,6 @@ variable "keda" {
   default     = {}
 }
 
-variable "keycloak" {
-  description = "Customize keycloak chart, see `keycloak.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
 variable "kong" {
   description = "Customize kong-ingress chart, see `kong.tf` for supported values"
   type        = any
@@ -96,12 +78,6 @@ variable "kong" {
 
 variable "kube-prometheus-stack" {
   description = "Customize kube-prometheus-stack chart, see `kube-prometheus-stack.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
-variable "kyverno" {
-  description = "Customize kyverno chart, see `kyverno.tf` for supported values"
   type        = any
   default     = {}
 }
@@ -190,12 +166,6 @@ variable "promtail" {
   default     = {}
 }
 
-variable "rabbitmq-operator" {
-  description = "Customize rabbitmq-operator chart, see `rabbitmq-operator.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
 variable "sealed-secrets" {
   description = "Customize sealed-secrets chart, see `sealed-secrets.tf` for supported values"
   type        = any
@@ -204,12 +174,6 @@ variable "sealed-secrets" {
 
 variable "secrets-store-csi-driver" {
   description = "Customize secrets-store-csi-driver chart, see `secrets-store-csi-driver.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
-variable "strimzi-kafka-operator" {
-  description = "Customize strimzi-kafka-operator chart, see `strimzi-kafka-operator.tf` for supported values"
   type        = any
   default     = {}
 }
@@ -246,12 +210,6 @@ variable "tigera-operator" {
 
 variable "traefik" {
   description = "Customize traefik chart, see `traefik.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
-variable "vault" {
-  description = "Customize Hashicorp Vault chart, see `vault.tf` for supported values"
   type        = any
   default     = {}
 }

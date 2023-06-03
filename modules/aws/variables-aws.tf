@@ -40,12 +40,6 @@ variable "aws-node-termination-handler" {
   default     = {}
 }
 
-variable "calico" {
-  description = "Customize calico helm chart, see `calico.tf`"
-  type        = any
-  default     = {}
-}
-
 variable "cni-metrics-helper" {
   description = "Customize cni-metrics-helper deployment, see `cni-metrics-helper.tf` for supported values"
   type        = any
@@ -54,6 +48,12 @@ variable "cni-metrics-helper" {
 
 variable "eks" {
   description = "EKS cluster inputs"
+  type        = any
+  default     = {}
+}
+
+variable "karpenter" {
+  description = "Customize karpenter chart, see `karpenter.tf` for supported values"
   type        = any
   default     = {}
 }
