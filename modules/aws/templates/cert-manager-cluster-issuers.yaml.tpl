@@ -14,6 +14,7 @@ spec:
     - dns01:
         route53:
           region: '${aws_region}'
+          role: '${role}'
     %{ endif }
     %{ if acme_http01_enabled }
     - http01:
@@ -41,6 +42,7 @@ spec:
     - dns01:
         route53:
           region: '${aws_region}'
+          role: '${role}'
     %{ endif }
     %{ if acme_http01_enabled }
     - http01:
