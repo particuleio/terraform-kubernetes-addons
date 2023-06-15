@@ -34,9 +34,9 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.3.0 |
 | <a name="provider_flux"></a> [flux](#provider\_flux) | 1.0.0-rc.5 |
-| <a name="provider_github"></a> [github](#provider\_github) | 5.26.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | 5.27.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 2.10.1 |
 | <a name="provider_http"></a> [http](#provider\_http) | 3.3.0 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | 1.14.0 |
