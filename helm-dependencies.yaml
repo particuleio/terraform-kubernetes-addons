@@ -15,7 +15,7 @@ dependencies:
     version: 2.4.5
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.1.24
+    version: 0.1.25
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
     version: 1.5.3
@@ -87,7 +87,7 @@ dependencies:
     version: 4.2.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
-    version: 0.25.0
+    version: 0.25.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
     version: 7.10.0
@@ -108,7 +108,7 @@ dependencies:
     version: 23.1.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.5.2
+    version: 6.5.3
     repository: https://charts.bitnami.com/bitnami
   - name: velero
     version: 4.0.3
