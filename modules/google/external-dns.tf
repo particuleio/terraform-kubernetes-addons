@@ -41,17 +41,6 @@ locals {
     v,
   ) if v.enabled }
 
-  test = { for k, v in local.external-dns : k => merge(
-    {
-      values = <<-VALUES
-          provider: ${k}
-          txtPrefix: "ext-dns-"
-          VALUES
-    },
-    {}
-    )
-  }
-
   managed_zones_by_instance = flatten([
     for k, v in local.external-dns : [
       for idx, zone in lookup(v, "managed_zones", []) : {
