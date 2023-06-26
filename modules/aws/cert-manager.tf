@@ -3,23 +3,24 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
-      namespace                 = "cert-manager"
-      service_account_name      = "cert-manager"
-      create_iam_resources_irsa = true
-      enabled                   = false
-      iam_policy_override       = null
-      default_network_policy    = true
-      acme_email                = "contact@acme.com"
-      acme_http01_enabled       = true
-      acme_http01_ingress_class = "nginx"
-      acme_dns01_enabled        = true
-      allowed_cidrs             = ["0.0.0.0/0"]
-      csi_driver                = false
-      name_prefix               = "${var.cluster-name}-cert-manager"
+      name                           = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
+      chart                          = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
+      repository                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
+      chart_version                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
+      namespace                      = "cert-manager"
+      service_account_name           = "cert-manager"
+      create_iam_resources_irsa      = true
+      enabled                        = false
+      iam_policy_override            = null
+      default_network_policy         = true
+      acme_email                     = "contact@acme.com"
+      acme_http01_enabled            = true
+      acme_http01_ingress_class      = "nginx"
+      acme_dns01_enabled             = true
+      cluster_issuer_assume_role_arn = ""
+      allowed_cidrs                  = ["0.0.0.0/0"]
+      csi_driver                     = false
+      name_prefix                    = "${var.cluster-name}-cert-manager"
     },
     var.cert-manager
   )
@@ -151,6 +152,7 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
     acme_http01_enabled       = local.cert-manager["acme_http01_enabled"]
     acme_http01_ingress_class = local.cert-manager["acme_http01_ingress_class"]
     acme_dns01_enabled        = local.cert-manager["acme_dns01_enabled"]
+    role_arn                  = local.cert-manager["cluster_issuer_assume_role_arn"]
   }
 }
 
