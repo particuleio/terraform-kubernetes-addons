@@ -41,7 +41,7 @@ global:
 serviceAccount:
   name: ${local.cert-manager.service_account_name}
   annotations:
-    iam.gke.io/gcp-service-account: "${module.cert_manager_workload_identity.0.gcp_service_account_email}"
+    iam.gke.io/gcp-service-account: "${local.cert-manager.create_iam_resources && local.cert-manager.enabled ? module.cert_manager_workload_identity[0].gcp_service_account_email : ""}"
 prometheus:
   servicemonitor:
     enabled: ${local.cert-manager.enable_monitoring}
@@ -55,7 +55,7 @@ VALUES
 # This module will create a Google Service account and configure the right permissions
 # to be allowed to use the workload identity on GKE.
 module "cert_manager_workload_identity" {
-  count               = local.cert-manager.create_iam_resources ? 1 : 0
+  count               = local.cert-manager.create_iam_resources && local.cert-manager.enabled ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version             = "~> v26.1.1"
   name                = local.cert-manager.service_account_name
@@ -70,6 +70,7 @@ module "cert_manager_workload_identity" {
 # to deal with Cloud DNS. The IAM permissions will be set at the resource level (DNS zone) and not at the project
 # level.
 resource "google_dns_managed_zone_iam_member" "cert_manager_cloud_dns_iam_permissions" {
+  count        = local.cert-manager.create_iam_resources && local.cert-manager.enabled ? 1 : 0
   project      = local.cert-manager.project_id
   managed_zone = local.cert-manager.managed_zone
   role         = "roles/dns.admin"

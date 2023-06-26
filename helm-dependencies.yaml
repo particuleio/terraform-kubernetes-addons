@@ -15,10 +15,10 @@ dependencies:
     version: 2.4.6
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.1.26
+    version: 0.1.27
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.5.3
+    version: 1.5.4
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
@@ -48,10 +48,10 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: v0.28.0
+    version: v0.28.1
     repository: oci://public.ecr.aws/karpenter
   - name: keda
-    version: 2.10.2
+    version: 2.11.0
     repository: https://kedacore.github.io/charts
   - name: kong
     version: 2.23.0
@@ -63,19 +63,19 @@ dependencies:
     version: 30.8.3
     repository: https://helm.linkerd.io/stable
   - name: linkerd-control-plane
-    version: 1.12.4
+    version: 1.12.5
     repository: https://helm.linkerd.io/stable
   - name: linkerd-crds
     version: 1.6.1
     repository: https://helm.linkerd.io/stable
   - name: linkerd-viz
-    version: 30.8.4
+    version: 30.8.5
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 5.8.2
+    version: 5.8.4
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.11.3
+    version: 6.11.5
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.10.0
@@ -99,7 +99,7 @@ dependencies:
     version: 2.10.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 12.8.2
+    version: 12.8.3
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.26.1

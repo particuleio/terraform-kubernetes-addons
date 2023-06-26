@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ip-masq-agent
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: ip-masq-agent
+  template:
+    metadata:
+      labels:
+        k8s-app: ip-masq-agent
+    spec:
+      hostNetwork: true
+      containers:
+      - name: ip-masq-agent
+        image: gke.gcr.io/ip-masq-agent:v2.9.3-v0.2.4-gke.5
+        args:
+            # The masq-chain must be IP-MASQ
+            - --masq-chain=IP-MASQ
+            # To non-masquerade reserved IP ranges by default,
+            # uncomment the following line.
+            # - --nomasq-all-reserved-ranges
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: ip-masq-agent
+            optional: true
+            items:
+              - key: config
+                path: ip-masq-agent
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
