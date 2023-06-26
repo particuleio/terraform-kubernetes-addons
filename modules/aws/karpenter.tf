@@ -15,6 +15,9 @@ locals {
       irsa_namespace_service_accounts = ["karpenter:karpenter"]
       allowed_cidrs                   = ["0.0.0.0/0"]
       iam_role_arn                    = ""
+      repository_username             = ""
+      repository_password             = ""
+
     },
     var.karpenter
   )
@@ -33,16 +36,6 @@ locals {
     VALUES
 
 }
-
-data "aws_ecrpublic_authorization_token" "token" {
-  provider = aws.ecr_public
-}
-
-provider "aws" {
-  region = "us-east-1"
-  alias  = "ecr_public"
-}
-
 
 data "aws_iam_policy_document" "karpenter_additional" {
   count = local.karpenter["enabled"] ? 1 : 0
@@ -111,8 +104,8 @@ resource "kubernetes_namespace" "karpenter" {
 resource "helm_release" "karpenter" {
   count                 = local.karpenter["enabled"] ? 1 : 0
   repository            = local.karpenter["repository"]
-  repository_username   = data.aws_ecrpublic_authorization_token.token.user_name
-  repository_password   = data.aws_ecrpublic_authorization_token.token.password
+  repository_username   = local.karpenter["repository_username"]
+  repository_password   = local.karpenter["repository_password"]
   name                  = local.karpenter["name"]
   chart                 = local.karpenter["chart"]
   version               = local.karpenter["chart_version"]
