@@ -219,3 +219,9 @@ variable "victoria-metrics-k8s-stack" {
   type        = any
   default     = {}
 }
+
+variable "ip-masq-agent" {
+  description = "Configure ip masq agent chart, see `ip-masq-agent.tf` for supported values. This addon works only on GCP."
+  type        = any
+  default     = {}
+}
