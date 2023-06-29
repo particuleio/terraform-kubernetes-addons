@@ -248,7 +248,7 @@ VALUES
 
 module "iam_assumable_sa_kube-prometheus-stack_grafana" {
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 9.0"
+  version             = "~> 26.0"
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
   name                = local.kube-prometheus-stack["grafana_service_account_name"]
@@ -257,7 +257,7 @@ module "iam_assumable_sa_kube-prometheus-stack_grafana" {
 
 module "iam_assumable_sa_kube-prometheus-stack_thanos" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 9.0"
+  version    = "~> 26.0"
   namespace  = local.kube-prometheus-stack["namespace"]
   project_id = var.project_id
   name       = "${local.kube-prometheus-stack["name_prefix"]}-thanos"

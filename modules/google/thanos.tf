@@ -218,7 +218,7 @@ locals {
 
 module "iam_assumable_sa_thanos" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 9.0"
+  version    = "~> 26.0"
   namespace  = local.thanos["namespace"]
   project_id = var.project_id
   name       = local.thanos["name"]
@@ -226,7 +226,7 @@ module "iam_assumable_sa_thanos" {
 
 module "iam_assumable_sa_thanos-compactor" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 9.0"
+  version    = "~> 26.0"
   namespace  = local.thanos["namespace"]
   project_id = var.project_id
   name       = "${local.thanos["name"]}-compactor"
@@ -234,7 +234,7 @@ module "iam_assumable_sa_thanos-compactor" {
 
 module "iam_assumable_sa_thanos-sg" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 9.0"
+  version    = "~> 26.0"
   namespace  = local.thanos["namespace"]
   project_id = var.project_id
   name       = "${local.thanos["name"]}-sg"
