@@ -23,24 +23,6 @@ locals {
   )
 }
 
-resource "kubernetes_namespace" "flux2" {
-  count = local.flux2["enabled"] && local.flux2["create_ns"] ? 1 : 0
-
-  metadata {
-    labels = {
-      name = local.flux2["namespace"]
-    }
-
-    name = local.flux2["namespace"]
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].annotations,
-      metadata[0].labels,
-    ]
-  }
-}
-
 resource "tls_private_key" "identity" {
   count       = local.flux2["enabled"] ? 1 : 0
   algorithm   = "ECDSA"
@@ -78,7 +60,6 @@ resource "flux_bootstrap_git" "flux" {
 
   depends_on = [
     github_repository_deploy_key.main,
-    kubernetes_namespace.flux2
   ]
 
   path                    = local.flux2["path"]
@@ -105,8 +86,8 @@ resource "kubernetes_network_policy" "flux2_allow_monitoring" {
   count = local.flux2["enabled"] && local.flux2["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-monitoring"
-    namespace = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
+    name      = "${flux_bootstrap_git.flux.0.namespace}-allow-monitoring"
+    namespace = flux_bootstrap_git.flux.0.namespace
   }
 
   spec {
@@ -136,8 +117,8 @@ resource "kubernetes_network_policy" "flux2_allow_namespace" {
   count = local.flux2["enabled"] && local.flux2["default_network_policy"] ? 1 : 0
 
   metadata {
-    name      = "${local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]}-allow-namespace"
-    namespace = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
+    name      = "${flux_bootstrap_git.flux.0.namespace}-allow-namespace"
+    namespace = flux_bootstrap_git.flux.0.namespace
   }
 
   spec {
@@ -148,7 +129,7 @@ resource "kubernetes_network_policy" "flux2_allow_namespace" {
       from {
         namespace_selector {
           match_labels = {
-            name = local.flux2["create_ns"] ? kubernetes_namespace.flux2.*.metadata.0.name[count.index] : local.flux2["namespace"]
+            name = flux_bootstrap_git.flux.0.namespace
           }
         }
       }
