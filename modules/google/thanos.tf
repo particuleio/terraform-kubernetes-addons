@@ -35,7 +35,7 @@ locals {
         minAvailable: 1
       serviceAccount:
         annotations:
-          iam.gke.io/gcp-service-account: "${local.thanos["enabled"] && local.thanos["create_iam_resources"] ? module.iam_assumable_sa_thanos.gcp_service_account_email : ""}"
+          iam.gke.io/gcp-service-account: "${local.thanos["enabled"] && local.thanos["create_iam_resources"] ? module.iam_assumable_sa_thanos[0].gcp_service_account_email : ""}"
     metrics:
       enabled: true
       serviceMonitor:
@@ -78,7 +78,7 @@ locals {
       enabled: true
       serviceAccount:
         annotations:
-          iam.gke.io/gcp-service-account: "${local.thanos["enabled"] && local.thanos["create_iam_resources"] ? module.iam_assumable_sa_thanos-compactor.gcp_service_account_email : ""}"
+          iam.gke.io/gcp-service-account: "${local.thanos["enabled"] && local.thanos["create_iam_resources"] ? module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email : ""}"
     storegateway:
       extraFlags:
         - --ignore-deletion-marks-delay=24h
@@ -86,7 +86,7 @@ locals {
       enabled: true
       serviceAccount:
         annotations:
-          iam.gke.io/gcp-service-account: "${local.thanos["enabled"] && local.thanos["create_iam_resources"] ? module.iam_assumable_sa_thanos-sg.gcp_service_account_email : ""}"
+          iam.gke.io/gcp-service-account: "${local.thanos["enabled"] && local.thanos["create_iam_resources"] ? module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email : ""}"
       pdb:
         create: true
         minAvailable: 1
@@ -217,6 +217,7 @@ locals {
 }
 
 module "iam_assumable_sa_thanos" {
+  count      = local.thanos["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version    = "~> 9.0"
   namespace  = local.thanos["namespace"]
@@ -225,6 +226,7 @@ module "iam_assumable_sa_thanos" {
 }
 
 module "iam_assumable_sa_thanos-compactor" {
+  count      = local.thanos["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version    = "~> 9.0"
   namespace  = local.thanos["namespace"]
@@ -233,6 +235,7 @@ module "iam_assumable_sa_thanos-compactor" {
 }
 
 module "iam_assumable_sa_thanos-sg" {
+  count      = local.thanos["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version    = "~> 9.0"
   namespace  = local.thanos["namespace"]
@@ -282,14 +285,14 @@ module "thanos_bucket_iam" {
   storage_buckets = [local.thanos["bucket"]]
   bindings = {
     "roles/storage.objectViewer" = [
-      "serviceAccount:${module.iam_assumable_sa_thanos.gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-compactor.gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-sg.gcp_service_account_email}",
+      "serviceAccount:${module.iam_assumable_sa_thanos[0].gcp_service_account_email}",
+      "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}",
+      "serviceAccount:${module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email}",
     ]
     "roles/storage.objectCreator" = [
-      "serviceAccount:${module.iam_assumable_sa_thanos.gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-compactor.gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-sg.gcp_service_account_email}",
+      "serviceAccount:${module.iam_assumable_sa_thanos[0].gcp_service_account_email}",
+      "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}",
+      "serviceAccount:${module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email}",
     ]
   }
 }
