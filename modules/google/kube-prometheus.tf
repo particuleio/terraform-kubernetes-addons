@@ -55,7 +55,7 @@ grafana:
     name: ${local.kube-prometheus-stack["grafana_service_account_name"]}
     nameTest: ${local.kube-prometheus-stack["grafana_service_account_name"]}-test
     annotations:
-      iam.gke.io/gcp-service-account: ${module.iam_assumable_sa_kube-prometheus-stack_grafana.gcp_service_account_email}
+      iam.gke.io/gcp-service-account: ${local.kube-prometheus-stack["enabled"] ? module.iam_assumable_sa_kube-prometheus-stack_grafana[0].gcp_service_account_email : ""}
   adminPassword: ${join(",", random_string.grafana_password.*.result)}
   dashboardProviders:
     dashboardproviders.yaml:
@@ -78,7 +78,7 @@ prometheus:
     create: true
     name: ${local.kube-prometheus-stack["prometheus_service_account_name"]}
     annotations:
-      iam.gke.io/gcp-service-account: ${module.iam_assumable_sa_kube-prometheus-stack_thanos.gcp_service_account_email}
+      iam.gke.io/gcp-service-account: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email : ""}
   prometheusSpec:
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 alertmanager:
@@ -247,6 +247,7 @@ VALUES
 }
 
 module "iam_assumable_sa_kube-prometheus-stack_grafana" {
+  count               = local.kube-prometheus-stack["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version             = "~> 9.0"
   namespace           = local.kube-prometheus-stack["namespace"]
@@ -256,6 +257,7 @@ module "iam_assumable_sa_kube-prometheus-stack_grafana" {
 }
 
 module "iam_assumable_sa_kube-prometheus-stack_thanos" {
+  count      = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version    = "~> 9.0"
   namespace  = local.kube-prometheus-stack["namespace"]
@@ -276,6 +278,7 @@ resource "kubernetes_secret" "kube-prometheus-stack_thanos" {
 }
 
 module "kube-prometheus-stack_thanos_bucket_iam" {
+  count   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
   source  = "terraform-google-modules/iam/google//modules/storage_buckets_iam"
   version = "~> 7.6"
 
@@ -283,16 +286,17 @@ module "kube-prometheus-stack_thanos_bucket_iam" {
   storage_buckets = [module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name]
   bindings = {
     "roles/storage.objectViewer" = [
-      "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos.gcp_service_account_email}"
+      "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
     ]
   }
 }
 
 module "kube-prometheus-stack_grafana-iam-member" {
+  count   = local.kube-prometheus-stack["enabled"] ? 1 : 0
   source  = "terraform-google-modules/iam/google//modules/member_iam"
   version = "~> 7.6"
 
-  service_account_address = module.iam_assumable_sa_kube-prometheus-stack_grafana.gcp_service_account_email
+  service_account_address = module.iam_assumable_sa_kube-prometheus-stack_grafana[0].gcp_service_account_email
   project_id              = var.project_id
   project_roles = [
     "roles/monitoring.viewer",
@@ -498,8 +502,8 @@ resource "kubernetes_network_policy" "kube-prometheus-stack_allow_control_plane"
 
 output "kube-prometheus-stack" {
   value = {
-    iam_assumable_sa_kube-prometheus-stack_grafana = module.iam_assumable_sa_kube-prometheus-stack_grafana
-    iam_assumable_sa_kube-prometheus-stack_thanos  = module.iam_assumable_sa_kube-prometheus-stack_thanos
+    iam_assumable_sa_kube-prometheus-stack_grafana = module.iam_assumable_sa_kube-prometheus-stack_grafana[*]
+    iam_assumable_sa_kube-prometheus-stack_thanos  = module.iam_assumable_sa_kube-prometheus-stack_thanos[*]
   }
 }
 
