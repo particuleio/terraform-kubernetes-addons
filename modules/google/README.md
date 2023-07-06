@@ -17,7 +17,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_flux"></a> [flux](#requirement\_flux) | 1.0.0-rc.5 |
+| <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
 | <a name="requirement_google"></a> [google](#requirement\_google) | >= 4.69 |
 | <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 4.69 |
@@ -32,7 +32,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 
 | Name | Version |
 |------|---------|
-| <a name="provider_flux"></a> [flux](#provider\_flux) | 1.0.0-rc.5 |
+| <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 1.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 5.0 |
 | <a name="provider_google"></a> [google](#provider\_google) | >= 4.69 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
@@ -48,15 +48,15 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cert_manager_workload_identity"></a> [cert\_manager\_workload\_identity](#module\_cert\_manager\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> v26.1.1 |
-| <a name="module_external_dns_workload_identity"></a> [external\_dns\_workload\_identity](#module\_external\_dns\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> v26.1.1 |
-| <a name="module_iam_assumable_sa_kube-prometheus-stack_grafana"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_grafana) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 9.0 |
-| <a name="module_iam_assumable_sa_kube-prometheus-stack_thanos"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 9.0 |
-| <a name="module_iam_assumable_sa_loki-stack"></a> [iam\_assumable\_sa\_loki-stack](#module\_iam\_assumable\_sa\_loki-stack) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 9.0 |
-| <a name="module_iam_assumable_sa_thanos"></a> [iam\_assumable\_sa\_thanos](#module\_iam\_assumable\_sa\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 9.0 |
-| <a name="module_iam_assumable_sa_thanos-compactor"></a> [iam\_assumable\_sa\_thanos-compactor](#module\_iam\_assumable\_sa\_thanos-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 9.0 |
-| <a name="module_iam_assumable_sa_thanos-sg"></a> [iam\_assumable\_sa\_thanos-sg](#module\_iam\_assumable\_sa\_thanos-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 9.0 |
-| <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 9.0 |
+| <a name="module_cert_manager_workload_identity"></a> [cert\_manager\_workload\_identity](#module\_cert\_manager\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0.0 |
+| <a name="module_external_dns_workload_identity"></a> [external\_dns\_workload\_identity](#module\_external\_dns\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0.0 |
+| <a name="module_iam_assumable_sa_kube-prometheus-stack_grafana"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_grafana) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0 |
+| <a name="module_iam_assumable_sa_kube-prometheus-stack_thanos"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0 |
+| <a name="module_iam_assumable_sa_loki-stack"></a> [iam\_assumable\_sa\_loki-stack](#module\_iam\_assumable\_sa\_loki-stack) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0 |
+| <a name="module_iam_assumable_sa_thanos"></a> [iam\_assumable\_sa\_thanos](#module\_iam\_assumable\_sa\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0 |
+| <a name="module_iam_assumable_sa_thanos-compactor"></a> [iam\_assumable\_sa\_thanos-compactor](#module\_iam\_assumable\_sa\_thanos-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0 |
+| <a name="module_iam_assumable_sa_thanos-sg"></a> [iam\_assumable\_sa\_thanos-sg](#module\_iam\_assumable\_sa\_thanos-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0 |
+| <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 27.0 |
 | <a name="module_kube-prometheus-stack_grafana-iam-member"></a> [kube-prometheus-stack\_grafana-iam-member](#module\_kube-prometheus-stack\_grafana-iam-member) | terraform-google-modules/iam/google//modules/member_iam | ~> 7.6 |
 | <a name="module_kube-prometheus-stack_kube-prometheus-stack_bucket"></a> [kube-prometheus-stack\_kube-prometheus-stack\_bucket](#module\_kube-prometheus-stack\_kube-prometheus-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 4.0 |
 | <a name="module_kube-prometheus-stack_thanos_bucket_iam"></a> [kube-prometheus-stack\_thanos\_bucket\_iam](#module\_kube-prometheus-stack\_thanos\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 7.6 |
@@ -73,7 +73,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 
 | Name | Type |
 |------|------|
-| [flux_bootstrap_git.flux](https://registry.terraform.io/providers/fluxcd/flux/1.0.0-rc.5/docs/resources/bootstrap_git) | resource |
+| [flux_bootstrap_git.flux](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/resources/bootstrap_git) | resource |
 | [github_branch_default.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
 | [github_repository.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
 | [github_repository_deploy_key.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
