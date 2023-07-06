@@ -57,7 +57,7 @@ VALUES
 module "cert_manager_workload_identity" {
   count               = local.cert-manager.create_iam_resources && local.cert-manager.enabled ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> v26.1.1"
+  version             = "~> 27.0.0"
   name                = local.cert-manager.service_account_name
   namespace           = local.cert-manager.namespace
   project_id          = local.cert-manager.project_id
