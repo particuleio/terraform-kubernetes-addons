@@ -76,7 +76,7 @@ prometheus:
     enabled: ${local.thanos["enabled"]}
   serviceAccount:
     create: true
-    name: ${local.kube-prometheus-stack["prometheus_service_account_name"]}
+    name: ${local.kube-prometheus-stack["name_prefix"]}-thanos
     annotations:
       iam.gke.io/gcp-service-account: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email : ""}
   prometheusSpec:
@@ -257,12 +257,13 @@ module "iam_assumable_sa_kube-prometheus-stack_grafana" {
 }
 
 module "iam_assumable_sa_kube-prometheus-stack_thanos" {
-  count      = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
-  source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 27.0"
-  namespace  = local.kube-prometheus-stack["namespace"]
-  project_id = var.project_id
-  name       = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
+  count               = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
+  source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  version             = "~> 27.0"
+  namespace           = local.kube-prometheus-stack["namespace"]
+  project_id          = var.project_id
+  name                = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
+  use_existing_k8s_sa = local.kube-prometheus-stack["workload_identity_use_existing_k8s_sa"]
 }
 
 resource "kubernetes_secret" "kube-prometheus-stack_thanos" {
@@ -286,6 +287,9 @@ module "kube-prometheus-stack_thanos_bucket_iam" {
   storage_buckets = [module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name]
   bindings = {
     "roles/storage.objectViewer" = [
+      "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
+    ]
+    "roles/storage.objectAdmin" = [
       "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
     ]
   }
