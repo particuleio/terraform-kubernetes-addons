@@ -9,16 +9,16 @@ dependencies:
     version: 1.3.4
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.20.0
+    version: 2.21.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.4.6
+    version: 2.4.7
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.27
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.5.4
+    version: 1.5.5
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
@@ -57,7 +57,7 @@ dependencies:
     version: 2.24.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 47.4.0
+    version: 48.1.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.8.3
@@ -75,7 +75,7 @@ dependencies:
     version: 5.8.9
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.11.5
+    version: 6.11.6
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.10.0
@@ -90,7 +90,7 @@ dependencies:
     version: 0.25.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 7.12.0
+    version: 8.2.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
@@ -99,7 +99,7 @@ dependencies:
     version: 2.10.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 12.8.3
+    version: 12.8.4
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.26.1
@@ -108,13 +108,13 @@ dependencies:
     version: 23.1.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.5.4
+    version: 6.5.5
     repository: https://charts.bitnami.com/bitnami
   - name: velero
     version: 4.1.3
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.17.0
+    version: 0.17.1
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
