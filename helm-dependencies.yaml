@@ -48,7 +48,7 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: v0.29.1
+    version: v0.29.2
     repository: oci://public.ecr.aws/karpenter
   - name: keda
     version: 2.11.1
