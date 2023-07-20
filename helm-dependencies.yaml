@@ -57,7 +57,7 @@ dependencies:
     version: 2.25.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 48.1.1
+    version: 48.1.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.8.3
