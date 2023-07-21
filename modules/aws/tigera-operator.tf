@@ -8,7 +8,7 @@ locals {
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "tigera-operator")].version
       namespace              = "tigera-operator"
       create_ns              = true
-      manage_crds            = false
+      manage_crds            = true
       enabled                = false
       default_network_policy = true
     },
