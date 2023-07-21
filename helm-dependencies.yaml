@@ -48,16 +48,16 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: v0.29.0
+    version: v0.29.2
     repository: oci://public.ecr.aws/karpenter
   - name: keda
     version: 2.11.1
     repository: https://kedacore.github.io/charts
   - name: kong
-    version: 2.24.0
+    version: 2.25.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 48.1.1
+    version: 48.1.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.8.3
@@ -75,7 +75,7 @@ dependencies:
     version: 5.8.9
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.11.6
+    version: 6.11.7
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.10.0
@@ -96,10 +96,10 @@ dependencies:
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.10.0
+    version: 2.11.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 12.8.4
+    version: 12.8.6
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.26.1
