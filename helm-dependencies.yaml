@@ -51,7 +51,7 @@ dependencies:
     version: v0.29.2
     repository: oci://public.ecr.aws/karpenter
   - name: keda
-    version: 2.11.1
+    version: 2.11.2
     repository: https://kedacore.github.io/charts
   - name: kong
     version: 2.25.0
