@@ -75,16 +75,16 @@ dependencies:
     version: 5.9.2
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.11.9
+    version: 6.14.0
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 3.10.0
+    version: 3.11.0
     repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
     version: 2.3.5
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 4.3.0
+    version: 4.3.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.25.1
@@ -111,7 +111,7 @@ dependencies:
     version: 6.5.6
     repository: https://charts.bitnami.com/bitnami
   - name: velero
-    version: 4.1.4
+    version: 4.2.0
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
     version: 0.17.3
