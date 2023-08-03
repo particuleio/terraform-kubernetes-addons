@@ -294,6 +294,9 @@ module "thanos_bucket_iam" {
       "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}",
       "serviceAccount:${module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email}",
     ]
+    "roles/storage.legacyBucketWriter" = [
+      "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}",
+    ]
   }
 }
 
