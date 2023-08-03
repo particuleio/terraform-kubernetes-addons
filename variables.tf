@@ -22,6 +22,7 @@ variable "cluster-autoscaler" {
   default     = {}
 }
 
+
 variable "cluster-name" {
   description = "Name of the Kubernetes cluster"
   default     = "sample-cluster"
