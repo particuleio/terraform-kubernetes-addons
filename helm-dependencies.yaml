@@ -18,7 +18,7 @@ dependencies:
     version: 0.1.28
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.5.5
+    version: 1.6.0
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
