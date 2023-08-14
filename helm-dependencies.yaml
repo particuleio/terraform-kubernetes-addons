@@ -18,7 +18,7 @@ dependencies:
     version: 0.1.28
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.5.5
+    version: 1.6.0
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
@@ -42,7 +42,7 @@ dependencies:
     version: 4.7.1
     repository: https://kubernetes.github.io/ingress-nginx
   - name: k8gb
-    version: v0.11.1
+    version: v0.11.2
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
@@ -54,25 +54,25 @@ dependencies:
     version: 2.11.2
     repository: https://kedacore.github.io/charts
   - name: kong
-    version: 2.25.0
+    version: 2.26.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 48.2.3
+    version: 48.3.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
-    version: 30.8.3
+    version: 30.8.4
     repository: https://helm.linkerd.io/stable
   - name: linkerd-control-plane
-    version: 1.12.5
+    version: 1.12.6
     repository: https://helm.linkerd.io/stable
   - name: linkerd-crds
     version: 1.6.1
     repository: https://helm.linkerd.io/stable
   - name: linkerd-viz
-    version: 30.8.5
+    version: 30.8.6
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 5.9.2
+    version: 5.11.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 6.14.1
@@ -99,22 +99,22 @@ dependencies:
     version: 2.11.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 12.10.1
+    version: 12.11.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.26.1
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 23.2.0
+    version: 24.0.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
     version: 6.5.6
     repository: https://charts.bitnami.com/bitnami
   - name: velero
-    version: 4.2.0
+    version: 4.4.1
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.17.3
+    version: 0.17.4
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
