@@ -42,6 +42,8 @@ kubeControllerManager:
   enabled: false
 kubeEtcd:
   enabled: false
+coreDns:
+  enabled: false
 grafana:
   sidecar:
     dashboards:
