@@ -69,7 +69,7 @@ dependencies:
     version: 1.8.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-viz
-    version: 30.8.6
+    version: 30.11.0
     repository: https://helm.linkerd.io/stable
   - name: loki
     version: 5.14.1
