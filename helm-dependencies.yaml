@@ -66,7 +66,7 @@ dependencies:
     version: 1.15.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-crds
-    version: 1.6.1
+    version: 1.8.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-viz
     version: 30.8.6
