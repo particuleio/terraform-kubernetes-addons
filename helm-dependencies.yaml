@@ -60,7 +60,7 @@ dependencies:
     version: 48.3.3
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
-    version: 30.8.4
+    version: 30.11.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-control-plane
     version: 1.15.0
