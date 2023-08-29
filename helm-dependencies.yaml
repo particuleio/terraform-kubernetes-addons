@@ -81,7 +81,7 @@ dependencies:
     version: 3.11.0
     repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
-    version: 2.3.5
+    version: 2.3.6
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
     version: 4.4.1
