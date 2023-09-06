@@ -2,23 +2,24 @@ locals {
   kube-prometheus-stack = merge(
     local.helm_defaults,
     {
-      name                    = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
-      chart                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
-      repository              = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].repository
-      chart_version           = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
-      namespace               = "monitoring"
-      thanos_sidecar_enabled  = false
-      thanos_create_bucket    = true
-      thanos_bucket           = "thanos-store-${var.cluster-name}"
-      thanos_bucket_region    = local.scaleway["region"]
-      thanos_store_config     = null
-      thanos_version          = "v0.31.0"
-      enabled                 = false
-      allowed_cidrs           = ["0.0.0.0/0"]
-      default_network_policy  = true
-      default_global_requests = false
-      default_global_limits   = false
-      manage_crds             = true
+      name                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      chart                    = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].name
+      repository               = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].repository
+      chart_version            = local.helm_dependencies[index(local.helm_dependencies.*.name, "kube-prometheus-stack")].version
+      namespace                = "monitoring"
+      thanos_sidecar_enabled   = false
+      thanos_dashboard_enabled = true
+      thanos_create_bucket     = true
+      thanos_bucket            = "thanos-store-${var.cluster-name}"
+      thanos_bucket_region     = local.scaleway["region"]
+      thanos_store_config      = null
+      thanos_version           = "v0.31.0"
+      enabled                  = false
+      allowed_cidrs            = ["0.0.0.0/0"]
+      default_network_policy   = true
+      default_global_requests  = false
+      default_global_limits    = false
+      manage_crds              = true
     },
     var.kube-prometheus-stack
   )
@@ -320,7 +321,7 @@ resource "helm_release" "kube-prometheus-stack" {
     local.cert-manager["enabled"] ? local.values_dashboard_cert-manager : null,
     local.values_dashboard_cluster-autoscaler,
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
-    local.thanos["enabled"] ? local.values_dashboard_thanos : null,
+    local.thanos["enabled"] && local.kube-prometheus-stack["thanos_dashboard_enabled"] ? local.values_dashboard_thanos : null,
     local.values_dashboard_node_exporter,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_grafana_ds : null,

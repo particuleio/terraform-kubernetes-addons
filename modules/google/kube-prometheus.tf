@@ -15,6 +15,7 @@ locals {
       thanos_create_iam_resources           = true
       thanos_iam_policy_override            = null
       thanos_sidecar_enabled                = false
+      thanos_dashboard_enabled              = true
       thanos_create_bucket                  = true
       thanos_bucket                         = "thanos-store-${var.cluster-name}"
       thanos_bucket_force_destroy           = false
@@ -386,7 +387,7 @@ resource "helm_release" "kube-prometheus-stack" {
   values = compact([
     local.values_kube-prometheus-stack,
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
-    local.thanos["enabled"] ? local.values_dashboard_thanos : null,
+    local.thanos["enabled"] && local.kube-prometheus-stack["thanos_dashboard_enabled"] ? local.values_dashboard_thanos : null,
     local.values_dashboard_node_exporter,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_grafana_ds : null,
