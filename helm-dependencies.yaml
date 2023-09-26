@@ -57,19 +57,19 @@ dependencies:
     version: 2.27.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 50.3.1
+    version: 51.2.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
-    version: 30.11.0
+    version: 30.12.1
     repository: https://helm.linkerd.io/stable
   - name: linkerd-control-plane
-    version: 1.15.0
+    version: 1.16.2
     repository: https://helm.linkerd.io/stable
   - name: linkerd-crds
     version: 1.8.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-viz
-    version: 30.11.0
+    version: 30.12.2
     repository: https://helm.linkerd.io/stable
   - name: loki
     version: 5.23.0
