@@ -23,6 +23,7 @@ locals {
 
   values_ingress-nginx_l4 = <<VALUES
 controller:
+  allowSnippetAnnotations: true
   metrics:
     enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
@@ -47,6 +48,7 @@ VALUES
 
   values_ingress-nginx_nlb = <<VALUES
 controller:
+  allowSnippetAnnotations: true
   metrics:
     enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
@@ -71,6 +73,7 @@ VALUES
 
   values_ingress-nginx_nlb_ip = <<VALUES
 controller:
+  allowSnippetAnnotations: true
   metrics:
     enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
@@ -95,6 +98,7 @@ VALUES
 
   values_ingress-nginx_l7 = <<VALUES
 controller:
+  allowSnippetAnnotations: true
   metrics:
     enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     serviceMonitor:
