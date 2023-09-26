@@ -22,7 +22,7 @@ locals {
       thanos_bucket_location                = ""
       thanos_kms_bucket_location            = ""
       thanos_store_config                   = null
-      thanos_version                        = "v0.30.0"
+      thanos_version                        = "v0.32.3"
       thanos_service_account                = ""
       enabled                               = false
       allowed_cidrs                         = ["0.0.0.0/0"]
@@ -190,12 +190,14 @@ grafana:
 VALUES
 
   values_thanos_sidecar = <<VALUES
+prometheusOperator:
+  thanosImage:
+    tag: "${local.kube-prometheus-stack["thanos_version"]}"
 prometheus:
   prometheusSpec:
     externalLabels:
       cluster: ${var.cluster-name}
     thanos:
-      version: "${local.kube-prometheus-stack["thanos_version"]}"
       objectStorageConfig:
         key: thanos.yaml
         name: "${local.kube-prometheus-stack["thanos_bucket"]}-config"
