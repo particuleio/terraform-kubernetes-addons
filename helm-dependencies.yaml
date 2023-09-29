@@ -84,7 +84,7 @@ dependencies:
     version: 2.3.11
     repository: https://charts.deliveryhero.io/
   - name: prometheus-adapter
-    version: 4.5.0
+    version: 4.6.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
     version: 0.25.2
