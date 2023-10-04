@@ -72,6 +72,7 @@ locals {
       extraFlags:
         - --deduplication.replica-label=prometheus_replica
         - --deduplication.replica-label=rule_replica
+        - --compact.skip-block-with-out-of-order-chunks
       strategyType: Recreate
       enabled: true
       serviceAccount:
