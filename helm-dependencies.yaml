@@ -108,7 +108,7 @@ dependencies:
     version: 24.0.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.6.3
+    version: 6.6.5
     repository: https://charts.bitnami.com/bitnami
   - name: velero
     version: 4.4.1
