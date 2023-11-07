@@ -99,7 +99,7 @@ dependencies:
     version: 2.13.2
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 12.13.13
+    version: 12.14.0
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.26.3
