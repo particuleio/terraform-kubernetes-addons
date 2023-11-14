@@ -22,7 +22,7 @@ locals {
       thanos_bucket_location                = ""
       thanos_kms_bucket_location            = ""
       thanos_store_config                   = null
-      thanos_version                        = "v0.32.3"
+      thanos_version                        = "v0.32.5"
       thanos_service_account                = ""
       enabled                               = false
       allowed_cidrs                         = ["0.0.0.0/0"]
@@ -199,8 +199,9 @@ prometheus:
       cluster: ${var.cluster-name}
     thanos:
       objectStorageConfig:
-        key: thanos.yaml
-        name: "${local.kube-prometheus-stack["thanos_bucket"]}-config"
+        existingSecret:
+          key: thanos.yaml
+          name: "${local.kube-prometheus-stack["thanos_bucket"]}-config"
 VALUES
 
   values_grafana_ds = <<VALUES
