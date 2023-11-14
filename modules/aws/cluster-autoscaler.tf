@@ -10,7 +10,7 @@ locals {
       service_account_name      = "cluster-autoscaler"
       create_iam_resources_irsa = true
       enabled                   = false
-      version                   = "v1.21.1"
+      version                   = "v1.28.0"
       iam_policy_override       = null
       default_network_policy    = true
       name_prefix               = "${var.cluster-name}-cluster-autoscaler"
