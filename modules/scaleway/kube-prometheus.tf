@@ -13,7 +13,7 @@ locals {
       thanos_bucket            = "thanos-store-${var.cluster-name}"
       thanos_bucket_region     = local.scaleway["region"]
       thanos_store_config      = null
-      thanos_version           = "v0.32.3"
+      thanos_version           = "v0.32.5"
       enabled                  = false
       allowed_cidrs            = ["0.0.0.0/0"]
       default_network_policy   = true
@@ -195,8 +195,9 @@ prometheus:
       cluster: ${var.cluster-name}
     thanos:
       objectStorageConfig:
-        key: thanos.yaml
-        name: "${local.kube-prometheus-stack["thanos_bucket"]}-config"
+        existingSecret:
+          key: thanos.yaml
+          name: "${local.kube-prometheus-stack["thanos_bucket"]}-config"
 VALUES
 
   values_grafana_ds = <<VALUES

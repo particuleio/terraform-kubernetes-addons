@@ -73,7 +73,7 @@ locals {
 module "iam_assumable_sa_loki-stack" {
   count      = local.loki-stack["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 28.0"
+  version    = "~> 29.0"
   namespace  = local.loki-stack["namespace"]
   project_id = var.project_id
   name       = local.loki-stack["name"]
@@ -169,7 +169,7 @@ resource "helm_release" "loki-stack" {
 module "loki-stack_kms_bucket" {
   count   = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
   source  = "terraform-google-modules/kms/google"
-  version = "2.2.2"
+  version = "~> 2.2"
 
   project_id = var.project_id
   location   = local.loki-stack["kms_bucket_location"]
@@ -187,7 +187,7 @@ module "loki-stack_bucket" {
   count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 4.0"
+  version    = "~> 5.0"
   project_id = var.project_id
   location   = local.loki-stack["bucket_location"]
 
