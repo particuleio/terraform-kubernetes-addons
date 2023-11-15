@@ -96,7 +96,7 @@ dependencies:
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.13.2
+    version: 2.13.3
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
     version: 12.15.0
