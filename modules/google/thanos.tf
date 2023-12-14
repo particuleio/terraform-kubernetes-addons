@@ -27,6 +27,11 @@ locals {
     var.thanos
   )
 
+  thanos_bucket = (
+    local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name :
+    local.thanos["create_bucket"] ? module.thanos_bucket[0] : local.thanos["bucket"]
+  )
+
   values_thanos = <<-VALUES
     receive:
       enabled: false
@@ -170,7 +175,7 @@ locals {
     objstoreConfig:
       type: GCS
       config:
-        bucket: ${local.thanos["bucket"]}
+        bucket: ${local.thanos_bucket}
     VALUES
 
   values_thanos_global_requests = <<-VALUES
@@ -276,28 +281,56 @@ module "thanos_kms_bucket" {
   ]
 }
 
-module "thanos_bucket_iam" {
-  count   = local.thanos["enabled"] ? 1 : 0
-  source  = "terraform-google-modules/iam/google//modules/storage_buckets_iam"
-  version = "~> 7.6"
+# GCS permissions for thanos service account
+resource "google_storage_bucket_iam_member" "thanos_gcs_iam_objectViewer_permissions" {
+  count  = local.thanos["enabled"] ? 1 : 0
+  bucket = local.thanos_bucket
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${module.iam_assumable_sa_thanos[0].gcp_service_account_email}"
+}
 
-  mode            = "additive"
-  storage_buckets = [local.thanos["bucket"]]
-  bindings = {
-    "roles/storage.objectViewer" = [
-      "serviceAccount:${module.iam_assumable_sa_thanos[0].gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email}",
-    ]
-    "roles/storage.objectCreator" = [
-      "serviceAccount:${module.iam_assumable_sa_thanos[0].gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}",
-      "serviceAccount:${module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email}",
-    ]
-    "roles/storage.legacyBucketWriter" = [
-      "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}",
-    ]
-  }
+resource "google_storage_bucket_iam_member" "thanos_gcs_iam_objectCreator_permissions" {
+  count  = local.thanos["enabled"] ? 1 : 0
+  bucket = local.thanos_bucket
+  role   = "roles/storage.objectCreator"
+  member = "serviceAccount:${module.iam_assumable_sa_thanos[0].gcp_service_account_email}"
+}
+
+# GCS permissions for thanos compactor service account
+resource "google_storage_bucket_iam_member" "thanos_compactor_gcs_iam_objectViewer_permissions" {
+  count  = local.thanos["enabled"] ? 1 : 0
+  bucket = local.thanos_bucket
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}"
+}
+
+resource "google_storage_bucket_iam_member" "thanos_compactor_gcs_iam_objectCreator_permissions" {
+  count  = local.thanos["enabled"] ? 1 : 0
+  bucket = local.thanos_bucket
+  role   = "roles/storage.objectCreator"
+  member = "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}"
+}
+
+resource "google_storage_bucket_iam_member" "thanos_compactor_gcs_iam_legacyBucketWriter_permissions" {
+  count  = local.thanos["enabled"] ? 1 : 0
+  bucket = local.thanos_bucket
+  role   = "roles/storage.legacyBucketWriter"
+  member = "serviceAccount:${module.iam_assumable_sa_thanos-compactor[0].gcp_service_account_email}"
+}
+
+# GCS permissions for thanos storage gateway service account
+resource "google_storage_bucket_iam_member" "thanos_sg_gcs_iam_objectViewer_permissions" {
+  count  = local.thanos["enabled"] ? 1 : 0
+  bucket = local.thanos_bucket
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email}"
+}
+
+resource "google_storage_bucket_iam_member" "thanos_sg_gcs_iam_objectCreator_permissions" {
+  count  = local.thanos["enabled"] ? 1 : 0
+  bucket = local.thanos_bucket
+  role   = "roles/storage.objectCreator"
+  member = "serviceAccount:${module.iam_assumable_sa_thanos-sg[0].gcp_service_account_email}"
 }
 
 resource "kubernetes_namespace" "thanos" {
