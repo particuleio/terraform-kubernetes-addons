@@ -42,7 +42,7 @@ dependencies:
     version: 4.9.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: k8gb
-    version: v0.11.5
+    version: v0.12.2
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
