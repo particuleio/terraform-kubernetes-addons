@@ -7,7 +7,6 @@
     ":automergeDisabled",
     ":disableRateLimiting",
     ":ignoreModulesAndTests",
-    ":autodetectPinVersions",
     ":gitSignOff",
     "group:monorepos",
     "group:recommended",
@@ -18,47 +17,72 @@
     ":automergeMinor",
     ":dependencyDashboard"
   ],
-  "baseBranches": ["main"],
-  "enabledManagers": ["helmv3", "github-actions", "pre-commit", "terraform"],
+  "baseBranches": [
+    "main"
+  ],
+  "enabledManagers": [
+    "helmv3",
+    "github-actions",
+    "pre-commit",
+    "terraform"
+  ],
   "semanticCommits": "enabled",
   "automergeType": "pr-comment",
   "automergeComment": "renovate:merge",
   "helmv3": {
     "enabled": true,
-    "fileMatch": ["(^|/)helm-dependencies.yaml$"]
+    "fileMatch": [
+      "(^|/)helm-dependencies.yaml$"
+    ]
   },
   "reviewers": [
     "team:team"
   ],
   "prHourlyLimit": 0,
   "packageRules": [
-      {
-        "matchManagers": ["github-actions"],
-        "semanticCommitScope": "ci",
-        "semanticCommitType": "chore"
-      },
-      {
-        "matchManagers": ["pre-commit"],
-        "semanticCommitScope": "ci",
-        "semanticCommitType": "chore"
-      },
-      {
-        "matchManagers": ["helmv3"],
-        "semanticCommitScope": "charts",
-        "semanticCommitType": "fix",
-        "matchUpdateTypes": ["patch", "digest"]
-      },
-      {
-        "matchManagers": ["helmv3"],
-        "semanticCommitScope": "charts",
-        "semanticCommitType": "feat",
-        "matchUpdateTypes": ["major", "minor"]
-      },
-      {
-        "matchManagers": ["terraform"],
-        "semanticCommitScope": "tf",
-        "semanticCommitType": "feat",
-        "automerge": false
-      }
-    ]
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "semanticCommitScope": "ci",
+      "semanticCommitType": "chore"
+    },
+    {
+      "matchManagers": [
+        "pre-commit"
+      ],
+      "semanticCommitScope": "ci",
+      "semanticCommitType": "chore"
+    },
+    {
+      "matchManagers": [
+        "helmv3"
+      ],
+      "semanticCommitScope": "charts",
+      "semanticCommitType": "fix",
+      "matchUpdateTypes": [
+        "patch",
+        "digest"
+      ]
+    },
+    {
+      "matchManagers": [
+        "helmv3"
+      ],
+      "semanticCommitScope": "charts",
+      "semanticCommitType": "feat",
+      "matchUpdateTypes": [
+        "major",
+        "minor"
+      ]
+    },
+    {
+      "matchManagers": [
+        "terraform"
+      ],
+      "semanticCommitScope": "tf",
+      "semanticCommitType": "feat",
+      "automerge": false
+    }
+  ]
 }
