@@ -24,7 +24,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | >= 3 |
 | <a name="requirement_jinja"></a> [jinja](#requirement\_jinja) | ~> 1.15 |
-| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 1.0 |
+| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 2.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0, != 2.12 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
 
@@ -38,7 +38,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
 | <a name="provider_http"></a> [http](#provider\_http) | >= 3 |
 | <a name="provider_jinja"></a> [jinja](#provider\_jinja) | ~> 1.15 |
-| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 1.0 |
+| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 2.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.0, != 2.12 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 | <a name="provider_time"></a> [time](#provider\_time) | n/a |
@@ -59,14 +59,12 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 29.0 |
 | <a name="module_kube-prometheus-stack_grafana-iam-member"></a> [kube-prometheus-stack\_grafana-iam-member](#module\_kube-prometheus-stack\_grafana-iam-member) | terraform-google-modules/iam/google//modules/member_iam | ~> 7.6 |
 | <a name="module_kube-prometheus-stack_kube-prometheus-stack_bucket"></a> [kube-prometheus-stack\_kube-prometheus-stack\_bucket](#module\_kube-prometheus-stack\_kube-prometheus-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 5.0 |
-| <a name="module_kube-prometheus-stack_thanos_bucket_iam"></a> [kube-prometheus-stack\_thanos\_bucket\_iam](#module\_kube-prometheus-stack\_thanos\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 7.6 |
 | <a name="module_kube-prometheus-stack_thanos_kms_bucket"></a> [kube-prometheus-stack\_thanos\_kms\_bucket](#module\_kube-prometheus-stack\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 2.2 |
 | <a name="module_loki-stack_bucket"></a> [loki-stack\_bucket](#module\_loki-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 5.0 |
 | <a name="module_loki-stack_bucket_iam"></a> [loki-stack\_bucket\_iam](#module\_loki-stack\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 7.6 |
 | <a name="module_loki-stack_kms_bucket"></a> [loki-stack\_kms\_bucket](#module\_loki-stack\_kms\_bucket) | terraform-google-modules/kms/google | ~> 2.2 |
 | <a name="module_thanos-storegateway_bucket_iam"></a> [thanos-storegateway\_bucket\_iam](#module\_thanos-storegateway\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 7.6 |
 | <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 5.0 |
-| <a name="module_thanos_bucket_iam"></a> [thanos\_bucket\_iam](#module\_thanos\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 7.6 |
 | <a name="module_thanos_kms_bucket"></a> [thanos\_kms\_bucket](#module\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 2.2 |
 
 ## Resources
@@ -79,6 +77,15 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [github_repository_deploy_key.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
 | [google_dns_managed_zone_iam_member.cert_manager_cloud_dns_iam_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_managed_zone_iam_member) | resource |
 | [google_dns_managed_zone_iam_member.external_dns_cloud_dns_iam_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_managed_zone_iam_member) | resource |
+| [google_storage_bucket_iam_member.kube_prometheus_stack_thanos_bucket_objectAdmin_iam_permission](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.kube_prometheus_stack_thanos_bucket_objectViewer_iam_permission](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.thanos_compactor_gcs_iam_legacyBucketWriter_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.thanos_compactor_gcs_iam_objectCreator_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.thanos_compactor_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.thanos_gcs_iam_objectCreator_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.thanos_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.thanos_sg_gcs_iam_objectCreator_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.thanos_sg_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [helm_release.admiralty](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cert-manager](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cert-manager-csi-driver](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
@@ -104,11 +111,11 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [helm_release.thanos-tls-querier](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.traefik](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.victoria-metrics-k8s-stack](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
-| [kubectl_manifest.cert-manager_cluster_issuers](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.ip_masq_agent](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.linkerd](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.linkerd-viz](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
-| [kubectl_manifest.prometheus-operator_crds](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
+| [kubectl_manifest.cert-manager_cluster_issuers](https://registry.terraform.io/providers/alekc/kubectl/latest/docs/resources/manifest) | resource |
+| [kubectl_manifest.ip_masq_agent](https://registry.terraform.io/providers/alekc/kubectl/latest/docs/resources/manifest) | resource |
+| [kubectl_manifest.linkerd](https://registry.terraform.io/providers/alekc/kubectl/latest/docs/resources/manifest) | resource |
+| [kubectl_manifest.linkerd-viz](https://registry.terraform.io/providers/alekc/kubectl/latest/docs/resources/manifest) | resource |
+| [kubectl_manifest.prometheus-operator_crds](https://registry.terraform.io/providers/alekc/kubectl/latest/docs/resources/manifest) | resource |
 | [kubernetes_config_map.loki-stack_grafana_ds](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [kubernetes_namespace.admiralty](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.cert-manager](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
@@ -216,8 +223,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [http_http.prometheus-operator_crds](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 | [http_http.prometheus-operator_version](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 | [jinja_template.cert-manager_cluster_issuers](https://registry.terraform.io/providers/NikolaLohinski/jinja/latest/docs/data-sources/template) | data source |
-| [kubectl_file_documents.cert-manager_cluster_issuers](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/file_documents) | data source |
-| [kubectl_filename_list.ip_masq_agent_manifests](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/data-sources/filename_list) | data source |
+| [kubectl_file_documents.cert-manager_cluster_issuers](https://registry.terraform.io/providers/alekc/kubectl/latest/docs/data-sources/file_documents) | data source |
+| [kubectl_filename_list.ip_masq_agent_manifests](https://registry.terraform.io/providers/alekc/kubectl/latest/docs/data-sources/filename_list) | data source |
 
 ## Inputs
 
