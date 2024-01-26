@@ -22,7 +22,7 @@ locals {
       thanos_bucket_location                = ""
       thanos_kms_bucket_location            = ""
       thanos_store_config                   = null
-      thanos_version                        = "v0.32.5"
+      thanos_version                        = "v0.33.0"
       thanos_service_account                = ""
       enabled                               = false
       allowed_cidrs                         = ["0.0.0.0/0"]
@@ -284,21 +284,18 @@ resource "kubernetes_secret" "kube-prometheus-stack_thanos" {
   }
 }
 
-module "kube-prometheus-stack_thanos_bucket_iam" {
-  count   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
-  source  = "terraform-google-modules/iam/google//modules/storage_buckets_iam"
-  version = "~> 7.6"
+resource "google_storage_bucket_iam_member" "kube_prometheus_stack_thanos_bucket_objectViewer_iam_permission" {
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
+  bucket = module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
+}
 
-  mode            = "additive"
-  storage_buckets = [module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name]
-  bindings = {
-    "roles/storage.objectViewer" = [
-      "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
-    ]
-    "roles/storage.objectAdmin" = [
-      "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
-    ]
-  }
+resource "google_storage_bucket_iam_member" "kube_prometheus_stack_thanos_bucket_objectAdmin_iam_permission" {
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
+  bucket = module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
 }
 
 module "kube-prometheus-stack_grafana-iam-member" {
