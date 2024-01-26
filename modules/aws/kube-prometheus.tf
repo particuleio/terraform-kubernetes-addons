@@ -403,7 +403,7 @@ module "kube-prometheus-stack_thanos_bucket" {
   create_bucket = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] && local.kube-prometheus-stack["thanos_create_bucket"]
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   control_object_ownership = true
   object_ownership         = "ObjectWriter"

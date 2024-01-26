@@ -267,7 +267,7 @@ module "thanos_bucket" {
   create_bucket = local.thanos["enabled"] && local.thanos["create_bucket"]
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   control_object_ownership = true
   object_ownership         = "ObjectWriter"

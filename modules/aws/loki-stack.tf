@@ -186,7 +186,7 @@ module "loki_bucket" {
   create_bucket = local.loki-stack["enabled"] && local.loki-stack["create_bucket"]
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   control_object_ownership = true
   object_ownership         = "ObjectWriter"

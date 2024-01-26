@@ -13,7 +13,7 @@ module "s3_logging_bucket" {
   create_bucket = local.s3-logging.enabled && local.s3-logging.create_bucket
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   control_object_ownership = true
   object_ownership         = "ObjectWriter"
