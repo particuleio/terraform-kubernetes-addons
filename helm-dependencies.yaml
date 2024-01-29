@@ -39,7 +39,7 @@ dependencies:
     version: 1.13.3
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 4.9.0
+    version: 4.9.1
     repository: https://kubernetes.github.io/ingress-nginx
   - name: k8gb
     version: v0.12.2
@@ -57,7 +57,7 @@ dependencies:
     version: 2.34.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 56.1.0
+    version: 56.2.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -72,7 +72,7 @@ dependencies:
     version: 30.12.10
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 5.41.8
+    version: 5.42.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 6.15.4
@@ -99,7 +99,7 @@ dependencies:
     version: 2.14.2
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 12.22.0
+    version: 12.22.1
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.27.0

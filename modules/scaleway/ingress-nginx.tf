@@ -14,6 +14,8 @@ locals {
       linkerd-viz-namespace  = "linkerd-viz"
       ingress_cidrs          = ["0.0.0.0/0"]
       allowed_cidrs          = ["0.0.0.0/0"]
+      extra_ns_labels        = {}
+      extra_ns_annotations   = {}
     },
     var.ingress-nginx
   )
@@ -51,10 +53,15 @@ resource "kubernetes_namespace" "ingress-nginx" {
   count = local.ingress-nginx["enabled"] ? 1 : 0
 
   metadata {
-    labels = {
+    labels = merge({
       name                               = local.ingress-nginx["namespace"]
       "${local.labels_prefix}/component" = "ingress"
-    }
+      },
+    local.ingress-nginx["extra_ns_labels"])
+
+    annotations = merge(
+      local.ingress-nginx["extra_ns_annotations"]
+    )
 
     name = local.ingress-nginx["namespace"]
   }
