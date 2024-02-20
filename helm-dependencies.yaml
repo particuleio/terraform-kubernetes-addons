@@ -102,7 +102,7 @@ dependencies:
     version: 12.23.2
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.27.0
+    version: v3.27.2
     repository: https://docs.projectcalico.org/charts
   - name: traefik
     version: 26.1.0
