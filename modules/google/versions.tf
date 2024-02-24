@@ -11,7 +11,7 @@ terraform {
     }
     jinja = {
       source  = "NikolaLohinski/jinja"
-      version = "~> 1.15"
+      version = "~> 2.0"
     }
     flux = {
       source  = "fluxcd/flux"
