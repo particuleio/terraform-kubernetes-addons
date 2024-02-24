@@ -68,7 +68,7 @@ resource "aws_iam_policy" "karpenter_additional" {
 
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "~> 19.0"
+  version = "~> 20.0"
 
   create = local.karpenter["enabled"]
 
