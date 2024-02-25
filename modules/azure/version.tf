@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.3"
   required_providers {
     azurerm    = "~> 3.0"
     helm       = "~> 2.0"
