@@ -22,7 +22,7 @@ locals {
       thanos_bucket_location                = ""
       thanos_kms_bucket_location            = ""
       thanos_store_config                   = null
-      thanos_version                        = "v0.33.0"
+      thanos_version                        = "v0.34.1"
       thanos_service_account                = ""
       enabled                               = false
       allowed_cidrs                         = ["0.0.0.0/0"]
