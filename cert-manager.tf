@@ -31,6 +31,8 @@ prometheus:
 securityContext:
   fsGroup: 1001
 installCRDs: true
+extraArgs:
+- "--acme-http01-solver-nameservers=8.8.8.8:53,1.1.1.1:53"
 VALUES
 
 }
