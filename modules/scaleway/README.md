@@ -19,7 +19,7 @@ User guides, feature documentation and examples are available [here](https://git
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
