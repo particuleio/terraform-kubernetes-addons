@@ -19,7 +19,7 @@ locals {
       thanos_bucket                     = "thanos-store-${var.cluster-name}"
       thanos_bucket_force_destroy       = false
       thanos_store_config               = null
-      thanos_version                    = "v0.33.0"
+      thanos_version                    = "v0.34.1"
       enabled                           = false
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true

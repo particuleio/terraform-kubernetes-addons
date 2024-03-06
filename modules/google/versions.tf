@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.3"
   required_providers {
     google      = ">= 4.69"
     google-beta = ">= 4.69"
@@ -11,7 +11,7 @@ terraform {
     }
     jinja = {
       source  = "NikolaLohinski/jinja"
-      version = "~> 1.15"
+      version = "~> 2.0"
     }
     flux = {
       source  = "fluxcd/flux"
@@ -19,7 +19,7 @@ terraform {
     }
     github = {
       source  = "integrations/github"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
     tls = {
       source  = "hashicorp/tls"

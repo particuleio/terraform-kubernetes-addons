@@ -14,7 +14,7 @@ locals {
       irsa_oidc_provider_arn          = var.eks["oidc_provider_arn"]
       irsa_namespace_service_accounts = ["karpenter:karpenter"]
       allowed_cidrs                   = ["0.0.0.0/0"]
-      iam_role_arn                    = ""
+      iam_role_name                   = ""
       repository_username             = ""
       repository_password             = ""
 
@@ -68,23 +68,23 @@ resource "aws_iam_policy" "karpenter_additional" {
 
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "~> 19.0"
+  version = "~> 20.0"
 
   create = local.karpenter["enabled"]
 
   cluster_name = var.cluster-name
 
-  policies = {
+  node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
     KarpeneterAdditional         = local.karpenter["enabled"] ? aws_iam_policy.karpenter_additional[0].arn : ""
   }
 
-  irsa_use_name_prefix            = false
+  iam_role_use_name_prefix        = false
   irsa_oidc_provider_arn          = local.karpenter["irsa_oidc_provider_arn"]
   irsa_namespace_service_accounts = local.karpenter["irsa_namespace_service_accounts"]
 
   create_iam_role = false
-  iam_role_arn    = local.karpenter["iam_role_arn"]
+  iam_role_name   = local.karpenter["iam_role_name"]
 
   tags = local.tags
 }
@@ -137,7 +137,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.karpenter.irsa_arn
+    value = module.karpenter.iam_role_arn
   }
 
   set {

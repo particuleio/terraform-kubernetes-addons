@@ -19,9 +19,9 @@ User guides, feature documentation and examples are available [here](https://git
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.0 |
-| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | >= 3 |
 | <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 2.0 |
@@ -34,7 +34,7 @@ User guides, feature documentation and examples are available [here](https://git
 | Name | Version |
 |------|---------|
 | <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 1.0 |
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 5.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
 | <a name="provider_http"></a> [http](#provider\_http) | >= 3 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 2.0 |

@@ -73,7 +73,7 @@ locals {
 module "iam_assumable_sa_loki-stack" {
   count      = local.loki-stack["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 29.0"
+  version    = "~> 30.0"
   namespace  = local.loki-stack["namespace"]
   project_id = var.project_id
   name       = local.loki-stack["name"]

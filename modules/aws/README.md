@@ -20,10 +20,10 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.27 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.0 |
-| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | >= 3 |
 | <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 2.0 |
@@ -36,7 +36,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.27 |
 | <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 1.0 |
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 5.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
 | <a name="provider_http"></a> [http](#provider\_http) | >= 3 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 2.0 |
@@ -65,7 +65,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | <a name="module_iam_assumable_role_thanos-storegateway"></a> [iam\_assumable\_role\_thanos-storegateway](#module\_iam\_assumable\_role\_thanos-storegateway) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
 | <a name="module_iam_assumable_role_velero"></a> [iam\_assumable\_role\_velero](#module\_iam\_assumable\_role\_velero) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
 | <a name="module_iam_assumable_role_yet-another-cloudwatch-exporter"></a> [iam\_assumable\_role\_yet-another-cloudwatch-exporter](#module\_iam\_assumable\_role\_yet-another-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | ~> 19.0 |
+| <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | ~> 20.0 |
 | <a name="module_kube-prometheus-stack_thanos_bucket"></a> [kube-prometheus-stack\_thanos\_bucket](#module\_kube-prometheus-stack\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 4.0 |
 | <a name="module_loki_bucket"></a> [loki\_bucket](#module\_loki\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 4.0 |
 | <a name="module_s3_logging_bucket"></a> [s3\_logging\_bucket](#module\_s3\_logging\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 4.0 |

@@ -22,7 +22,7 @@ locals {
       thanos_bucket_location                = ""
       thanos_kms_bucket_location            = ""
       thanos_store_config                   = null
-      thanos_version                        = "v0.33.0"
+      thanos_version                        = "v0.34.1"
       thanos_service_account                = ""
       enabled                               = false
       allowed_cidrs                         = ["0.0.0.0/0"]
@@ -255,7 +255,7 @@ VALUES
 module "iam_assumable_sa_kube-prometheus-stack_grafana" {
   count               = local.kube-prometheus-stack["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 29.0"
+  version             = "~> 30.0"
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
   name                = local.kube-prometheus-stack["grafana_service_account_name"]
@@ -265,7 +265,7 @@ module "iam_assumable_sa_kube-prometheus-stack_grafana" {
 module "iam_assumable_sa_kube-prometheus-stack_thanos" {
   count               = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 29.0"
+  version             = "~> 30.0"
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
   name                = "${local.kube-prometheus-stack["name_prefix"]}-thanos"

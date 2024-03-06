@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.3"
   required_providers {
     helm       = "~> 2.0"
     kubernetes = "~> 2.0, != 2.12"
@@ -13,7 +13,7 @@ terraform {
     }
     github = {
       source  = "integrations/github"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
     scaleway = {
       source  = "scaleway/scaleway"

@@ -9,28 +9,28 @@ dependencies:
     version: 1.4.1
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.27.0
+    version: 2.28.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 2.5.4
+    version: 2.5.6
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.1.32
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.6.2
+    version: 1.7.1
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.13.3
+    version: v1.14.3
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
-    version: v0.6.0
+    version: v0.7.1
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.34.1
+    version: 9.35.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
     version: 1.14.3
@@ -39,7 +39,7 @@ dependencies:
     version: 1.13.3
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 4.9.1
+    version: 4.10.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: k8gb
     version: v0.12.2
@@ -48,37 +48,37 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: v0.33.1
+    version: 0.35.0
     repository: oci://public.ecr.aws/karpenter
   - name: keda
-    version: 2.13.1
+    version: 2.13.2
     repository: https://kedacore.github.io/charts
   - name: kong
-    version: 2.34.0
+    version: 2.38.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 56.2.1
+    version: 56.21.2
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
     repository: https://helm.linkerd.io/stable
   - name: linkerd-control-plane
-    version: 1.16.10
+    version: 1.16.11
     repository: https://helm.linkerd.io/stable
   - name: linkerd-crds
     version: 1.8.0
     repository: https://helm.linkerd.io/stable
   - name: linkerd-viz
-    version: 30.12.10
+    version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 5.42.0
+    version: 5.43.5
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.15.4
+    version: 6.15.5
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
-    version: 3.11.0
+    version: 3.12.0
     repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
     version: 2.3.12
@@ -90,31 +90,31 @@ dependencies:
     version: 0.25.3
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 8.10.0
+    version: 8.12.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.14.2
+    version: 2.15.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 12.22.1
+    version: 12.23.2
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.27.0
+    version: v3.27.2
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 26.0.0
+    version: 26.1.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 6.9.0
+    version: 6.14.0
     repository: https://charts.bitnami.com/bitnami
   - name: velero
     version: 4.4.1
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.18.11
+    version: 0.19.4
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
