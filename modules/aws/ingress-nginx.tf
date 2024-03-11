@@ -60,8 +60,8 @@ controller:
   kind: "DaemonSet"
   service:
     annotations:
+      service.beta.kubernetes.io/aws-load-balancer-attributes: load_balancing.cross_zone.enabled=true
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
-      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
       service.beta.kubernetes.io/aws-load-balancer-type: nlb
     externalTrafficPolicy: "Local"
   publishService:
@@ -85,8 +85,8 @@ controller:
   kind: "DaemonSet"
   service:
     annotations:
+      service.beta.kubernetes.io/aws-load-balancer-attributes: load_balancing.cross_zone.enabled=true
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
-      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
       service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
       service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
   publishService:
