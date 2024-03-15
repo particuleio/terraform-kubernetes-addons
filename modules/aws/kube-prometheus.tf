@@ -363,18 +363,6 @@ data "aws_iam_policy_document" "kube-prometheus-stack_grafana" {
 
     resources = ["*"]
   }
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "ec2:DescribeTags",
-      "ec2:DescribeInstances",
-      "ec2:DescribeRegions"
-    ]
-
-    resources = ["*"]
-
-  }
 }
 
 data "aws_iam_policy_document" "kube-prometheus-stack_thanos" {
