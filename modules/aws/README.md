@@ -20,7 +20,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.2 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.27 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
