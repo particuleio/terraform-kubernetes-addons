@@ -90,7 +90,7 @@ dependencies:
     version: 0.25.3
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 8.15.0
+    version: 8.15.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
