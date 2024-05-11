@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.3"
+  required_version = ">= 1.3.2"
   required_providers {
     helm       = "~> 2.0"
     kubernetes = "~> 2.0, != 2.12"

@@ -30,13 +30,6 @@ locals {
   values_loki-stack = <<-VALUES
     test:
       enabled: false
-    monitoring:
-      lokiCanary:
-        enabled: false
-      selfMonitoring:
-        enabled: false
-        grafanaAgent:
-          installOperator: false
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
@@ -187,7 +180,7 @@ module "loki-stack_bucket" {
   count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 5.0"
+  version    = "~> 6.0"
   project_id = var.project_id
   location   = local.loki-stack["bucket_location"]
 

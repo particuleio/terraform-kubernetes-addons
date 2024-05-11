@@ -51,13 +51,13 @@ credentials:
   useSecret: false
 initContainers:
    - name: velero-plugin-for-aws
-     image: velero/velero-plugin-for-aws:v1.7.1
+     image: velero/velero-plugin-for-aws:v1.9.2
      imagePullPolicy: IfNotPresent
      volumeMounts:
        - mountPath: /target
          name: plugins
    - name: velero-plugin-for-csi
-     image: velero/velero-plugin-for-csi:v0.5.1
+     image: velero/velero-plugin-for-csi:v0.7.1
      imagePullPolicy: IfNotPresent
      volumeMounts:
        - mountPath: /target
