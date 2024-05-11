@@ -333,7 +333,7 @@ module "kube-prometheus-stack_kube-prometheus-stack_bucket" {
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 5.0"
+  version    = "~> 6.0"
   project_id = var.project_id
   location   = local.kube-prometheus-stack["thanos_bucket_location"]
 
