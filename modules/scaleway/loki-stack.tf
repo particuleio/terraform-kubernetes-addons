@@ -24,13 +24,6 @@ locals {
   values_loki-stack = <<-VALUES
     global
       dnsService: coredns
-    monitoring:
-      lokiCanary:
-        enabled: false    
-      selfMonitoring:
-        enabled: false
-        grafanaAgent:
-          installOperator: false
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
