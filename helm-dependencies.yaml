@@ -9,16 +9,16 @@ dependencies:
     version: 1.4.3
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.30.0
+    version: 2.31.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 3.0.3
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.1.32
+    version: 0.1.33
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.7.2
+    version: 1.8.0
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
@@ -27,7 +27,7 @@ dependencies:
     version: v1.14.5
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
-    version: v0.8.0
+    version: v0.8.1
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
     version: 9.37.0
@@ -48,7 +48,7 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: 0.36.1
+    version: 0.37.0
     repository: oci://public.ecr.aws/karpenter
   - name: keda
     version: 2.14.2
@@ -57,7 +57,7 @@ dependencies:
     version: 2.38.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 58.5.0
+    version: 59.0.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -72,7 +72,7 @@ dependencies:
     version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 6.5.2
+    version: 6.6.2
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 6.15.5
@@ -90,31 +90,31 @@ dependencies:
     version: 0.25.3
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 8.16.0
+    version: 8.17.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.15.3
+    version: 2.15.4
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 15.4.4
+    version: 15.5.1
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.28.0
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 28.0.0
+    version: 28.1.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 7.0.5
+    version: 7.4.1
     repository: https://charts.bitnami.com/bitnami
   - name: velero
-    version: 6.0.0
+    version: 6.5.0
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.22.0
+    version: 0.22.1
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
