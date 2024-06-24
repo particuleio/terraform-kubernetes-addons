@@ -6,7 +6,7 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: secrets-store-csi-driver
-    version: 1.4.3
+    version: 1.4.4
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
     version: 2.31.0
@@ -57,7 +57,7 @@ dependencies:
     version: 2.39.3
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 60.2.0
+    version: 60.3.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -96,10 +96,10 @@ dependencies:
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.15.4
+    version: 2.16.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 15.7.8
+    version: 15.7.9
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.28.0
