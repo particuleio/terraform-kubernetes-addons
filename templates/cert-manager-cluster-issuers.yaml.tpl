@@ -15,6 +15,28 @@ spec:
         ingress:
           class: '${acme_http01_ingress_class}'
     %{ endif }
+    %{ if acme_dns01_enabled }
+    %{ if acme_dns01_provider == 'route53' }
+    - dns01:
+      route53:
+        hostedZoneID: ${acme_dns01_hosted_zone_id}
+        region: '${acme_dns01_region}'
+        accessKeyIDSecretRef:
+          name: ${acme_dns01_aws_secret}
+          key: ${acme_dns01_aws_access_key_id}
+        secretAccessKeySecretRef:
+          name: ${acme_dns01_aws_secret}
+          key: ${acme_dns01_aws_access_key_secret}
+    %{ endif }
+    %{ if acme_dns01_provider == 'google' }
+    - dns01:
+        clouddns:
+          project: '${acme_dns01_google_project}'
+          serviceAccountSecretRef:
+            name: '${acme_dns01_google_secret}'
+            key: '${acme_dns01_google_service_account_key}'
+    %{ endif }
+    %{ endif }
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -31,4 +53,26 @@ spec:
     - http01:
         ingress:
           class: '${acme_http01_ingress_class}'
+    %{ endif }
+    %{ if acme_dns01_enabled }
+    %{ if acme_dns01_provider == 'route53' }
+    - dns01:
+      route53:
+        hostedZoneID: ${acme_dns01_hosted_zone_id}
+        region: '${acme_dns01_region}'
+        accessKeyIDSecretRef:
+          name: ${acme_dns01_aws-secret}
+          key: ${acme_dns01_aws-access-key-id}
+        secretAccessKeySecretRef:
+          name: ${acme_dns01_aws-secret}
+          key: ${acme_dns01_aws-access-key-secret}
+    %{ endif }
+    %{ if acme_dns01_provider == 'google' }
+    - dns01:
+        clouddns:
+          project: '${acme_dns01_google_project}'
+          serviceAccountSecretRef:
+            name: '${acme_dns01_google_secret}'
+            key: '${acme_dns01_google_service_account_key}'
+    %{ endif }
     %{ endif }
