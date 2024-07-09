@@ -17,11 +17,6 @@ locals {
       acme_http01_enabled            = true
       acme_http01_ingress_class      = "nginx"
       acme_dns01_enabled             = true
-      acme_dns01_provider       = ""
-      acme_dns01_hosted_zone_id = ""
-      acme_dns01_aws_secret     = ""
-      acme_dns01_access_key_id  = ""
-      acme_dns01_aws_access_key_secret = ""
       cluster_issuer_assume_role_arn = ""
       allowed_cidrs                  = ["0.0.0.0/0"]
       csi_driver                     = false
