@@ -25,14 +25,6 @@ spec:
           name: ${acme_dns01_aws_secret}
           key: ${acme_dns01_aws_access_key_secret}
     %{ else }
-    %{ if acme_dns01_provider == "google" }
-    - dns01:
-        clouddns:
-          project: '${acme_dns01_google_project}'
-          serviceAccountSecretRef:
-            name: '${acme_dns01_google_secret}'
-            key: '${acme_dns01_google_service_account_key}'
-    %{ else }
     - dns01:
         webhook:
           groupName: acme.scaleway.com
@@ -44,7 +36,6 @@ spec:
             secretKeySecretRef:
               key: SCW_SECRET_KEY
               name: '${secret_name}'
-    %{ endif }
     %{ endif }
     %{ endif }
     %{ if acme_http01_enabled }
