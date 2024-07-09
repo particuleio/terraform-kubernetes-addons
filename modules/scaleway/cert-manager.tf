@@ -15,6 +15,13 @@ locals {
       acme_http01_enabled       = false
       acme_http01_ingress_class = "nginx"
       acme_dns01_enabled        = false
+      acme_dns01_provider       = ""
+      acme_dns01_hosted_zone_id = ""
+      acme_dns01_aws_secret     = ""
+      acme_dns01_aws_access_key_id  = ""
+      acme_dns01_aws_access_key_secret = ""
+      acme_dns01_region         = ""
+      cluster_issuer_assume_role_arn = ""
       allowed_cidrs             = ["0.0.0.0/0"]
       csi_driver                = false
     },
@@ -148,6 +155,12 @@ data "kubectl_path_documents" "cert-manager_cluster_issuers" {
     acme_http01_enabled       = local.cert-manager["acme_http01_enabled"]
     acme_http01_ingress_class = local.cert-manager["acme_http01_ingress_class"]
     acme_dns01_enabled        = local.cert-manager["acme_dns01_enabled"]
+    acme_dns01_provider       = local.cert-manager["acme_dns01_provider"]
+    acme_dns01_hosted_zone_id = local.cert-manager["acme_dns01_hosted_zone_id"]
+    acme_dns01_aws_secret     = local.cert-manager["acme_dns01_aws_secret"]
+    acme_dns01_aws_access_key_id  = local.cert-manager["acme_dns01_aws_access_key_id"]
+    acme_dns01_aws_access_key_secret = local.cert-manager["acme_dns01_aws_access_key_secret"]
+    acme_dns01_region         = local.cert-manager["acme_dns01_region"]
     secret_name               = local.cert-manager_scaleway_webhook_dns["secret_name"]
   }
 }
