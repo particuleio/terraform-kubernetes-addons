@@ -21,7 +21,6 @@ locals {
       acme_dns01_aws_access_key_id  = ""
       acme_dns01_aws_access_key_secret = ""
       acme_dns01_region         = ""
-      cluster_issuer_assume_role_arn = ""
       allowed_cidrs             = ["0.0.0.0/0"]
       csi_driver                = false
     },
