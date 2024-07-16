@@ -31,8 +31,6 @@ locals {
       enabled: true
     loki:
       auth_enabled: false
-      compactor:
-        shared_store: aws
       storage:
         bucketNames:
           chunks: "${local.loki-stack["bucket"]}"
