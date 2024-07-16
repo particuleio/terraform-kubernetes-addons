@@ -6,43 +6,43 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: secrets-store-csi-driver
-    version: 1.4.3
+    version: 1.4.4
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.31.0
+    version: 2.32.0
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 3.0.3
+    version: 3.0.6
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.1.33
+    version: 0.1.34
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.8.0
+    version: 1.8.1
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.14.5
+    version: v1.15.1
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
-    version: v0.8.1
+    version: v0.9.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
     version: 9.37.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 1.14.4
+    version: 1.14.5
     repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
     version: 1.13.3
     repository: https://charts.fluxcd.io
   - name: ingress-nginx
-    version: 4.10.1
+    version: 4.11.0
     repository: https://kubernetes.github.io/ingress-nginx
   - name: k8gb
-    version: v0.12.2
+    version: v0.13.0
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
@@ -54,10 +54,10 @@ dependencies:
     version: 2.14.2
     repository: https://kedacore.github.io/charts
   - name: kong
-    version: 2.38.0
+    version: 2.39.3
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 59.0.0
+    version: 60.5.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -72,10 +72,10 @@ dependencies:
     version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 6.6.2
+    version: 6.6.6
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.15.5
+    version: 6.16.3
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.12.1
@@ -96,25 +96,25 @@ dependencies:
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.15.4
+    version: 2.16.0
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 15.5.1
+    version: 15.7.12
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
     version: v3.28.0
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 28.1.0
+    version: 28.3.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 7.4.1
+    version: 7.4.8
     repository: https://charts.bitnami.com/bitnami
   - name: velero
-    version: 6.5.0
+    version: 6.7.0
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.22.1
+    version: 0.24.2
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
