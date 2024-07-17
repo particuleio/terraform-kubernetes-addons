@@ -57,7 +57,7 @@ dependencies:
     version: 2.39.3
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 60.5.0
+    version: 61.3.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -72,10 +72,10 @@ dependencies:
     version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 6.6.6
+    version: 6.7.1
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.16.3
+    version: 6.16.4
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.12.1
@@ -105,16 +105,16 @@ dependencies:
     version: v3.28.0
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 28.3.0
+    version: 29.0.1
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 7.4.8
+    version: 7.4.9
     repository: https://charts.bitnami.com/bitnami
   - name: velero
-    version: 6.7.0
+    version: 7.1.1
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.24.1
+    version: 0.24.2
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
