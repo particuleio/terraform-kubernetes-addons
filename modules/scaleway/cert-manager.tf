@@ -3,20 +3,29 @@ locals {
   cert-manager = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
-      namespace                 = "cert-manager"
-      service_account_name      = "cert-manager"
-      enabled                   = false
-      default_network_policy    = true
-      acme_email                = "contact@acme.com"
-      acme_http01_enabled       = false
-      acme_http01_ingress_class = "nginx"
-      acme_dns01_enabled        = false
-      allowed_cidrs             = ["0.0.0.0/0"]
-      csi_driver                = false
+      name                                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
+      chart                                 = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
+      repository                            = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
+      chart_version                         = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
+      namespace                             = "cert-manager"
+      service_account_name                  = "cert-manager"
+      enabled                               = false
+      default_network_policy                = true
+      acme_email                            = "contact@acme.com"
+      acme_http01_enabled                   = false
+      acme_http01_ingress_class             = "nginx"
+      acme_dns01_enabled                    = false
+      acme_dns01_provider                   = ""
+      acme_dns01_hosted_zone_id             = ""
+      acme_dns01_aws_secret                 = ""
+      acme_dns01_aws_access_key_id          = ""
+      acme_dns01_aws_access_key_secret      = ""
+      acme_dns01_region                     = ""
+      acme_dns01_google_project             = ""
+      acme_dns01_google_secret              = ""
+      acme_dns01_google_service_account_key = ""
+      allowed_cidrs                         = ["0.0.0.0/0"]
+      csi_driver                            = false
     },
     var.cert-manager
   )
@@ -144,11 +153,20 @@ resource "kubernetes_secret" "cert-manager_scaleway_credentials" {
 data "kubectl_path_documents" "cert-manager_cluster_issuers" {
   pattern = "${path.module}/templates/cert-manager-cluster-issuers.yaml.tpl"
   vars = {
-    acme_email                = local.cert-manager["acme_email"]
-    acme_http01_enabled       = local.cert-manager["acme_http01_enabled"]
-    acme_http01_ingress_class = local.cert-manager["acme_http01_ingress_class"]
-    acme_dns01_enabled        = local.cert-manager["acme_dns01_enabled"]
-    secret_name               = local.cert-manager_scaleway_webhook_dns["secret_name"]
+    acme_email                            = local.cert-manager["acme_email"]
+    acme_http01_enabled                   = local.cert-manager["acme_http01_enabled"]
+    acme_http01_ingress_class             = local.cert-manager["acme_http01_ingress_class"]
+    acme_dns01_enabled                    = local.cert-manager["acme_dns01_enabled"]
+    acme_dns01_provider                   = local.cert-manager["acme_dns01_provider"]
+    acme_dns01_hosted_zone_id             = local.cert-manager["acme_dns01_hosted_zone_id"]
+    acme_dns01_aws_secret                 = local.cert-manager["acme_dns01_aws_secret"]
+    acme_dns01_aws_access_key_id          = local.cert-manager["acme_dns01_aws_access_key_id"]
+    acme_dns01_aws_access_key_secret      = local.cert-manager["acme_dns01_aws_access_key_secret"]
+    acme_dns01_region                     = local.cert-manager["acme_dns01_region"]
+    acme_dns01_google_project             = local.cert-manager["acme_dns01_google_project"]
+    acme_dns01_google_secret              = local.cert-manager["acme_dns01_google_secret"]
+    acme_dns01_google_service_account_key = local.cert-manager["acme_dns01_google_service_account_key"]
+    secret_name                           = local.cert-manager_scaleway_webhook_dns["secret_name"]
   }
 }
 
