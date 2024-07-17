@@ -31,8 +31,6 @@ locals {
       enabled: true
     loki:
       auth_enabled: false
-      compactor:
-        shared_store: aws
       storage:
         bucketNames:
           chunks: "${local.loki-stack["bucket"]}"
@@ -56,8 +54,6 @@ locals {
           region: ${local.loki-stack["bucket_region"]}
           access_key_id: ${local.scaleway["scw_access_key"]}
           secret_access_key: ${local.scaleway["scw_secret_key"]}
-        boltdb_shipper:
-          shared_store: aws
     VALUES
 }
 
