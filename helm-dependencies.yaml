@@ -111,7 +111,7 @@ dependencies:
     version: 7.4.11
     repository: https://charts.bitnami.com/bitnami
   - name: velero
-    version: 7.1.4
+    version: 7.1.5
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
     version: 0.24.5
