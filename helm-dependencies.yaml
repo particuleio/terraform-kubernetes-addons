@@ -6,7 +6,7 @@ dependencies:
     version: 0.13.2
     repository: https://charts.admiralty.io
   - name: secrets-store-csi-driver
-    version: 1.4.4
+    version: 1.4.5
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
     version: 2.33.0
