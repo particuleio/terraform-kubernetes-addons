@@ -1,7 +1,7 @@
 terraform {
   required_version = ">= 1.3.2"
   required_providers {
-    azurerm    = "~> 3.0"
+    azurerm    = "~> 4.0"
     helm       = "~> 2.0"
     kubernetes = "~> 2.0, != 2.12"
     kubectl = {
