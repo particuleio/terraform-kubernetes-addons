@@ -55,7 +55,7 @@ locals {
 # to be allowed to use the workload identity on GKE.
 module "external_dns_workload_identity" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version = "~> 31.1.0"
+  version = "~> 32.0.0"
 
   for_each = { for k, v in local.external-dns : k => v if v.enabled && v.create_iam_resources }
 
