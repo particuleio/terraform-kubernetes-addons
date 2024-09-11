@@ -15,3 +15,9 @@ variable "cert-manager_scaleway_webhook_dns" {
   type        = any
   default     = {}
 }
+
+variable "tags" {
+  description = "Map of tags for Scaleway resources"
+  type        = map(any)
+  default     = {}
+}
