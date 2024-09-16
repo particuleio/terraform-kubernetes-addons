@@ -211,7 +211,12 @@ locals {
 resource "scaleway_object_bucket" "thanos_bucket" {
   count = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
   name  = local.thanos["bucket"]
-  acl   = "private"
+}
+
+resource "scaleway_object_bucket_acl" "thanos_bucket_acl" {
+  count  = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
+  bucket = scaleway_object_bucket.thanos_bucket.0.id
+  acl    = "private"
 }
 
 resource "kubernetes_namespace" "thanos" {
