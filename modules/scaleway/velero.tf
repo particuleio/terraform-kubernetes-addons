@@ -2,19 +2,19 @@ locals {
   velero = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].version
-      namespace                 = "velero"
-      service_account_name      = "velero"
-      enabled                   = false
-      create_bucket             = true
-      bucket                    = "${var.cluster-name}-velero"
-      bucket_force_destroy      = false
-      default_network_policy    = true
-      name_prefix               = "${var.cluster-name}-velero"
-      secret_name               = "velero-scaleway-credentials"
+      name                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].name
+      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].name
+      repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].repository
+      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].version
+      namespace              = "velero"
+      service_account_name   = "velero"
+      enabled                = false
+      create_bucket          = true
+      bucket                 = "${var.cluster-name}-velero"
+      bucket_force_destroy   = false
+      default_network_policy = true
+      name_prefix            = "${var.cluster-name}-velero"
+      secret_name            = "velero-scaleway-credentials"
     },
     var.velero
   )
@@ -58,7 +58,7 @@ VALUES
 }
 
 resource "scaleway_object_bucket" "velero_bucket" {
-  count = local.velero.enabled && local.velero.create_bucket  ? 1 : 0
+  count = local.velero.enabled && local.velero.create_bucket ? 1 : 0
   name  = local.velero.bucket
 
   versioning {
@@ -71,9 +71,9 @@ resource "scaleway_object_bucket" "velero_bucket" {
 }
 
 resource "scaleway_object_bucket_acl" "velero_bucket_acl" {
-  count = local.velero.enabled && local.velero.create_bucket  ? 1 : 0
+  count  = local.velero.enabled && local.velero.create_bucket ? 1 : 0
   bucket = scaleway_object_bucket.velero_bucket.0.id
-  acl = "private"
+  acl    = "private"
 }
 
 resource "kubernetes_namespace" "velero" {
