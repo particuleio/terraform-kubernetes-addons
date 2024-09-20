@@ -288,7 +288,12 @@ resource "kubernetes_namespace" "kube-prometheus-stack" {
 resource "scaleway_object_bucket" "kube-prometheus-stack_thanos_bucket" {
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
   name  = local.kube-prometheus-stack["thanos_bucket"]
-  acl   = "private"
+}
+
+resource "scaleway_object_bucket_acl" "kube-prometheus-stack_bucket_acl" {
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
+  bucket = scaleway_object_bucket.kube-prometheus-stack_thanos_bucket.0.id
+  acl    = "private"
 }
 
 resource "random_string" "grafana_password" {
