@@ -9,7 +9,7 @@ dependencies:
     version: 1.4.5
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.34.0
+    version: 2.35.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 3.0.8
@@ -18,7 +18,7 @@ dependencies:
     version: 0.1.34
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 1.8.2
+    version: 1.8.3
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
@@ -33,7 +33,7 @@ dependencies:
     version: 9.37.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 1.14.5
+    version: 1.15.0
     repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
     version: 1.13.3
@@ -42,22 +42,22 @@ dependencies:
     version: 4.11.2
     repository: https://kubernetes.github.io/ingress-nginx
   - name: k8gb
-    version: v0.13.0
+    version: v0.14.0
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: 1.0.1
+    version: 1.0.2
     repository: oci://public.ecr.aws/karpenter
   - name: keda
     version: 2.15.1
     repository: https://kedacore.github.io/charts
   - name: kong
-    version: 2.41.0
+    version: 2.41.1
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 62.3.1
+    version: 62.7.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -72,10 +72,10 @@ dependencies:
     version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 6.10.2
+    version: 6.12.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
-    version: 6.16.5
+    version: 6.16.6
     repository: https://grafana.github.io/helm-charts
   - name: metrics-server
     version: 3.12.1
@@ -99,22 +99,22 @@ dependencies:
     version: 2.16.1
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: thanos
-    version: 15.7.23
+    version: 15.7.25
     repository: https://charts.bitnami.com/bitnami
   - name: tigera-operator
-    version: v3.28.1
+    version: v3.28.2
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 30.1.0
+    version: 31.1.0
     repository: https://helm.traefik.io/traefik
   - name: memcached
-    version: 7.4.12
+    version: 7.4.16
     repository: https://charts.bitnami.com/bitnami
   - name: velero
-    version: 7.1.5
+    version: 7.2.1
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.25.8
+    version: 0.25.17
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0

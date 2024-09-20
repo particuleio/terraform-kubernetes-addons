@@ -12,4 +12,7 @@ locals {
     var.scaleway
   )
 
+  tags = var.tags
+
+
 }

@@ -233,7 +233,12 @@ resource "kubernetes_secret" "loki-stack-ca" {
 resource "scaleway_object_bucket" "loki_bucket" {
   count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
   name  = local.loki-stack["bucket"]
-  acl   = "private"
+}
+
+resource "scaleway_object_bucket_acl" "loki_bucket_acl" {
+  count  = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
+  bucket = scaleway_object_bucket.loki_bucket.0.id
+  acl    = "private"
 }
 
 resource "tls_private_key" "promtail-key" {

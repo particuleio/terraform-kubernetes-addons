@@ -224,7 +224,7 @@ locals {
 module "iam_assumable_sa_thanos" {
   count      = local.thanos["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 32.0"
+  version    = "~> 33.0"
   namespace  = local.thanos["namespace"]
   project_id = var.project_id
   name       = local.thanos["name"]
@@ -233,7 +233,7 @@ module "iam_assumable_sa_thanos" {
 module "iam_assumable_sa_thanos-compactor" {
   count      = local.thanos["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 32.0"
+  version    = "~> 33.0"
   namespace  = local.thanos["namespace"]
   project_id = var.project_id
   name       = "${local.thanos["name"]}-compactor"
@@ -242,7 +242,7 @@ module "iam_assumable_sa_thanos-compactor" {
 module "iam_assumable_sa_thanos-sg" {
   count      = local.thanos["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 32.0"
+  version    = "~> 33.0"
   namespace  = local.thanos["namespace"]
   project_id = var.project_id
   name       = "${local.thanos["name"]}-sg"
@@ -267,7 +267,7 @@ module "thanos_bucket" {
 module "thanos_kms_bucket" {
   count   = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
   source  = "terraform-google-modules/kms/google"
-  version = "~> 2.2"
+  version = "~> 3.0"
 
   project_id = var.project_id
   location   = local.thanos["kms_bucket_location"]

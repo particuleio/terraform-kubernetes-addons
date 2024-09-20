@@ -58,7 +58,7 @@ locals {
 module "iam_assumable_sa_thanos-storegateway" {
   for_each   = local.thanos-storegateway
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 32.0"
+  version    = "~> 33.0"
   namespace  = each.value["namespace"]
   project_id = data.google_project.current.id
   name       = "${each.value["name_prefix"]}-${each.key}"
@@ -68,7 +68,7 @@ module "iam_assumable_sa_thanos-storegateway" {
 module "thanos-storegateway_bucket_iam" {
   for_each = local.thanos-storegateway
   source   = "terraform-google-modules/iam/google//modules/storage_buckets_iam"
-  version  = "~> 7.6"
+  version  = "~> 8.0"
 
   mode            = "additive"
   storage_buckets = [each.value["bucket"]]
