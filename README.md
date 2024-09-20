@@ -76,7 +76,7 @@ section.
 Full contributing [guidelines are covered
 here](https://github.com/particuleio/terraform-kubernetes-addons/blob/master/.github/CONTRIBUTING.md).
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -324,4 +324,4 @@ No modules.
 | <a name="output_loki-stack-ca"></a> [loki-stack-ca](#output\_loki-stack-ca) | n/a |
 | <a name="output_promtail-cert"></a> [promtail-cert](#output\_promtail-cert) | n/a |
 | <a name="output_promtail-key"></a> [promtail-key](#output\_promtail-key) | n/a |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

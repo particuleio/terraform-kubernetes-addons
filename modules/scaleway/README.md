@@ -14,7 +14,7 @@ User guides, feature documentation and examples are available [here](https://git
 
 ## Terraform docs
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -279,4 +279,4 @@ No modules.
 | <a name="output_promtail-cert"></a> [promtail-cert](#output\_promtail-cert) | n/a |
 | <a name="output_promtail-key"></a> [promtail-key](#output\_promtail-key) | n/a |
 | <a name="output_thanos_ca"></a> [thanos\_ca](#output\_thanos\_ca) | n/a |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
