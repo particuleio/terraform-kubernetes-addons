@@ -267,7 +267,7 @@ module "thanos_bucket" {
 module "thanos_kms_bucket" {
   count   = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
   source  = "terraform-google-modules/kms/google"
-  version = "~> 2.2"
+  version = "~> 3.0"
 
   project_id = var.project_id
   location   = local.thanos["kms_bucket_location"]
