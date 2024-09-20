@@ -301,7 +301,7 @@ resource "google_storage_bucket_iam_member" "kube_prometheus_stack_thanos_bucket
 module "kube-prometheus-stack_grafana-iam-member" {
   count   = local.kube-prometheus-stack["enabled"] ? 1 : 0
   source  = "terraform-google-modules/iam/google//modules/member_iam"
-  version = "~> 7.6"
+  version = "~> 8.0"
 
   service_account_address = module.iam_assumable_sa_kube-prometheus-stack_grafana[0].gcp_service_account_email
   project_id              = var.project_id

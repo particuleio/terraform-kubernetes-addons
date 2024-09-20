@@ -68,7 +68,7 @@ module "iam_assumable_sa_thanos-storegateway" {
 module "thanos-storegateway_bucket_iam" {
   for_each = local.thanos-storegateway
   source   = "terraform-google-modules/iam/google//modules/storage_buckets_iam"
-  version  = "~> 7.6"
+  version  = "~> 8.0"
 
   mode            = "additive"
   storage_buckets = [each.value["bucket"]]

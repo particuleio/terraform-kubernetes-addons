@@ -75,7 +75,7 @@ module "iam_assumable_sa_loki-stack" {
 module "loki-stack_bucket_iam" {
   count   = local.loki-stack["enabled"] ? 1 : 0
   source  = "terraform-google-modules/iam/google//modules/storage_buckets_iam"
-  version = "~> 7.6"
+  version = "~> 8.0"
 
   mode            = "additive"
   storage_buckets = [local.loki-stack["bucket"]]
