@@ -30,7 +30,7 @@ dependencies:
     version: v0.10.1
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.37.0
+    version: 9.40.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
     version: 1.15.0
@@ -48,16 +48,16 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: 1.0.2
+    version: 1.0.3
     repository: oci://public.ecr.aws/karpenter
   - name: keda
     version: 2.15.1
     repository: https://kedacore.github.io/charts
   - name: kong
-    version: 2.41.1
+    version: 2.42.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 62.7.0
+    version: 63.0.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -72,7 +72,7 @@ dependencies:
     version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 6.12.0
+    version: 6.15.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 6.16.6
@@ -105,7 +105,7 @@ dependencies:
     version: v3.28.2
     repository: https://docs.projectcalico.org/charts
   - name: traefik
-    version: 31.1.0
+    version: 31.1.1
     repository: https://helm.traefik.io/traefik
   - name: memcached
     version: 7.4.16
