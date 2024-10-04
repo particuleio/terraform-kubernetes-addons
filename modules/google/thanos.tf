@@ -95,6 +95,8 @@ locals {
       pdb:
         create: true
         minAvailable: 1
+      service:
+        additionalHeadless: true
     VALUES
 
   values_thanos_caching = <<-VALUES

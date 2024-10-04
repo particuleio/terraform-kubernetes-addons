@@ -76,6 +76,8 @@ locals {
       pdb:
         create: true
         minAvailable: 1
+      service:
+        additionalHeadless: true
     VALUES
 
 
