@@ -53,7 +53,8 @@ prometheus:
     enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
 securityContext:
   fsGroup: 1001
-installCRDs: true
+crds:
+  enabled: true
 VALUES
 
 }
