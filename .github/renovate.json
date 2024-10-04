@@ -38,6 +38,7 @@
   "reviewers": [
     "team:team"
   ],
+  "commitMessageExtra": "to {{newVersion}} (was {{curentVersion}})",
   "prHourlyLimit": 0,
   "packageRules": [
     {
