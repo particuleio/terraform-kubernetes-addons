@@ -202,6 +202,12 @@ variable "thanos-memcached" {
   default     = {}
 }
 
+variable "thanos-receive" {
+  description = "Customize thanos chart, see `thanos-receive.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "tigera-operator" {
   description = "Customize tigera-operator chart, see `tigera-operator.tf` for supported values"
   type        = any
