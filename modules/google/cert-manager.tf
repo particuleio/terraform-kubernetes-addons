@@ -44,7 +44,7 @@ serviceAccount:
     iam.gke.io/gcp-service-account: "${local.cert-manager.create_iam_resources && local.cert-manager.enabled ? module.cert_manager_workload_identity[0].gcp_service_account_email : ""}"
 prometheus:
   servicemonitor:
-    enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"] || local.cert-manager.enable_monitoring}
+    enabled: ${local.cert-manager.enable_monitoring}
     honorLabels: true
 securityContext:
   fsGroup: 1001

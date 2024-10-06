@@ -169,7 +169,7 @@ module "loki-stack_kms_bucket" {
   keyring    = "loki-stack"
   keys       = ["loki-stack"]
   owners = [
-    "serviceAccount:service-${data.google_project.current.number}@gs-project-accounts.iam.gserviceaccount.com"
+    "serviceAccount:${local.loki-stack["cloud_storage_service_account"]}"
   ]
   set_owners_for = [
     "loki-stack"

@@ -9,17 +9,18 @@ locals {
       namespace                             = "monitoring"
       grafana_service_account_name          = "kube-prometheus-stack-grafana"
       prometheus_service_account_name       = "kube-prometheus-stack-prometheus"
-      workload_identity_use_existing_k8s_sa = true
+      workload_identity_use_existing_k8s_sa = false
       grafana_create_iam_resources          = false
       grafana_iam_policy_override           = null
       thanos_create_iam_resources           = true
       thanos_iam_policy_override            = null
       thanos_sidecar_enabled                = false
-      thanos_receive_enabled                = false
       thanos_dashboard_enabled              = true
       thanos_create_bucket                  = true
       thanos_bucket                         = "thanos-store-${var.cluster-name}"
       thanos_bucket_force_destroy           = false
+      thanos_bucket_location                = ""
+      thanos_kms_bucket_location            = ""
       thanos_store_config                   = null
       thanos_version                        = "v0.36.1"
       thanos_service_account                = ""
@@ -29,6 +30,7 @@ locals {
       default_global_requests               = false
       default_global_limits                 = false
       manage_crds                           = true
+      cloud_storage_service_account         = ""
       name_prefix                           = "kube-prometheus-stack"
     },
     var.kube-prometheus-stack
@@ -48,7 +50,7 @@ grafana:
     dashboards:
       multicluster:
         global:
-          enabled: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] || local.thanos-receive["enabled"] ? "true" : "false"}
+          enabled: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? "true" : "false"}
   rbac:
     pspEnabled: false
   serviceAccount:
@@ -77,7 +79,7 @@ prometheus:
     enabled: ${local.thanos["enabled"]}
   serviceAccount:
     create: true
-    name: ${local.kube-prometheus-stack["prometheus_service_account_name"]}
+    name: ${local.kube-prometheus-stack["name_prefix"]}-thanos
     annotations:
       iam.gke.io/gcp-service-account: ${local.kube-prometheus-stack["thanos_sidecar_enabled"] ? module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email : ""}
   prometheusSpec:
@@ -202,18 +204,7 @@ prometheus:
           name: "${local.kube-prometheus-stack["thanos_bucket"]}-config"
 VALUES
 
-  values_thanos_receive = <<VALUES
-prometheus:
-  prometheusSpec:
-    externalLabels:
-      cluster: ${var.cluster-name}
-    remoteWrite:
-    - url: "http://thanos-receive:19291/api/v1/receive"
-      name: "thanos-receive"
-      enableHttp2: true
-VALUES
-
-  values_grafana_ds_default = <<VALUES
+  values_grafana_ds = <<VALUES
 grafana:
   sidecar:
     datasources:
@@ -224,28 +215,9 @@ grafana:
     editable: false
     orgId: 1
     type: prometheus
-    url: http://${local.kube-prometheus-stack["name"]}-prometheus:9090
+    url: http://${local.thanos["enabled"] ? "${local.thanos["name"]}-query-frontend:9090" : "${local.kube-prometheus-stack["name"]}-prometheus:9090"}
     version: 1
     isDefault: true
-VALUES
-
-  values_grafana_ds_thanos = <<VALUES
-grafana:
-  sidecar:
-    datasources:
-      defaultDatasourceEnabled: false
-  additionalDataSources:
-  - name: Prometheus
-    access: proxy
-    editable: false
-    orgId: 1
-    type: prometheus
-    url: http://${local.thanos["name"]}-query-frontend:9090
-    version: 1
-    isDefault: true
-    jsonData:
-      prometheusType: Thanos
-      thanosVersion: ">0.31.x"
 VALUES
 
   values_dashboard_thanos = <<VALUES
@@ -260,7 +232,7 @@ grafana:
         url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/query.json
       thanos-store:
         url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/store.json
-      thanos-receive:
+      thanos-receiver:
         url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/receive.json
       thanos-sidecar:
         url: https://raw.githubusercontent.com/thanos-io/thanos/master/examples/dashboards/sidecar.json
@@ -287,8 +259,7 @@ module "iam_assumable_sa_kube-prometheus-stack_grafana" {
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
   name                = local.kube-prometheus-stack["grafana_service_account_name"]
-  use_existing_k8s_sa = true
-  annotate_k8s_sa     = false
+  use_existing_k8s_sa = local.kube-prometheus-stack["workload_identity_use_existing_k8s_sa"]
 }
 
 module "iam_assumable_sa_kube-prometheus-stack_thanos" {
@@ -298,8 +269,7 @@ module "iam_assumable_sa_kube-prometheus-stack_thanos" {
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
   name                = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
-  use_existing_k8s_sa = true
-  annotate_k8s_sa     = false
+  use_existing_k8s_sa = local.kube-prometheus-stack["workload_identity_use_existing_k8s_sa"]
 }
 
 resource "kubernetes_secret" "kube-prometheus-stack_thanos" {
@@ -315,14 +285,14 @@ resource "kubernetes_secret" "kube-prometheus-stack_thanos" {
 }
 
 resource "google_storage_bucket_iam_member" "kube_prometheus_stack_thanos_bucket_objectViewer_iam_permission" {
-  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
   bucket = module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name
   role   = "roles/storage.objectViewer"
   member = "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
 }
 
 resource "google_storage_bucket_iam_member" "kube_prometheus_stack_thanos_bucket_objectAdmin_iam_permission" {
-  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
+  count  = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
   bucket = module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${module.iam_assumable_sa_kube-prometheus-stack_thanos[0].gcp_service_account_email}"
@@ -343,16 +313,16 @@ module "kube-prometheus-stack_grafana-iam-member" {
 }
 
 module "kube-prometheus-stack_thanos_kms_bucket" {
-  count   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
+  count   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
   source  = "terraform-google-modules/kms/google"
   version = "~> 3.0"
 
   project_id = var.project_id
-  location   = data.google_client_config.current.region
+  location   = local.kube-prometheus-stack["thanos_kms_bucket_location"]
   keyring    = "thanos"
   keys       = ["thanos"]
   owners = [
-    "serviceAccount:service-${data.google_project.current.number}@gs-project-accounts.iam.gserviceaccount.com"
+    "serviceAccount:${local.kube-prometheus-stack["cloud_storage_service_account"]}"
   ]
   set_owners_for = [
     "thanos"
@@ -360,12 +330,12 @@ module "kube-prometheus-stack_thanos_kms_bucket" {
 }
 
 module "kube-prometheus-stack_kube-prometheus-stack_bucket" {
-  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
+  count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
   version    = "~> 6.0"
   project_id = var.project_id
-  location   = data.google_client_config.current.region
+  location   = local.kube-prometheus-stack["thanos_bucket_location"]
 
   name = local.kube-prometheus-stack["thanos_bucket"]
 
@@ -420,8 +390,7 @@ resource "helm_release" "kube-prometheus-stack" {
     local.thanos["enabled"] && local.kube-prometheus-stack["thanos_dashboard_enabled"] ? local.values_dashboard_thanos : null,
     local.values_dashboard_node_exporter,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
-    local.thanos-receive["enabled"] ? local.values_thanos_receive : null,
-    ((local.kube-prometheus-stack["thanos_sidecar_enabled"] && local.thanos["enabled"]) || local.thanos-receive["enabled"]) ? local.values_grafana_ds_thanos : local.values_grafana_ds_default,
+    local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_grafana_ds : null,
     local.kube-prometheus-stack["default_global_requests"] ? local.values_kps_global_requests : null,
     local.kube-prometheus-stack["default_global_limits"] ? local.values_kps_global_limits : null,
     local.kube-prometheus-stack["extra_values"]
