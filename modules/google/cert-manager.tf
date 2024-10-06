@@ -48,7 +48,8 @@ prometheus:
     honorLabels: true
 securityContext:
   fsGroup: 1001
-installCRDs: true
+crds:
+  enabled: true
 VALUES
 }
 
