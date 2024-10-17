@@ -121,7 +121,7 @@ resource "google_service_account_iam_policy" "admin-account-iam" {
 
 module "velero_bucket" {
   count  = (local.velero["enabled"] && local.velero["create_bucket"]) ? 1 : 0
-  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v6.1.0"
+  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v8.0.0"
 
   name       = local.velero["name_prefix"]
   project_id = data.google_project.current.project_id
