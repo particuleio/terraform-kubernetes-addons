@@ -49,7 +49,7 @@ serviceAccount:
     name: ${local.velero["service_account_name"]}
     create: true
     annotations:
-      iam.gke.io/gcp-service-account: ${local.velero["create_iam_account"] ? google_service_account.velero[0].email : ""}
+       ${local.velero["create_iam_account"] ? "iam.gke.io/gcp-service-account: ${google_service_account.velero[0].email}" : ""}
 priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 credentials:
   useSecret: false
