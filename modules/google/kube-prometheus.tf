@@ -417,7 +417,7 @@ resource "helm_release" "kube-prometheus-stack" {
   values = compact([
     local.values_kube-prometheus-stack,
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
-    local.thanos["enabled"] && local.kube-prometheus-stack["thanos_dashboard_enabled"] ? local.values_dashboard_thanos : null,
+    ((local.thanos["enabled"] && local.kube-prometheus-stack["thanos_dashboard_enabled"]) || local.thanos-receive["enabled"]) ? local.values_dashboard_thanos : null,
     local.values_dashboard_node_exporter,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
     local.thanos-receive["enabled"] ? local.values_thanos_receive : null,
