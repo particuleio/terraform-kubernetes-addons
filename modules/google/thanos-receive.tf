@@ -22,18 +22,18 @@ locals {
     var.thanos-receive
   )
 
-  thanos-receive_bucket = local.thanos["bucket"]
-
   values_thanos-receive = <<-VALUES
     receive:
       extraFlags:
         - --receive.hashrings-algorithm=ketama
       enabled: true
-      replicaCount: 2
-      replicationFactor: 1
+      replicaCount: 3
+      replicationFactor: 2
       pdb:
         create: true
         minAvailable: 1
+      service:
+        additionalHeadless: true
       serviceAccount:
         annotations:
           iam.gke.io/gcp-service-account: "${local.thanos-receive["enabled"] && local.thanos-receive["create_iam_resources"] ? module.iam_assumable_sa_thanos-receive-receive[0].gcp_service_account_email : ""}"
@@ -123,7 +123,7 @@ module "iam_assumable_sa_thanos-receive-receive" {
   version             = "~> 33.0"
   namespace           = local.thanos-receive["namespace"]
   project_id          = var.project_id
-  name                = local.thanos-receive["name"]
+  name                = "${local.thanos-receive["name"]}-receive"
   use_existing_k8s_sa = true
   annotate_k8s_sa     = false
 }
