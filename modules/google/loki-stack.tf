@@ -184,7 +184,7 @@ module "loki-stack_bucket" {
   count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 6.0"
+  version    = "~> 8.0"
   project_id = var.project_id
   location   = local.loki-stack["bucket_location"]
 
