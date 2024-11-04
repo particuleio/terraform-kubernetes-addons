@@ -32,6 +32,10 @@ locals {
       enabled: false
     serviceMonitor:
       enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
+    gateway:
+      service:
+        labels:
+          prometheus.io/service-monitor: "false"
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
     serviceAccount:
       create: false
@@ -66,7 +70,7 @@ locals {
 module "iam_assumable_sa_loki-stack" {
   count      = local.loki-stack["enabled"] ? 1 : 0
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 33.0"
+  version    = "~> 34.0"
   namespace  = local.loki-stack["namespace"]
   project_id = var.project_id
   name       = local.loki-stack["name"]
@@ -180,7 +184,7 @@ module "loki-stack_bucket" {
   count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 6.0"
+  version    = "~> 8.0"
   project_id = var.project_id
   location   = local.loki-stack["bucket_location"]
 

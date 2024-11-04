@@ -283,7 +283,7 @@ VALUES
 module "iam_assumable_sa_kube-prometheus-stack_grafana" {
   count               = local.kube-prometheus-stack["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 33.0"
+  version             = "~> 34.0"
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
   name                = local.kube-prometheus-stack["grafana_service_account_name"]
@@ -294,7 +294,7 @@ module "iam_assumable_sa_kube-prometheus-stack_grafana" {
 module "iam_assumable_sa_kube-prometheus-stack_thanos" {
   count               = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 33.0"
+  version             = "~> 34.0"
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
   name                = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
@@ -363,7 +363,7 @@ module "kube-prometheus-stack_kube-prometheus-stack_bucket" {
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 6.0"
+  version    = "~> 8.0"
   project_id = var.project_id
   location   = data.google_client_config.current.region
 
@@ -417,7 +417,7 @@ resource "helm_release" "kube-prometheus-stack" {
   values = compact([
     local.values_kube-prometheus-stack,
     local.ingress-nginx["enabled"] ? local.values_dashboard_ingress-nginx : null,
-    local.thanos["enabled"] && local.kube-prometheus-stack["thanos_dashboard_enabled"] ? local.values_dashboard_thanos : null,
+    ((local.thanos["enabled"] && local.kube-prometheus-stack["thanos_dashboard_enabled"]) || local.thanos-receive["enabled"]) ? local.values_dashboard_thanos : null,
     local.values_dashboard_node_exporter,
     local.kube-prometheus-stack["thanos_sidecar_enabled"] ? local.values_thanos_sidecar : null,
     local.thanos-receive["enabled"] ? local.values_thanos_receive : null,

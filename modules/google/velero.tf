@@ -49,7 +49,7 @@ serviceAccount:
     name: ${local.velero["service_account_name"]}
     create: true
     annotations:
-      iam.gke.io/gcp-service-account: ${local.velero["create_iam_account"] ? google_service_account.velero[0].email : ""}
+       ${local.velero["create_iam_account"] ? "iam.gke.io/gcp-service-account: ${google_service_account.velero[0].email}" : ""}
 priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 credentials:
   useSecret: false
@@ -121,7 +121,7 @@ resource "google_service_account_iam_policy" "admin-account-iam" {
 
 module "velero_bucket" {
   count  = (local.velero["enabled"] && local.velero["create_bucket"]) ? 1 : 0
-  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v6.1.0"
+  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v8.0.1"
 
   name       = local.velero["name_prefix"]
   project_id = data.google_project.current.project_id
