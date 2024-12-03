@@ -29,6 +29,7 @@
         "ec2:DescribeTags",
         "ec2:GetCoipPoolUsage",
         "ec2:DescribeCoipPools",
+        "ec2:GetSecurityGroupsForVpc",
         "elasticloadbalancing:DescribeLoadBalancers",
         "elasticloadbalancing:DescribeLoadBalancerAttributes",
         "elasticloadbalancing:DescribeListeners",
@@ -38,7 +39,9 @@
         "elasticloadbalancing:DescribeTargetGroups",
         "elasticloadbalancing:DescribeTargetGroupAttributes",
         "elasticloadbalancing:DescribeTargetHealth",
-        "elasticloadbalancing:DescribeTags"
+        "elasticloadbalancing:DescribeTags",
+        "elasticloadbalancing:DescribeTrustStores",
+        "elasticloadbalancing:DescribeListenerAttributes"
       ],
       "Resource": "*"
     },
