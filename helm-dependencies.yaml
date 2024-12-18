@@ -98,18 +98,18 @@ dependencies:
   - name: sealed-secrets
     version: 2.17.0
     repository: https://bitnami-labs.github.io/sealed-secrets
-  - name: thanos
-    version: 15.9.2
-    repository: https://charts.bitnami.com/bitnami
+  - name: oci://registry-1.docker.io/bitnamicharts/thanos
+    version: 15.8.3
+    repository: ""
   - name: tigera-operator
     version: v3.29.1
     repository: https://docs.projectcalico.org/charts
   - name: traefik
     version: 33.2.1
     repository: https://helm.traefik.io/traefik
-  - name: memcached
-    version: 7.6.0
-    repository: https://charts.bitnami.com/bitnami
+  - name: oci://registry-1.docker.io/bitnamicharts/memcached
+    version: 7.5.3
+    repository: ""
   - name: velero
     version: 8.1.0
     repository: https://vmware-tanzu.github.io/helm-charts
