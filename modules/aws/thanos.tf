@@ -3,10 +3,10 @@ locals {
   thanos = merge(
     local.helm_defaults,
     {
-      name                      = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
-      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
-      repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].repository
-      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].version
+      name                      = "thanos"
+      chart                     = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].name
+      repository                = ""
+      chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].version
       namespace                 = "monitoring"
       create_iam_resources_irsa = true
       iam_policy_override       = null
