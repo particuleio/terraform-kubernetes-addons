@@ -64,7 +64,6 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="module_kube-prometheus-stack_kube-prometheus-stack_bucket"></a> [kube-prometheus-stack\_kube-prometheus-stack\_bucket](#module\_kube-prometheus-stack\_kube-prometheus-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 9.0 |
 | <a name="module_kube-prometheus-stack_thanos_kms_bucket"></a> [kube-prometheus-stack\_thanos\_kms\_bucket](#module\_kube-prometheus-stack\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 3.0 |
 | <a name="module_loki-stack_bucket"></a> [loki-stack\_bucket](#module\_loki-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 9.0 |
-| <a name="module_loki-stack_bucket_iam"></a> [loki-stack\_bucket\_iam](#module\_loki-stack\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 8.0 |
 | <a name="module_loki-stack_kms_bucket"></a> [loki-stack\_kms\_bucket](#module\_loki-stack\_kms\_bucket) | terraform-google-modules/kms/google | ~> 3.0 |
 | <a name="module_thanos-receive_bucket"></a> [thanos-receive\_bucket](#module\_thanos-receive\_bucket) | terraform-google-modules/cloud-storage/google | ~> 9.0 |
 | <a name="module_thanos-receive_kms_bucket"></a> [thanos-receive\_kms\_bucket](#module\_thanos-receive\_kms\_bucket) | terraform-google-modules/kms/google | ~> 3.0 |
@@ -89,6 +88,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [google_service_account_iam_policy.admin-account-iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_policy) | resource |
 | [google_storage_bucket_iam_member.kube_prometheus_stack_thanos_bucket_objectAdmin_iam_permission](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.kube_prometheus_stack_thanos_bucket_objectViewer_iam_permission](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.loki-stack_gcs_iam_objectCreator_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.loki-stack_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.thanos-receive-receive_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.thanos-receive_compactor_gcs_iam_legacyBucketWriter_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.thanos-receive_compactor_gcs_iam_objectCreator_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
