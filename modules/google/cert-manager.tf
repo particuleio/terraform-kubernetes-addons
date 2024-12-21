@@ -7,7 +7,7 @@ locals {
       repository                = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].repository
       chart_version             = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].version
       namespace                 = "cert-manager"
-      service_account_name      = "cert-manager"
+      service_account_name      = local.helm_dependencies[index(local.helm_dependencies.*.name, "cert-manager")].name
       project_id                = "default-0"
       create_iam_resources      = true
       enable_monitoring         = false
@@ -18,7 +18,7 @@ locals {
       acme_email                = "contact@acme.com"
       acme_http01_enabled       = true
       acme_http01_ingress_class = "nginx"
-      acme_dns01_enabled        = true
+      acme_dns01_enabled        = false
       acme_dns01_provider       = "clouddns"
       acme_dns01_provider_clouddns = {
         project_id    = "default-0"
@@ -71,7 +71,7 @@ module "cert_manager_workload_identity" {
 # to deal with Cloud DNS. The IAM permissions will be set at the resource level (DNS zone) and not at the project
 # level.
 resource "google_dns_managed_zone_iam_member" "cert_manager_cloud_dns_iam_permissions" {
-  count        = local.cert-manager.create_iam_resources && local.cert-manager.enabled ? 1 : 0
+  count        = local.cert-manager.acme_dns01_enabled && local.cert-manager.create_iam_resources && local.cert-manager.enabled ? 1 : 0
   project      = local.cert-manager.project_id
   managed_zone = local.cert-manager.managed_zone
   role         = "roles/dns.admin"
