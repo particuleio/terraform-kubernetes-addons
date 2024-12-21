@@ -60,6 +60,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="module_iam_assumable_sa_thanos-receive-sg"></a> [iam\_assumable\_sa\_thanos-receive-sg](#module\_iam\_assumable\_sa\_thanos-receive-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 35.0 |
 | <a name="module_iam_assumable_sa_thanos-sg"></a> [iam\_assumable\_sa\_thanos-sg](#module\_iam\_assumable\_sa\_thanos-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 35.0 |
 | <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 35.0 |
+| <a name="module_iam_assumable_sa_velero"></a> [iam\_assumable\_sa\_velero](#module\_iam\_assumable\_sa\_velero) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 35.0 |
 | <a name="module_kube-prometheus-stack_grafana-iam-member"></a> [kube-prometheus-stack\_grafana-iam-member](#module\_kube-prometheus-stack\_grafana-iam-member) | terraform-google-modules/iam/google//modules/member_iam | ~> 8.0 |
 | <a name="module_kube-prometheus-stack_kube-prometheus-stack_bucket"></a> [kube-prometheus-stack\_kube-prometheus-stack\_bucket](#module\_kube-prometheus-stack\_kube-prometheus-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 9.0 |
 | <a name="module_kube-prometheus-stack_thanos_kms_bucket"></a> [kube-prometheus-stack\_thanos\_kms\_bucket](#module\_kube-prometheus-stack\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 3.0 |
@@ -84,8 +85,6 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [google_dns_managed_zone_iam_member.external_dns_cloud_dns_iam_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_managed_zone_iam_member) | resource |
 | [google_project_iam_custom_role.velero](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_custom_role) | resource |
 | [google_project_iam_member.velero](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
-| [google_service_account.velero](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
-| [google_service_account_iam_policy.admin-account-iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_policy) | resource |
 | [google_storage_bucket_iam_member.kube_prometheus_stack_thanos_bucket_objectAdmin_iam_permission](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.kube_prometheus_stack_thanos_bucket_objectViewer_iam_permission](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.loki-stack_gcs_iam_objectCreator_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
@@ -104,6 +103,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [google_storage_bucket_iam_member.thanos_receive_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.thanos_sg_gcs_iam_objectCreator_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_member.thanos_sg_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.velero_gcs_iam_objectUser_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_iam_member.velero_gcs_iam_objectViewer_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [helm_release.admiralty](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cert-manager](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cert-manager-csi-driver](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
@@ -250,7 +251,6 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [tls_self_signed_cert.webhook_issuer_tls](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
 | [github_repository.main](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
 | [google_client_config.current](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
-| [google_iam_policy.velero](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy) | data source |
 | [google_project.current](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 | [http_http.prometheus-operator_crds](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 | [http_http.prometheus-operator_version](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
