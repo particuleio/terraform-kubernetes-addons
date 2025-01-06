@@ -7,10 +7,9 @@ locals {
       repository              = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].repository
       chart_version           = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].version
       namespace               = "velero"
-      service_account_name    = "velero"
+      service_account_name    = local.helm_dependencies[index(local.helm_dependencies.*.name, "velero")].name
       enabled                 = false
-      create_iam_account      = true
-      iam_account_name        = "gke-${substr(var.cluster-name, 0, 18)}-velero"
+      create_iam_resources    = true
       create_bucket           = true
       bucket                  = "${var.cluster-name}-velero"
       bucket_location         = "eu"
@@ -39,7 +38,7 @@ configuration:
       bucket: ${local.velero["bucket"]}
       default: true
       config:
-        serviceAccount: ${local.velero["create_iam_account"] ? google_service_account.velero[0].email : "@@SETTHIS@@"}
+        serviceAccount: ${local.velero.create_iam_resources && local.velero.enabled ? module.iam_assumable_sa_velero[0].gcp_service_account_email : "@@SETTHIS@@"}
   volumeSnapshotLocation:
     - name: gcp
       provider: velero.io/gcp
@@ -49,7 +48,7 @@ serviceAccount:
     name: ${local.velero["service_account_name"]}
     create: true
     annotations:
-       ${local.velero["create_iam_account"] ? "iam.gke.io/gcp-service-account: ${google_service_account.velero[0].email}" : ""}
+       ${local.velero["enabled"] && local.velero["create_iam_resources"] ? "iam.gke.io/gcp-service-account: ${module.iam_assumable_sa_velero[0].gcp_service_account_email}" : ""}
 priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 credentials:
   useSecret: false
@@ -66,7 +65,7 @@ VALUES
 
 resource "google_project_iam_custom_role" "velero" {
   count       = (local.velero["enabled"] && local.velero["create_iam_account"]) ? 1 : 0
-  role_id     = replace(local.velero["iam_account_name"], "-", "_")
+  role_id     = replace(local.velero["service_account_name"], "-", "_")
   title       = "${var.cluster-name} - velero"
   description = "IAM role used by velero on ${var.cluster-name} to perform backup operations"
   permissions = [
@@ -89,39 +88,28 @@ resource "google_project_iam_custom_role" "velero" {
   ]
 }
 
-resource "google_service_account" "velero" {
-  count        = (local.velero["enabled"] && local.velero["create_iam_account"]) ? 1 : 0
-  account_id   = local.velero["iam_account_name"]
-  display_name = "Velero on GKE ${var.cluster-name}"
-  description  = "Service account for Velero on GKE cluster ${var.cluster-name}"
-}
-
 resource "google_project_iam_member" "velero" {
   count   = (local.velero["enabled"] && local.velero["create_iam_account"]) ? 1 : 0
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.velero[0].id
-  member  = google_service_account.velero[0].member
+  member  = "serviceAccount:${module.iam_assumable_sa_velero[0].gcp_service_account_email}"
 }
 
-data "google_iam_policy" "velero" {
-  binding {
-    role = "roles/iam.workloadIdentityUser"
-
-    members = [
-      "serviceAccount:${data.google_project.current.project_id}.svc.id.goog[${local.velero["namespace"]}/${local.velero["service_account_name"]}]",
-    ]
-  }
+module "iam_assumable_sa_velero" {
+  count               = local.velero["enabled"] && local.velero.create_iam_resources ? 1 : 0
+  source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  version             = "~> 35.0"
+  namespace           = local.velero["namespace"]
+  project_id          = var.project_id
+  name                = local.velero.service_account_name
+  use_existing_k8s_sa = true
+  annotate_k8s_sa     = false
 }
 
-resource "google_service_account_iam_policy" "admin-account-iam" {
-  count              = (local.velero["enabled"] && local.velero["create_iam_account"]) ? 1 : 0
-  service_account_id = google_service_account.velero[0].name
-  policy_data        = data.google_iam_policy.velero.policy_data
-}
 
 module "velero_bucket" {
   count  = (local.velero["enabled"] && local.velero["create_bucket"]) ? 1 : 0
-  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v8.0.1"
+  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v9.0.0"
 
   name       = local.velero["name_prefix"]
   project_id = data.google_project.current.project_id
@@ -130,14 +118,26 @@ module "velero_bucket" {
   location   = local.velero["bucket_location"]
 
   force_destroy = local.velero["bucket_force_destroy"]
+}
 
-  iam_members = [
-    {
-      role   = "roles/storage.objectUser"
-      member = "serviceAccount:${local.velero["iam_account_name"]}@${data.google_project.current.project_id}.iam.gserviceaccount.com" # This should be google_service_account.velero[0].member, but it's included in a loop so we have to determine it before apply
-    }
+resource "google_storage_bucket_iam_member" "velero_gcs_iam_objectUser_permissions" {
+  count  = local.velero["enabled"] ? 1 : 0
+  bucket = local.velero["bucket"]
+  role   = "roles/storage.objectUser"
+  member = "serviceAccount:${module.iam_assumable_sa_velero[0].gcp_service_account_email}"
+  depends_on = [
+    module.velero_bucket
   ]
-  depends_on = [google_service_account.velero]
+}
+
+resource "google_storage_bucket_iam_member" "velero_gcs_iam_objectViewer_permissions" {
+  count  = local.velero["enabled"] ? 1 : 0
+  bucket = local.velero["bucket"]
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${module.iam_assumable_sa_velero[0].gcp_service_account_email}"
+  depends_on = [
+    module.velero_bucket
+  ]
 }
 
 resource "kubernetes_namespace" "velero" {

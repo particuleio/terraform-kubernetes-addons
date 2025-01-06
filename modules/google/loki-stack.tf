@@ -6,6 +6,7 @@ locals {
       chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
       repository             = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].repository
       chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].version
+      service_account_name   = local.helm_dependencies[index(local.helm_dependencies.*.name, "loki")].name
       namespace              = "monitoring"
       create_iam_resources   = true
       iam_policy_override    = null
@@ -28,6 +29,8 @@ locals {
   )
 
   values_loki-stack = <<-VALUES
+    lokiCanary:
+      enabled: false
     test:
       enabled: false
     serviceMonitor:
@@ -38,13 +41,12 @@ locals {
           prometheus.io/service-monitor: "false"
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
     serviceAccount:
-      create: false
+      annotations:
+        iam.gke.io/gcp-service-account: "${local.loki-stack.create_iam_resources && local.loki-stack.enabled ? module.iam_assumable_sa_loki-stack[0].gcp_service_account_email : ""}"
     persistence:
       enabled: true
     loki:
       auth_enabled: false
-      compactor:
-        shared_store: gcs
       storage:
         bucketNames:
           chunks: "${local.loki-stack["bucket"]}"
@@ -59,38 +61,29 @@ locals {
           index:
             prefix: loki_index_
             period: 24h
+        - from: 2024-12-20
+          store: tsdb
+          object_store: gcs
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
       storage_config:
         gcs:
           bucket_name: "${local.loki-stack["bucket"]}"
-        boltdb_shipper:
-          shared_store: gcs
     VALUES
 }
 
 module "iam_assumable_sa_loki-stack" {
-  count      = local.loki-stack["enabled"] ? 1 : 0
-  source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 34.0"
-  namespace  = local.loki-stack["namespace"]
-  project_id = var.project_id
-  name       = local.loki-stack["name"]
-}
-
-module "loki-stack_bucket_iam" {
-  count   = local.loki-stack["enabled"] ? 1 : 0
-  source  = "terraform-google-modules/iam/google//modules/storage_buckets_iam"
-  version = "~> 8.0"
-
-  mode            = "additive"
-  storage_buckets = [local.loki-stack["bucket"]]
-  bindings = {
-    "roles/storage.objectViewer" = [
-      "serviceAccount:${module.iam_assumable_sa_loki-stack[0].gcp_service_account_email}"
-    ]
-    "roles/storage.objectCreator" = [
-      "serviceAccount:${module.iam_assumable_sa_loki-stack[0].gcp_service_account_email}"
-    ]
-  }
+  count               = local.loki-stack["enabled"] ? 1 : 0
+  source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  version             = "~> 35.0"
+  namespace           = local.loki-stack["namespace"]
+  project_id          = var.project_id
+  name                = local.loki-stack.service_account_name
+  gcp_sa_name         = "${local.loki-stack.service_account_name}-stack"
+  use_existing_k8s_sa = true
+  annotate_k8s_sa     = false
 }
 
 resource "kubernetes_namespace" "loki-stack" {
@@ -184,7 +177,7 @@ module "loki-stack_bucket" {
   count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 8.0"
+  version    = "~> 9.0"
   project_id = var.project_id
   location   = local.loki-stack["bucket_location"]
 
@@ -193,7 +186,26 @@ module "loki-stack_bucket" {
   encryption = {
     default_kms_key_name = module.loki-stack_kms_bucket[0].keys.loki-stack
   }
+}
 
+resource "google_storage_bucket_iam_member" "loki-stack_gcs_iam_objectViewer_permissions" {
+  count  = local.loki-stack["enabled"] ? 1 : 0
+  bucket = local.loki-stack["bucket"]
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${module.iam_assumable_sa_loki-stack[0].gcp_service_account_email}"
+  depends_on = [
+    module.loki-stack_bucket
+  ]
+}
+
+resource "google_storage_bucket_iam_member" "loki-stack_gcs_iam_objectCreator_permissions" {
+  count  = local.loki-stack["enabled"] ? 1 : 0
+  bucket = local.loki-stack["bucket"]
+  role   = "roles/storage.objectCreator"
+  member = "serviceAccount:${module.iam_assumable_sa_loki-stack[0].gcp_service_account_email}"
+  depends_on = [
+    module.loki-stack_bucket
+  ]
 }
 
 resource "tls_private_key" "loki-stack-ca-key" {
