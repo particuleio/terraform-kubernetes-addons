@@ -64,7 +64,7 @@ VALUES
 }
 
 resource "google_project_iam_custom_role" "velero" {
-  count       = (local.velero["enabled"] && local.velero["create_iam_account"]) ? 1 : 0
+  count       = (local.velero["enabled"] && local.velero["create_iam_resources"]) ? 1 : 0
   role_id     = replace(local.velero["service_account_name"], "-", "_")
   title       = "${var.cluster-name} - velero"
   description = "IAM role used by velero on ${var.cluster-name} to perform backup operations"
@@ -89,7 +89,7 @@ resource "google_project_iam_custom_role" "velero" {
 }
 
 resource "google_project_iam_member" "velero" {
-  count   = (local.velero["enabled"] && local.velero["create_iam_account"]) ? 1 : 0
+  count   = (local.velero["enabled"] && local.velero["create_iam_resources"]) ? 1 : 0
   project = data.google_project.current.project_id
   role    = google_project_iam_custom_role.velero[0].id
   member  = "serviceAccount:${module.iam_assumable_sa_velero[0].gcp_service_account_email}"
