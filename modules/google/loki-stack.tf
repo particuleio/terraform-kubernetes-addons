@@ -188,20 +188,20 @@ module "loki-stack_bucket" {
   }
 }
 
-resource "google_storage_bucket_iam_member" "loki-stack_gcs_iam_objectViewer_permissions" {
+resource "google_storage_bucket_iam_member" "loki-stack_gcs_iam_objectCreator_permissions" {
   count  = local.loki-stack["enabled"] ? 1 : 0
   bucket = local.loki-stack["bucket"]
-  role   = "roles/storage.objectViewer"
+  role   = "roles/storage.objectCreator"
   member = "serviceAccount:${module.iam_assumable_sa_loki-stack[0].gcp_service_account_email}"
   depends_on = [
     module.loki-stack_bucket
   ]
 }
 
-resource "google_storage_bucket_iam_member" "loki-stack_gcs_iam_objectCreator_permissions" {
+resource "google_storage_bucket_iam_member" "loki-stack_gcs_iam_objectUser_permissions" {
   count  = local.loki-stack["enabled"] ? 1 : 0
   bucket = local.loki-stack["bucket"]
-  role   = "roles/storage.objectCreator"
+  role   = "roles/storage.objectUser"
   member = "serviceAccount:${module.iam_assumable_sa_loki-stack[0].gcp_service_account_email}"
   depends_on = [
     module.loki-stack_bucket
