@@ -3,9 +3,9 @@ locals {
   thanos-tls-querier = { for k, v in var.thanos-tls-querier : k => merge(
     local.helm_defaults,
     {
-      chart              = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].name
-      repository         = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].repository
-      chart_version      = local.helm_dependencies[index(local.helm_dependencies.*.name, "thanos")].version
+      chart              = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].name
+      repository         = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].repository
+      chart_version      = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].version
       name               = "${local.thanos["name"]}-tls-querier-${k}"
       enabled            = false
       generate_cert      = local.thanos["generate_ca"]
