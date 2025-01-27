@@ -54,7 +54,7 @@ dependencies:
     version: 2.16.1
     repository: https://kedacore.github.io/charts
   - name: kong
-    version: 2.46.0
+    version: 2.47.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
     version: 67.11.0
