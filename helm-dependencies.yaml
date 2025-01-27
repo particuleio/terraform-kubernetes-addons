@@ -9,7 +9,7 @@ dependencies:
     version: 1.4.7
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.38.1
+    version: 2.39.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 3.1.5
@@ -48,7 +48,7 @@ dependencies:
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: 1.1.1
+    version: 1.1.2
     repository: oci://public.ecr.aws/karpenter
   - name: keda
     version: 2.16.1
