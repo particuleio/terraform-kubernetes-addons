@@ -18,6 +18,7 @@ locals {
       create_bucket             = false
       bucket                    = "thanos-store-${var.cluster-name}"
       bucket_force_destroy      = false
+      bucket_enforce_tls        = false
       generate_ca               = false
       trusted_ca_content        = null
       name_prefix               = "${var.cluster-name}-thanos"
@@ -293,6 +294,8 @@ module "thanos_bucket" {
     target_bucket = local.s3-logging.create_bucket ? module.s3_logging_bucket.s3_bucket_id : local.s3-logging.custom_bucket_id
     target_prefix = "${var.cluster-name}/${local.thanos.name}/"
   } : {}
+
+  attach_deny_insecure_transport_policy = local.thanos["bucket_enforce_tls"]
 
   tags = local.tags
 }

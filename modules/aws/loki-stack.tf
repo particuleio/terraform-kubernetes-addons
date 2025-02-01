@@ -16,6 +16,7 @@ locals {
       bucket                    = "loki-store-${var.cluster-name}"
       bucket_lifecycle_rule     = []
       bucket_force_destroy      = false
+      bucket_enforce_tls        = false
       generate_ca               = true
       trusted_ca_content        = null
       create_promtail_cert      = true
@@ -205,6 +206,8 @@ module "loki_bucket" {
     target_bucket = local.s3-logging.create_bucket ? module.s3_logging_bucket.s3_bucket_id : local.s3-logging.custom_bucket_id
     target_prefix = "${var.cluster-name}/${local.loki-stack.name}/"
   } : {}
+
+  attach_deny_insecure_transport_policy = local.loki-stack["bucket_enforce_tls"]
 
   tags = local.tags
 
