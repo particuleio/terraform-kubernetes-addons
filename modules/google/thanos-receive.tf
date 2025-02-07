@@ -167,7 +167,7 @@ module "thanos-receive_bucket" {
 module "thanos-receive_kms_bucket" {
   count   = local.thanos-receive["enabled"] && local.thanos-receive["create_bucket"] ? 1 : 0
   source  = "terraform-google-modules/kms/google"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   project_id = var.project_id
   location   = data.google_client_config.current.region
