@@ -98,7 +98,7 @@ resource "google_project_iam_member" "velero" {
 module "iam_assumable_sa_velero" {
   count               = local.velero["enabled"] && local.velero.create_iam_resources ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 35.0"
+  version             = "~> 36.0"
   namespace           = local.velero["namespace"]
   project_id          = var.project_id
   name                = local.velero.service_account_name
@@ -109,7 +109,7 @@ module "iam_assumable_sa_velero" {
 
 module "velero_bucket" {
   count  = (local.velero["enabled"] && local.velero["create_bucket"]) ? 1 : 0
-  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v9.0.0"
+  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v9.0.2"
 
   name       = local.velero["name_prefix"]
   project_id = data.google_project.current.project_id
