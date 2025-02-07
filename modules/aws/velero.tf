@@ -14,6 +14,7 @@ locals {
       create_bucket             = true
       bucket                    = "${var.cluster-name}-velero"
       bucket_force_destroy      = false
+      bucket_enforce_tls        = false
       allowed_cidrs             = ["0.0.0.0/0"]
       default_network_policy    = true
       kms_key_arn_access_list   = []
@@ -185,6 +186,8 @@ module "velero_thanos_bucket" {
     target_bucket = local.s3-logging.create_bucket ? module.s3_logging_bucket.s3_bucket_id : local.s3-logging.custom_bucket_id
     target_prefix = "${var.cluster-name}/${local.velero.name}/"
   } : {}
+
+  attach_deny_insecure_transport_policy = local.velero.bucket_enforce_tls
 
   tags = local.tags
 }
