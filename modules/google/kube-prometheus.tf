@@ -345,7 +345,7 @@ module "kube-prometheus-stack_grafana-iam-member" {
 module "kube-prometheus-stack_thanos_kms_bucket" {
   count   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
   source  = "terraform-google-modules/kms/google"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   project_id = var.project_id
   location   = data.google_client_config.current.region

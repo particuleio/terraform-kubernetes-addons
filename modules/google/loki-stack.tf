@@ -159,7 +159,7 @@ resource "helm_release" "loki-stack" {
 module "loki-stack_kms_bucket" {
   count   = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
   source  = "terraform-google-modules/kms/google"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   project_id = var.project_id
   location   = local.loki-stack["kms_bucket_location"]
