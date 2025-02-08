@@ -210,7 +210,6 @@ prometheus:
     remoteWrite:
     - url: "http://thanos-receive:19291/api/v1/receive"
       name: "thanos-receive"
-      enableHttp2: true
 VALUES
 
   values_grafana_ds_default = <<VALUES
