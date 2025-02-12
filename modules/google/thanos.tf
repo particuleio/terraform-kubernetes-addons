@@ -29,7 +29,7 @@ locals {
 
   thanos_bucket = (
     local.thanos["enabled"] && local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] ? module.kube-prometheus-stack_kube-prometheus-stack_bucket[0].name :
-    local.thanos["enabled"] && local.thanos["create_bucket"] ? module.thanos_bucket[0] : local.thanos["bucket"]
+    local.thanos["enabled"] && local.thanos["create_bucket"] ? module.thanos_bucket[0].name : local.thanos["bucket"]
   )
 
   values_thanos = <<-VALUES
