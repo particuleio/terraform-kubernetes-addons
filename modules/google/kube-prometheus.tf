@@ -296,7 +296,7 @@ module "iam_assumable_sa_kube-prometheus-stack_thanos" {
   version             = "~> 36.0"
   namespace           = local.kube-prometheus-stack["namespace"]
   project_id          = var.project_id
-  name                = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
+  name                = local.kube-prometheus-stack["prometheus_service_account_name"]
   use_existing_k8s_sa = true
   annotate_k8s_sa     = false
 }
