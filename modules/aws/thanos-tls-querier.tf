@@ -1,5 +1,8 @@
 locals {
 
+  thanos-ca-key  = local.thanos["generate_ca"] ? (var.thanos-tls-querier-ca-private-key != "" ? var.thanos-tls-querier-ca-private-key : tls_private_key.thanos-tls-querier-ca-key[0].private_key_pem) : ""
+  thanos-ca-cert = local.thanos["generate_ca"] ? (var.thanos-tls-querier-ca-cert != "" ? var.thanos-tls-querier-ca-cert : tls_self_signed_cert.thanos-tls-querier-ca-cert[0].cert_pem) : ""
+
   thanos-tls-querier = { for k, v in var.thanos-tls-querier : k => merge(
     local.helm_defaults,
     {
@@ -150,8 +153,8 @@ resource "tls_cert_request" "thanos-tls-querier-cert-csr" {
 resource "tls_locally_signed_cert" "thanos-tls-querier-cert" {
   for_each           = { for k, v in local.thanos-tls-querier : k => v if v["enabled"] && v["generate_cert"] }
   cert_request_pem   = tls_cert_request.thanos-tls-querier-cert-csr[each.key].cert_request_pem
-  ca_private_key_pem = tls_private_key.thanos-tls-querier-ca-key[0].private_key_pem
-  ca_cert_pem        = tls_self_signed_cert.thanos-tls-querier-ca-cert[0].cert_pem
+  ca_private_key_pem = local.thanos-ca-key
+  ca_cert_pem        = local.thanos-ca-cert
 
   validity_period_hours = 8760
   early_renewal_hours   = 720
