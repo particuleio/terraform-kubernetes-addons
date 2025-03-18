@@ -266,6 +266,8 @@ No modules.
 | <a name="input_thanos-receive"></a> [thanos-receive](#input\_thanos-receive) | Customize thanos chart, see `thanos-receive.tf` for supported values | `any` | `{}` | no |
 | <a name="input_thanos-storegateway"></a> [thanos-storegateway](#input\_thanos-storegateway) | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | <a name="input_thanos-tls-querier"></a> [thanos-tls-querier](#input\_thanos-tls-querier) | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| <a name="input_thanos-tls-querier-ca-cert"></a> [thanos-tls-querier-ca-cert](#input\_thanos-tls-querier-ca-cert) | TLS CA certificate, used to generate the client mTLS materials | `string` | `""` | no |
+| <a name="input_thanos-tls-querier-ca-private-key"></a> [thanos-tls-querier-ca-private-key](#input\_thanos-tls-querier-ca-private-key) | TLS CA private key, used to generate the client mTLS materials | `string` | `""` | no |
 | <a name="input_tigera-operator"></a> [tigera-operator](#input\_tigera-operator) | Customize tigera-operator chart, see `tigera-operator.tf` for supported values | `any` | `{}` | no |
 | <a name="input_traefik"></a> [traefik](#input\_traefik) | Customize traefik chart, see `traefik.tf` for supported values | `any` | `{}` | no |
 | <a name="input_velero"></a> [velero](#input\_velero) | Customize velero chart, see `velero.tf` for supported values | `any` | `{}` | no |

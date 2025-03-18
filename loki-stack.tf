@@ -239,6 +239,11 @@ output "loki-stack-ca" {
   value = element(concat(tls_self_signed_cert.loki-stack-ca-cert[*].cert_pem, [""]), 0)
 }
 
+output "loki-stack-ca-key" {
+  value     = element(concat(tls_private_key.loki-stack-ca-key[*].private_key_pem, [""]), 0)
+  sensitive = true
+}
+
 output "promtail-key" {
   value     = element(concat(tls_private_key.promtail-key[*].private_key_pem, [""]), 0)
   sensitive = true
