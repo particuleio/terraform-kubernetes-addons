@@ -190,6 +190,21 @@ variable "thanos-tls-querier" {
   default     = {}
 }
 
+variable "thanos-tls-querier-ca-cert" {
+  description = "TLS CA certificate, used to generate the client mTLS materials"
+  type        = string
+  default     = ""
+  sensitive   = true
+
+}
+
+variable "thanos-tls-querier-ca-private-key" {
+  description = "TLS CA private key, used to generate the client mTLS materials"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
 variable "thanos-storegateway" {
   description = "Customize thanos chart, see `thanos.tf` for supported values"
   type        = any

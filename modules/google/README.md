@@ -71,7 +71,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="module_thanos-storegateway_bucket_iam"></a> [thanos-storegateway\_bucket\_iam](#module\_thanos-storegateway\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 8.0 |
 | <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 9.0 |
 | <a name="module_thanos_kms_bucket"></a> [thanos\_kms\_bucket](#module\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 4.0 |
-| <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket | v9.0.2 |
+| <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket | v9.1.0 |
 
 ## Resources
 
@@ -305,6 +305,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="input_thanos-receive"></a> [thanos-receive](#input\_thanos-receive) | Customize thanos chart, see `thanos-receive.tf` for supported values | `any` | `{}` | no |
 | <a name="input_thanos-storegateway"></a> [thanos-storegateway](#input\_thanos-storegateway) | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
 | <a name="input_thanos-tls-querier"></a> [thanos-tls-querier](#input\_thanos-tls-querier) | Customize thanos chart, see `thanos.tf` for supported values | `any` | `{}` | no |
+| <a name="input_thanos-tls-querier-ca-cert"></a> [thanos-tls-querier-ca-cert](#input\_thanos-tls-querier-ca-cert) | TLS CA certificate, used to generate the client mTLS materials | `string` | `""` | no |
+| <a name="input_thanos-tls-querier-ca-private-key"></a> [thanos-tls-querier-ca-private-key](#input\_thanos-tls-querier-ca-private-key) | TLS CA private key, used to generate the client mTLS materials | `string` | `""` | no |
 | <a name="input_tigera-operator"></a> [tigera-operator](#input\_tigera-operator) | Customize tigera-operator chart, see `tigera-operator.tf` for supported values | `any` | `{}` | no |
 | <a name="input_traefik"></a> [traefik](#input\_traefik) | Customize traefik chart, see `traefik.tf` for supported values | `any` | `{}` | no |
 | <a name="input_velero"></a> [velero](#input\_velero) | Customize velero chart, see `velero.tf` for supported values | `any` | `{}` | no |
