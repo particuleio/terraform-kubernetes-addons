@@ -389,3 +389,8 @@ resource "kubernetes_secret" "thanos-ca" {
 output "thanos_ca" {
   value = element(concat(tls_self_signed_cert.thanos-tls-querier-ca-cert[*].cert_pem, [""]), 0)
 }
+
+output "thanos_ca_key" {
+  value     = element(concat(tls_private_key.thanos-tls-querier-ca-key[*].private_key_pem, [""]), 0)
+  sensitive = true
+}
