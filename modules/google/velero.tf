@@ -109,7 +109,7 @@ module "iam_assumable_sa_velero" {
 
 module "velero_bucket" {
   count  = (local.velero["enabled"] && local.velero["create_bucket"]) ? 1 : 0
-  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v10.0.0"
+  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=v10.0.1"
 
   name       = local.velero["name_prefix"]
   project_id = data.google_project.current.project_id
