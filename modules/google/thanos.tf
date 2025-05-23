@@ -3,26 +3,27 @@ locals {
   thanos = merge(
     local.helm_defaults,
     {
-      name                    = "thanos"
-      chart                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].name
-      repository              = ""
-      chart_version           = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].version
-      namespace               = "monitoring"
-      create_iam_resources    = true
-      iam_policy_override     = null
-      create_ns               = false
-      enabled                 = false
-      default_network_policy  = true
-      default_global_requests = false
-      default_global_limits   = false
-      create_bucket           = false
-      bucket                  = "thanos-store-${var.cluster-name}"
-      bucket_force_destroy    = false
-      bucket_location         = "europe-west1"
-      kms_bucket_location     = "europe-west1"
-      generate_ca             = false
-      trusted_ca_content      = null
-      name_prefix             = "gke-thanos"
+      name                            = "thanos"
+      chart                           = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].name
+      repository                      = ""
+      chart_version                   = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://registry-1.docker.io/bitnamicharts/thanos")].version
+      namespace                       = "monitoring"
+      create_iam_resources            = true
+      iam_policy_override             = null
+      create_ns                       = false
+      enabled                         = false
+      default_network_policy          = true
+      default_global_requests         = false
+      default_global_limits           = false
+      create_bucket                   = false
+      bucket                          = "thanos-store-${var.cluster-name}"
+      bucket_force_destroy            = false
+      bucket_location                 = "europe-west1"
+      bucket_public_access_prevention = "enforced"
+      kms_bucket_location             = "europe-west1"
+      generate_ca                     = false
+      trusted_ca_content              = null
+      name_prefix                     = "gke-thanos"
     },
     var.thanos
   )
@@ -268,6 +269,7 @@ module "thanos_bucket" {
     default_kms_key_name = module.thanos_kms_bucket[0].keys.thanos
   }
 
+  public_access_prevention = local.thanos["bucket_public_access_prevention"]
 }
 
 module "thanos_kms_bucket" {
