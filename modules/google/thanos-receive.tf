@@ -154,7 +154,7 @@ module "thanos-receive_bucket" {
   count = local.thanos-receive["enabled"] && local.thanos-receive["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google"
-  version    = "~> 10.0"
+  version    = "~> 11.0"
   project_id = var.project_id
   location   = data.google_client_config.current.region
 
