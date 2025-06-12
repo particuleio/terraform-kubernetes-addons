@@ -10,7 +10,7 @@ locals {
       create_ns                = true
       namespace                = "flux-system"
       path                     = "gitops/clusters/${var.cluster-name}"
-      version                  = "v2.4.0"
+      version                  = "v2.6.1"
       create_github_repository = false
       repository               = "gitops"
       repository_visibility    = "public"
