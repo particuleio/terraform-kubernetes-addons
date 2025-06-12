@@ -21,7 +21,7 @@ locals {
       thanos_bucket                         = "thanos-store-${var.cluster-name}"
       thanos_bucket_force_destroy           = false
       thanos_store_config                   = null
-      thanos_version                        = "v0.37.2"
+      thanos_version                        = "v0.38.0"
       thanos_service_account                = ""
       enabled                               = false
       allowed_cidrs                         = ["0.0.0.0/0"]
@@ -362,7 +362,7 @@ module "kube-prometheus-stack_kube-prometheus-stack_bucket" {
   count = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_bucket"] && local.kube-prometheus-stack["thanos_sidecar_enabled"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 10.0"
+  version    = "~> 11.0"
   project_id = var.project_id
   location   = data.google_client_config.current.region
 

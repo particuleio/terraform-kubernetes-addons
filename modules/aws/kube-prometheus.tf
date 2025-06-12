@@ -20,7 +20,7 @@ locals {
       thanos_bucket_force_destroy       = false
       thanos_bucket_enforce_tls         = false
       thanos_store_config               = null
-      thanos_version                    = "v0.37.2"
+      thanos_version                    = "v0.38.0"
       enabled                           = false
       allowed_cidrs                     = ["0.0.0.0/0"]
       default_network_policy            = true
