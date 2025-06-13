@@ -111,7 +111,7 @@ dependencies:
     version: 7.5.3
     repository: ""
   - name: velero
-    version: 10.0.4
+    version: 10.0.5
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
     version: 0.52.0
