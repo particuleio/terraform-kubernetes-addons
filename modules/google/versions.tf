@@ -3,7 +3,7 @@ terraform {
   required_providers {
     google      = ">= 4.69"
     google-beta = ">= 4.69"
-    helm        = "~> 2.0"
+    helm        = "~> 3.0"
     kubernetes  = "~> 2.0, != 2.12"
     kubectl = {
       source  = "alekc/kubectl"
