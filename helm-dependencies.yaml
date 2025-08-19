@@ -9,7 +9,7 @@ dependencies:
     version: 1.5.3
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.47.0
+    version: 2.47.1
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
     version: 3.2.2
