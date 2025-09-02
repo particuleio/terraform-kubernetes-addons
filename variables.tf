@@ -46,6 +46,12 @@ variable "flux2" {
   default     = {}
 }
 
+variable "grafana-mcp" {
+  description = "Customize grafana-mcp chart, see `grafana-mcp.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
 variable "helm_defaults" {
   description = "Customize default Helm behavior"
   type        = any
