@@ -120,5 +120,5 @@ dependencies:
     version: 0.14.0
     repository: https://nerdswords.github.io/yet-another-cloudwatch-exporter
   - name: reloader
-    version: 2.2.2
+    version: 2.2.3
     repository: https://stakater.github.io/stakater-charts
