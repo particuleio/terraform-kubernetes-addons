@@ -98,7 +98,7 @@ resource "google_project_iam_member" "velero" {
 module "iam_assumable_sa_velero" {
   count               = local.velero["enabled"] && local.velero.create_iam_resources ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 40.0"
   namespace           = local.velero["namespace"]
   project_id          = var.project_id
   name                = local.velero.service_account_name
