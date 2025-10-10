@@ -259,7 +259,7 @@ module "thanos_bucket" {
   count = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 11.0"
+  version    = "~> 12.0"
   project_id = var.project_id
   location   = local.thanos["bucket_location"]
 
