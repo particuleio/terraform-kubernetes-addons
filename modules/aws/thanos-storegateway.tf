@@ -22,12 +22,19 @@ locals {
   values_thanos-storegateway = { for k, v in local.thanos-storegateway : k => merge(
     {
       values = <<-VALUES
+        global:
+          security:
+            allowInsecureImages: true
+        image:
+          registry: quay.io
+          repository: thanos/thanos
+          tag: v0.37.2
         objstoreConfig:
           type: S3
           config:
             bucket: ${v["bucket"]}
-            region: ${v["region"] == null ? data.aws_region.current.name : v["region"]}
-            endpoint: s3.${v["region"] == null ? data.aws_region.current.name : v["region"]}.amazonaws.com
+            region: ${v["region"] == null ? data.aws_region.current.region : v["region"]}
+            endpoint: s3.${v["region"] == null ? data.aws_region.current.region : v["region"]}.amazonaws.com
             sse_config:
               type: "SSE-S3"
         metrics:
