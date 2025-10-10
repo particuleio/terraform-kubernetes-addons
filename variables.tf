@@ -41,7 +41,13 @@ variable "external-dns" {
 }
 
 variable "flux2" {
-  description = "Customize Flux chart, see `flux2.tf` for supported values"
+  description = "Customize Flux Instance chart, see `flux2.tf` for supported values"
+  type        = any
+  default     = {}
+}
+
+variable "flux-operator" {
+  description = "Customize Flux Operator chart, see `flux2.tf` for supported values"
   type        = any
   default     = {}
 }
