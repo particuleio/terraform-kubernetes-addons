@@ -68,7 +68,7 @@ resource "aws_iam_policy" "karpenter_additional" {
 
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "~> 20.0"
+  version = "~> 21.0"
 
   create = local.karpenter["enabled"]
 
@@ -79,9 +79,7 @@ module "karpenter" {
     KarpeneterAdditional         = local.karpenter["enabled"] ? aws_iam_policy.karpenter_additional[0].arn : ""
   }
 
-  iam_role_use_name_prefix        = false
-  irsa_oidc_provider_arn          = local.karpenter["irsa_oidc_provider_arn"]
-  irsa_namespace_service_accounts = local.karpenter["irsa_namespace_service_accounts"]
+  iam_role_use_name_prefix = false
 
   create_iam_role = false
   iam_role_name   = local.karpenter["iam_role_name"]
@@ -130,25 +128,24 @@ resource "helm_release" "karpenter" {
   ]
   namespace = local.karpenter["create_ns"] ? kubernetes_namespace.karpenter.*.metadata.0.name[count.index] : local.karpenter["namespace"]
 
-  set {
-    name  = "settings.aws.clusterName"
-    value = var.cluster-name
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.karpenter.iam_role_arn
-  }
-
-  set {
-    name  = "settings.aws.defaultInstanceProfile"
-    value = module.karpenter.instance_profile_name
-  }
-
-  set {
-    name  = "settings.aws.interruptionQueueName"
-    value = module.karpenter.queue_name
-  }
+  set = [
+    {
+      name  = "settings.aws.clusterName"
+      value = var.cluster-name
+    },
+    {
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = module.karpenter.iam_role_arn
+    },
+    {
+      name  = "settings.aws.defaultInstanceProfile"
+      value = module.karpenter.instance_profile_name
+    },
+    {
+      name  = "settings.aws.interruptionQueueName"
+      value = module.karpenter.queue_name
+    }
+  ]
 
 }
 

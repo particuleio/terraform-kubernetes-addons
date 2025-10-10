@@ -53,9 +53,9 @@ resource "helm_release" "ingress-nginx" {
   namespace = kubernetes_namespace.ingress-nginx.*.metadata.0.name[count.index]
 
   #The ingress controller needs to be scheduled on a Linux node. Windows Server nodes shouldn't run the ingress controller
-  set {
+  set = [{
     name  = "defaultBackend.nodeSelector.kubernetes\\.io/os"
     value = "linux"
-  }
+  }]
 
 }
