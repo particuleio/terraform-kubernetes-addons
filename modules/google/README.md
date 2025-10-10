@@ -71,7 +71,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="module_thanos-storegateway_bucket_iam"></a> [thanos-storegateway\_bucket\_iam](#module\_thanos-storegateway\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 8.0 |
 | <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 11.0 |
 | <a name="module_thanos_kms_bucket"></a> [thanos\_kms\_bucket](#module\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 4.0 |
-| <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket | v11.0.0 |
+| <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket | v11.1.2 |
 
 ## Resources
 
