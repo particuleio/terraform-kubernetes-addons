@@ -54,6 +54,13 @@ locals {
   values_thanos-tls-querier = { for k, v in local.thanos-tls-querier : k => merge(
     {
       values = <<-VALUES
+        global:
+          security:
+            allowInsecureImages: true
+        image:
+          registry: quay.io
+          repository: thanos/thanos
+          tag: v0.37.2
         metrics:
           enabled: true
           serviceMonitor:
