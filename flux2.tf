@@ -68,12 +68,6 @@ healthcheck:
 VALUES
 }
 
-resource "tls_private_key" "identity" {
-  count       = local.flux2["enabled"] ? 1 : 0
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P521"
-}
-
 resource "kubernetes_namespace" "flux2" {
   count = local.flux2["enabled"] && local.flux2["create_ns"] ? 1 : 0
 
