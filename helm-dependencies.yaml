@@ -30,7 +30,7 @@ dependencies:
     version: v0.11.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.50.1
+    version: 9.51.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
     version: 1.19.0
@@ -66,7 +66,7 @@ dependencies:
     version: 2.52.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 78.0.0
+    version: 78.1.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
