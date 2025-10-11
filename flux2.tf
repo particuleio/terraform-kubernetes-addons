@@ -12,15 +12,14 @@ locals {
       namespace              = "flux-system"
       extra_ns_labels        = {}
       extra_ns_annotations   = {}
-      default_network_policy = true
     },
     var.flux-operator
   )
 
   values_flux-operator = <<VALUES
-    serviceMonitor:
-      enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
-  VALUES
+serviceMonitor:
+  enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
+VALUES
 
   flux2 = merge(
     local.helm_defaults,
@@ -32,7 +31,7 @@ locals {
       enabled                    = false
       create_ns                  = true
       namespace                  = "flux-system"
-      version                    = "v2.6.1"
+      flux_version               = "v2.6.1"
       cluster_type               = "kubernetes"
       cluster_size               = "medium"
       git_path                   = "gitops/clusters/${var.cluster-name}"
@@ -41,7 +40,7 @@ locals {
       github_app_id              = ""
       github_app_installation_id = ""
       github_app_pem             = ""
-      components                 = ["source-controller", "kustomize-controller", "helm-controller", "notification-controller", "image-reflector-controller", "image-automation-controller"]
+      components                 = "[\"source-controller\", \"kustomize-controller\", \"helm-controller\", \"notification-controller\", \"image-reflector-controller\", \"image-automation-controller\"]"
       create_github_repository   = false
       repository                 = "gitops"
       repository_visibility      = "public"
@@ -51,23 +50,28 @@ locals {
   )
 
   values_flux2 = <<VALUES
-    instance:
-      components: ${local.flux2["components"]}
-      distribution:
-        version: ${local.flux2["flux_version"]}
-      cluster:
-        type: ${local.flux2["cluster_type"]}
-        size: ${local.flux2["cluster_size"]}
-      sync:
-        kind: GitRepository
-        url: ${local.flux2["create_github_repository"]} ? ${github_repository.main[0].name} : ${data.github_repository.main[0].name}
-        path: ${local.flux2["git_path"]}
-        ref: ${local.flux2["git_ref"]}
-        provider: ${local.flux2["github_app_id"] != "" ? "github" : "generic"}
-        pullSecret: ${local.flux2["git_token"] != "" || local.flux2["github_app_id"] != "" ? "flux-system" : ""}
-    healthcheck:
-      enabled: true
- VALUES
+instance:
+  components: ${local.flux2["components"]}
+  distribution:
+    version: ${local.flux2["flux_version"]}
+  cluster:
+    type: ${local.flux2["cluster_type"]}
+    size: ${local.flux2["cluster_size"]}
+  sync:
+    kind: GitRepository
+    path: ${local.flux2["git_path"]}
+    ref: ${local.flux2["git_ref"]}
+    provider: ${local.flux2["github_app_id"] != "" ? "github" : "generic"}
+    pullSecret: ${local.flux2["git_token"] != "" || local.flux2["github_app_id"] != "" ? "flux-system" : ""}
+healthcheck:
+  enabled: true
+VALUES
+}
+
+resource "tls_private_key" "identity" {
+  count       = local.flux2["enabled"] ? 1 : 0
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P521"
 }
 
 resource "kubernetes_namespace" "flux2" {
@@ -169,6 +173,12 @@ resource "helm_release" "flux2" {
     local.values_flux2,
     local.flux2["extra_values"],
   ]
+
+  set {
+    name  = "instance.sync.url"
+    value = local.flux2["create_github_repository"] ? github_repository.main[0].http_clone_url : data.github_repository.main[0].http_clone_url
+  }
+
   namespace = kubernetes_namespace.flux2.*.metadata.0.name[count.index]
 }
 
