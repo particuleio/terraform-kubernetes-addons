@@ -3,15 +3,15 @@ locals {
   flux-operator = merge(
     local.helm_defaults,
     {
-      name                   = "flux-operator"
-      chart                  = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator")].name
-      repository             = ""
-      chart_version          = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator")].version
-      enabled                = false
-      create_ns              = true
-      namespace              = "flux-system"
-      extra_ns_labels        = {}
-      extra_ns_annotations   = {}
+      name                 = "flux-operator"
+      chart                = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator")].name
+      repository           = ""
+      chart_version        = local.helm_dependencies[index(local.helm_dependencies.*.name, "oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator")].version
+      enabled              = false
+      create_ns            = true
+      namespace            = "flux-system"
+      extra_ns_labels      = {}
+      extra_ns_annotations = {}
     },
     var.flux-operator
   )
@@ -168,10 +168,12 @@ resource "helm_release" "flux2" {
     local.flux2["extra_values"],
   ]
 
-  set {
-    name  = "instance.sync.url"
-    value = local.flux2["create_github_repository"] ? github_repository.main[0].http_clone_url : data.github_repository.main[0].http_clone_url
-  }
+  set = [
+    {
+      name  = "instance.sync.url"
+      value = local.flux2["create_github_repository"] ? github_repository.main[0].http_clone_url : data.github_repository.main[0].http_clone_url
+    }
+  ]
 
   namespace = kubernetes_namespace.flux2.*.metadata.0.name[count.index]
 }
