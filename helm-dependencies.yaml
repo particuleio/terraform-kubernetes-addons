@@ -30,7 +30,7 @@ dependencies:
     version: v0.11.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.50.1
+    version: 9.51.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
     version: 1.19.0
@@ -60,7 +60,7 @@ dependencies:
     version: 2.52.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 78.0.0
+    version: 78.1.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -117,7 +117,7 @@ dependencies:
     version: 11.0.0
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.61.4
+    version: 0.61.6
     repository: https://victoriametrics.github.io/helm-charts/
   - name: yet-another-cloudwatch-exporter
     version: 0.14.0
