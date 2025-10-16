@@ -105,7 +105,7 @@ dependencies:
     version: 15.9.2
     repository: ""
   - name: tigera-operator
-    version: v3.30.3
+    version: v3.30.4
     repository: https://docs.projectcalico.org/charts
   - name: traefik
     version: 37.1.2
