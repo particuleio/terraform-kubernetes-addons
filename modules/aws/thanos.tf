@@ -27,6 +27,13 @@ locals {
   )
 
   values_thanos = <<-VALUES
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: quay.io
+      repository: thanos/thanos
+      tag: v0.37.2
     receive:
       enabled: false
       pdb:
@@ -171,8 +178,8 @@ locals {
       type: S3
       config:
         bucket: ${local.thanos["bucket"]}
-        region: ${data.aws_region.current.name}
-        endpoint: s3.${data.aws_region.current.name}.amazonaws.com
+        region: ${data.aws_region.current.region}
+        endpoint: s3.${data.aws_region.current.region}.amazonaws.com
         sse_config:
           type: "SSE-S3"
     VALUES

@@ -23,6 +23,13 @@ locals {
   )
 
   values_thanos-receive = <<-VALUES
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: quay.io
+      repository: thanos/thanos
+      tag: v0.37.2
     receive:
       extraFlags:
         - --receive.hashrings-algorithm=ketama
