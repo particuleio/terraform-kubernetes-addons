@@ -23,6 +23,13 @@ locals {
   )
 
   values_thanos = <<-VALUES
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: quay.io
+      repository: thanos/thanos
+      tag: v0.37.2
     receive:
       enabled: false
       pdb:

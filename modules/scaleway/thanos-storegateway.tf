@@ -21,6 +21,13 @@ locals {
   values_thanos-storegateway = { for k, v in local.thanos-storegateway : k => merge(
     {
       values = <<-VALUES
+        global:
+          security:
+            allowInsecureImages: true
+        image:
+          registry: quay.io
+          repository: thanos/thanos
+          tag: v0.37.2
         objstoreConfig:
           type: S3
           config:
