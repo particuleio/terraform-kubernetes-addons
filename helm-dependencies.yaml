@@ -99,7 +99,7 @@ dependencies:
     version: v0.0.1
     repository: https://particuleio.github.io/charts
   - name: sealed-secrets
-    version: 2.17.7
+    version: 2.17.9
     repository: https://bitnami-labs.github.io/sealed-secrets
   - name: oci://registry-1.docker.io/bitnamicharts/thanos
     version: 15.9.2
