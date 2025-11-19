@@ -32,7 +32,6 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 
 | Name | Version |
 |------|---------|
-| <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 1.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 | <a name="provider_google"></a> [google](#provider\_google) | >= 4.69 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 3.0 |
@@ -77,10 +76,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 
 | Name | Type |
 |------|------|
-| [flux_bootstrap_git.flux](https://registry.terraform.io/providers/fluxcd/flux/latest/docs/resources/bootstrap_git) | resource |
 | [github_branch_default.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
 | [github_repository.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
-| [github_repository_deploy_key.main](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_deploy_key) | resource |
 | [google_dns_managed_zone_iam_member.cert_manager_cloud_dns_iam_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_managed_zone_iam_member) | resource |
 | [google_dns_managed_zone_iam_member.external_dns_cloud_dns_iam_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_managed_zone_iam_member) | resource |
 | [google_project_iam_custom_role.velero](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_custom_role) | resource |
@@ -109,6 +106,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [helm_release.cert-manager](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cert-manager-csi-driver](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.external-dns](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.flux2](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.flux_operator](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.grafana-mcp](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.ingress-nginx](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.k8gb](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
@@ -230,6 +229,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [kubernetes_network_policy.victoria-metrics-k8s-stack_default_deny](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_priority_class.kubernetes_addons](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) | resource |
 | [kubernetes_priority_class.kubernetes_addons_ds](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/priority_class) | resource |
+| [kubernetes_secret.git_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [kubernetes_secret.kube-prometheus-stack_thanos](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [kubernetes_secret.linkerd_trust_anchor](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [kubernetes_secret.loki-stack-ca](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
@@ -242,7 +242,6 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [tls_cert_request.thanos-tls-querier-cert-csr](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) | resource |
 | [tls_locally_signed_cert.promtail-cert](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/locally_signed_cert) | resource |
 | [tls_locally_signed_cert.thanos-tls-querier-cert](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/locally_signed_cert) | resource |
-| [tls_private_key.identity](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.linkerd_trust_anchor](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.loki-stack-ca-key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.promtail-key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
@@ -274,7 +273,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="input_cni-metrics-helper"></a> [cni-metrics-helper](#input\_cni-metrics-helper) | Customize cni-metrics-helper deployment, see `cni-metrics-helper.tf` for supported values | `any` | `{}` | no |
 | <a name="input_csi-external-snapshotter"></a> [csi-external-snapshotter](#input\_csi-external-snapshotter) | Customize csi-external-snapshotter, see `csi-external-snapshotter.tf` for supported values | `any` | `{}` | no |
 | <a name="input_external-dns"></a> [external-dns](#input\_external-dns) | Map of map for external-dns configuration: see `external_dns.tf` for supported values | `any` | `{}` | no |
-| <a name="input_flux2"></a> [flux2](#input\_flux2) | Customize Flux chart, see `flux2.tf` for supported values | `any` | `{}` | no |
+| <a name="input_flux-operator"></a> [flux-operator](#input\_flux-operator) | Customize Flux Operator chart, see `flux2.tf` for supported values | `any` | `{}` | no |
+| <a name="input_flux2"></a> [flux2](#input\_flux2) | Customize Flux Instance chart, see `flux2.tf` for supported values | `any` | `{}` | no |
 | <a name="input_gke"></a> [gke](#input\_gke) | GKE cluster inputs | `any` | `{}` | no |
 | <a name="input_google"></a> [google](#input\_google) | GCP provider customization | `any` | `{}` | no |
 | <a name="input_grafana-mcp"></a> [grafana-mcp](#input\_grafana-mcp) | Customize grafana-mcp chart, see `grafana-mcp.tf` for supported values | `any` | `{}` | no |
