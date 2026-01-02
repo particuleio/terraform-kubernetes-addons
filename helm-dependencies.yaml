@@ -33,7 +33,7 @@ dependencies:
     version: 9.54.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
-    version: 1.19.0
+    version: 1.20.0
     repository: https://kubernetes-sigs.github.io/external-dns/
   - name: flux
     version: 1.13.3
