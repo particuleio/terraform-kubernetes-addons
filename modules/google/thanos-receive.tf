@@ -127,7 +127,7 @@ locals {
 module "iam_assumable_sa_thanos-receive-receive" {
   count               = local.thanos-receive["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 40.0"
+  version             = "~> 42.0"
   namespace           = local.thanos-receive["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos-receive["name"]}-receive"
@@ -138,7 +138,7 @@ module "iam_assumable_sa_thanos-receive-receive" {
 module "iam_assumable_sa_thanos-receive-compactor" {
   count               = local.thanos-receive["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 40.0"
+  version             = "~> 42.0"
   namespace           = local.thanos-receive["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos-receive["name"]}-compactor"
@@ -149,7 +149,7 @@ module "iam_assumable_sa_thanos-receive-compactor" {
 module "iam_assumable_sa_thanos-receive-sg" {
   count               = local.thanos-receive["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 40.0"
+  version             = "~> 42.0"
   namespace           = local.thanos-receive["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos-receive["name"]}-storegateway"
