@@ -75,7 +75,7 @@ dependencies:
     version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 6.49.0
+    version: 6.50.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 6.17.1
