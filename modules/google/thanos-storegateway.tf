@@ -65,7 +65,7 @@ locals {
 module "iam_assumable_sa_thanos-storegateway" {
   for_each   = local.thanos-storegateway
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 40.0"
+  version    = "~> 43.0"
   namespace  = each.value["namespace"]
   project_id = data.google_project.current.id
   name       = "${each.value["name_prefix"]}-${each.key}"
