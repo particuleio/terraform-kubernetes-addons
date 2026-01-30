@@ -39,7 +39,7 @@ dependencies:
     version: 1.13.3
     repository: https://charts.fluxcd.io
   - name: grafana-mcp
-    version: 0.3.0
+    version: 0.3.1
     repository: https://grafana.github.io/helm-charts
   - name: ingress-nginx
     version: 4.14.2
