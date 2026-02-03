@@ -24,7 +24,7 @@ dependencies:
     version: 0.21.0
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.19.2
+    version: v1.19.3
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
     version: v0.12.0
