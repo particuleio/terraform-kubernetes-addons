@@ -60,7 +60,7 @@ dependencies:
     version: 2.52.0
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 78.5.0
+    version: 82.2.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
