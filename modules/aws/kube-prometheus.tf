@@ -52,7 +52,7 @@ grafana:
     name: ${local.kube-prometheus-stack["grafana_service_account_name"]}
     nameTest: ${local.kube-prometheus-stack["grafana_service_account_name"]}-test
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_grafana.arn : ""}"
   adminPassword: ${join(",", random_string.grafana_password.*.result)}
   dashboardProviders:
     dashboardproviders.yaml:
@@ -75,7 +75,7 @@ prometheus:
     create: true
     name: ${local.kube-prometheus-stack["prometheus_service_account_name"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_thanos.iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? module.iam_assumable_role_kube-prometheus-stack_thanos.arn : ""}"
   prometheusSpec:
     priorityClassName: ${local.priority-class["create"] ? kubernetes_priority_class.kubernetes_addons[0].metadata[0].name : ""}
 alertmanager:
@@ -272,27 +272,27 @@ VALUES
 }
 
 module "iam_assumable_role_kube-prometheus-stack_grafana" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 6.0"
-  create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"]
-  role_name                     = "${local.kube-prometheus-stack["name_prefix"]}-grafana"
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack_grafana[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["grafana_service_account_name"]}"]
-  tags                          = local.tags
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"]
+  name               = "${local.kube-prometheus-stack["name_prefix"]}-grafana"
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? { "kube-prometheus-stack-grafana" = aws_iam_policy.kube-prometheus-stack_grafana[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["grafana_service_account_name"]}"]
+  tags               = local.tags
 }
 
 module "iam_assumable_role_kube-prometheus-stack_thanos" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 6.0"
-  create_role                   = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"]
-  role_name                     = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? [aws_iam_policy.kube-prometheus-stack_thanos[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["prometheus_service_account_name"]}"]
-  tags                          = local.tags
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"]
+  name               = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? { "kube-prometheus-stack-thanos" = aws_iam_policy.kube-prometheus-stack_thanos[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.kube-prometheus-stack["namespace"]}:${local.kube-prometheus-stack["prometheus_service_account_name"]}"]
+  tags               = local.tags
 }
 
 resource "aws_iam_policy" "kube-prometheus-stack_grafana" {

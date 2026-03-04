@@ -49,7 +49,7 @@ controller:
   serviceAccount:
     name: ${local.aws-ebs-csi-driver["service_account_names"]["controller"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-ebs-csi-driver.iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-ebs-csi-driver.arn : ""}"
 node:
   tolerateAllTaints: true
   priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
@@ -57,14 +57,14 @@ VALUES
 }
 
 module "iam_assumable_role_aws-ebs-csi-driver" {
-  source                     = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                    = "~> 6.0"
-  create_role                = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"]
-  role_name                  = local.aws-ebs-csi-driver["name_prefix"]
-  provider_url               = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns           = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? [aws_iam_policy.aws-ebs-csi-driver[0].arn] : []
-  number_of_role_policy_arns = 1
-  oidc_fully_qualified_subjects = [
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"]
+  name               = local.aws-ebs-csi-driver["name_prefix"]
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? { aws-ebs-csi-driver = aws_iam_policy.aws-ebs-csi-driver[0].arn } : {}
+  oidc_subjects = [
     "system:serviceaccount:${local.aws-ebs-csi-driver["namespace"]}:${local.aws-ebs-csi-driver["service_account_names"]["controller"]}",
   ]
   tags = local.tags

@@ -21,7 +21,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.27 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.28 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 3.0 |
@@ -34,7 +34,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.27 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.28 |
 | <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 1.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 3.0 |
@@ -49,22 +49,22 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_iam_assumable_role_aws-ebs-csi-driver"></a> [iam\_assumable\_role\_aws-ebs-csi-driver](#module\_iam\_assumable\_role\_aws-ebs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_aws-efs-csi-driver"></a> [iam\_assumable\_role\_aws-efs-csi-driver](#module\_iam\_assumable\_role\_aws-efs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_aws-for-fluent-bit"></a> [iam\_assumable\_role\_aws-for-fluent-bit](#module\_iam\_assumable\_role\_aws-for-fluent-bit) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_aws-load-balancer-controller"></a> [iam\_assumable\_role\_aws-load-balancer-controller](#module\_iam\_assumable\_role\_aws-load-balancer-controller) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_cert-manager"></a> [iam\_assumable\_role\_cert-manager](#module\_iam\_assumable\_role\_cert-manager) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_cluster-autoscaler"></a> [iam\_assumable\_role\_cluster-autoscaler](#module\_iam\_assumable\_role\_cluster-autoscaler) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_cni-metrics-helper"></a> [iam\_assumable\_role\_cni-metrics-helper](#module\_iam\_assumable\_role\_cni-metrics-helper) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_external-dns"></a> [iam\_assumable\_role\_external-dns](#module\_iam\_assumable\_role\_external-dns) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_kube-prometheus-stack_grafana"></a> [iam\_assumable\_role\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_role\_kube-prometheus-stack\_grafana) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_kube-prometheus-stack_thanos"></a> [iam\_assumable\_role\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_role\_kube-prometheus-stack\_thanos) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_loki-stack"></a> [iam\_assumable\_role\_loki-stack](#module\_iam\_assumable\_role\_loki-stack) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_prometheus-cloudwatch-exporter"></a> [iam\_assumable\_role\_prometheus-cloudwatch-exporter](#module\_iam\_assumable\_role\_prometheus-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_thanos"></a> [iam\_assumable\_role\_thanos](#module\_iam\_assumable\_role\_thanos) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_thanos-storegateway"></a> [iam\_assumable\_role\_thanos-storegateway](#module\_iam\_assumable\_role\_thanos-storegateway) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_velero"></a> [iam\_assumable\_role\_velero](#module\_iam\_assumable\_role\_velero) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
-| <a name="module_iam_assumable_role_yet-another-cloudwatch-exporter"></a> [iam\_assumable\_role\_yet-another-cloudwatch-exporter](#module\_iam\_assumable\_role\_yet-another-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | ~> 5.0 |
+| <a name="module_iam_assumable_role_aws-ebs-csi-driver"></a> [iam\_assumable\_role\_aws-ebs-csi-driver](#module\_iam\_assumable\_role\_aws-ebs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_aws-efs-csi-driver"></a> [iam\_assumable\_role\_aws-efs-csi-driver](#module\_iam\_assumable\_role\_aws-efs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_aws-for-fluent-bit"></a> [iam\_assumable\_role\_aws-for-fluent-bit](#module\_iam\_assumable\_role\_aws-for-fluent-bit) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_aws-load-balancer-controller"></a> [iam\_assumable\_role\_aws-load-balancer-controller](#module\_iam\_assumable\_role\_aws-load-balancer-controller) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_cert-manager"></a> [iam\_assumable\_role\_cert-manager](#module\_iam\_assumable\_role\_cert-manager) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_cluster-autoscaler"></a> [iam\_assumable\_role\_cluster-autoscaler](#module\_iam\_assumable\_role\_cluster-autoscaler) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_cni-metrics-helper"></a> [iam\_assumable\_role\_cni-metrics-helper](#module\_iam\_assumable\_role\_cni-metrics-helper) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_external-dns"></a> [iam\_assumable\_role\_external-dns](#module\_iam\_assumable\_role\_external-dns) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_kube-prometheus-stack_grafana"></a> [iam\_assumable\_role\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_role\_kube-prometheus-stack\_grafana) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_kube-prometheus-stack_thanos"></a> [iam\_assumable\_role\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_role\_kube-prometheus-stack\_thanos) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_loki-stack"></a> [iam\_assumable\_role\_loki-stack](#module\_iam\_assumable\_role\_loki-stack) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_prometheus-cloudwatch-exporter"></a> [iam\_assumable\_role\_prometheus-cloudwatch-exporter](#module\_iam\_assumable\_role\_prometheus-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_thanos"></a> [iam\_assumable\_role\_thanos](#module\_iam\_assumable\_role\_thanos) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_thanos-storegateway"></a> [iam\_assumable\_role\_thanos-storegateway](#module\_iam\_assumable\_role\_thanos-storegateway) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_velero"></a> [iam\_assumable\_role\_velero](#module\_iam\_assumable\_role\_velero) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
+| <a name="module_iam_assumable_role_yet-another-cloudwatch-exporter"></a> [iam\_assumable\_role\_yet-another-cloudwatch-exporter](#module\_iam\_assumable\_role\_yet-another-cloudwatch-exporter) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | ~> 21.0 |
 | <a name="module_kube-prometheus-stack_thanos_bucket"></a> [kube-prometheus-stack\_thanos\_bucket](#module\_kube-prometheus-stack\_thanos\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 5.0 |
 | <a name="module_loki_bucket"></a> [loki\_bucket](#module\_loki\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 5.0 |

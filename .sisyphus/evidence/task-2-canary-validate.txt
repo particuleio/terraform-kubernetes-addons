@@ -1,0 +1,40 @@
+=== CANARY MIGRATION: cert-manager.tf v5 → v6 ===
+
+TASK: Migrate modules/aws/cert-manager.tf from iam-assumable-role-with-oidc (v5) to iam-role (v6)
+
+CHANGES APPLIED:
+✓ Line 47: source = "terraform-aws-modules/iam/aws//modules/iam-role"
+✓ Line 49: create_role → create
+✓ Line 50: role_name → name
+✓ Line 51-52: provider_url → enable_oidc + oidc_provider_urls (list)
+✓ Line 53: role_policy_arns → policies (list → map)
+✓ Line 53: Removed number_of_role_policy_arns
+✓ Line 54: oidc_fully_qualified_subjects → oidc_subjects
+✓ Line 34: Output reference .iam_role_arn → .arn
+
+VERIFICATION:
+✓ HCL syntax valid (terraform fmt passed)
+✓ Module block structure correct
+✓ All 9 changes applied successfully
+✓ Output reference updated correctly
+✓ aws_iam_policy.cert-manager resource unchanged
+✓ kubernetes_namespace, helm_release, network_policy resources unchanged
+
+MODULE CONFIGURATION (FINAL):
+module "iam_assumable_role_cert-manager" {
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"]
+  name               = local.cert-manager["name_prefix"]
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? { cert-manager = aws_iam_policy.cert-manager[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.cert-manager["namespace"]}:${local.cert-manager["service_account_name"]}"]
+  tags               = local.tags
+}
+
+OUTPUT REFERENCE (FINAL):
+eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.arn : ""}"
+
+STATUS: ✓ CANARY MIGRATION COMPLETE
+The pattern is validated and ready for batch migrations.
