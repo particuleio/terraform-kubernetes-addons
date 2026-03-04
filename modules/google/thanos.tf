@@ -34,6 +34,13 @@ locals {
   )
 
   values_thanos = <<-VALUES
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: quay.io
+      repository: thanos/thanos
+      tag: v0.37.2
     receive:
       enabled: false
       pdb:
@@ -225,7 +232,7 @@ locals {
 module "iam_assumable_sa_thanos-receive" {
   count               = local.thanos["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 43.0"
   namespace           = local.thanos["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos["name"]}-receive"
@@ -236,7 +243,7 @@ module "iam_assumable_sa_thanos-receive" {
 module "iam_assumable_sa_thanos-compactor" {
   count               = local.thanos["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 43.0"
   namespace           = local.thanos["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos["name"]}-compactor"
@@ -247,7 +254,7 @@ module "iam_assumable_sa_thanos-compactor" {
 module "iam_assumable_sa_thanos-sg" {
   count               = local.thanos["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 43.0"
   namespace           = local.thanos["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos["name"]}-storegateway"
@@ -259,7 +266,7 @@ module "thanos_bucket" {
   count = local.thanos["enabled"] && local.thanos["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 11.0"
+  version    = "~> 12.0"
   project_id = var.project_id
   location   = local.thanos["bucket_location"]
 

@@ -1,15 +1,36 @@
 pull_request_rules:
-  - name: Automatic merge on approval
+  - name: Automatic approve Renovate PRs (patch/minor)
     conditions:
+      - author=renovate[bot]
+      - label=automerge
+    actions:
+      review:
+        type: APPROVE
+
+  - name: Automatic merge Renovate PRs (patch/minor)
+    conditions:
+      - author=renovate[bot]
       - base=main
-      - "approved-reviews-by>=1"
+      - label=automerge
+      - "#approved-reviews-by>=1"
+      - check-success=Max TF pre-commit
+      - check-success=Validate PR title
     actions:
       merge:
         method: squash
+
+  - name: Automatic merge on approval
+    conditions:
+      - base=main
+      - "#approved-reviews-by>=1"
+    actions:
+      merge:
+        method: squash
+
   - name: Automatic merge on approval release
     conditions:
       - base=release
-      - "approved-reviews-by>=1"
+      - "#approved-reviews-by>=1"
     actions:
       merge:
         method: merge

@@ -22,6 +22,13 @@ locals {
   values_thanos-storegateway = { for k, v in local.thanos-storegateway : k => merge(
     {
       values = <<-VALUES
+        global:
+          security:
+            allowInsecureImages: true
+        image:
+          registry: quay.io
+          repository: thanos/thanos
+          tag: v0.37.2
         objstoreConfig:
           type: GCS
           config:
@@ -58,7 +65,7 @@ locals {
 module "iam_assumable_sa_thanos-storegateway" {
   for_each   = local.thanos-storegateway
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 36.0"
+  version    = "~> 43.0"
   namespace  = each.value["namespace"]
   project_id = data.google_project.current.id
   name       = "${each.value["name_prefix"]}-${each.key}"

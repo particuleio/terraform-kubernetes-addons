@@ -31,7 +31,7 @@ global:
 serviceAccount:
   name: ${local.cert-manager["service_account_name"]}
   annotations:
-    eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.iam_role_arn : ""}"
+    eks.amazonaws.com/role-arn: "${local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? module.iam_assumable_role_cert-manager.arn : ""}"
 prometheus:
   servicemonitor:
     enabled: ${local.kube-prometheus-stack["enabled"] || local.victoria-metrics-k8s-stack["enabled"]}
@@ -44,15 +44,15 @@ VALUES
 }
 
 module "iam_assumable_role_cert-manager" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 5.0"
-  create_role                   = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"]
-  role_name                     = local.cert-manager["name_prefix"]
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? [aws_iam_policy.cert-manager[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.cert-manager["namespace"]}:${local.cert-manager["service_account_name"]}"]
-  tags                          = local.tags
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"]
+  name               = local.cert-manager["name_prefix"]
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? { cert-manager = aws_iam_policy.cert-manager[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.cert-manager["namespace"]}:${local.cert-manager["service_account_name"]}"]
+  tags               = local.tags
 }
 
 resource "aws_iam_policy" "cert-manager" {

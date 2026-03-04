@@ -77,7 +77,7 @@ locals {
 module "iam_assumable_sa_loki-stack" {
   count               = local.loki-stack["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 43.0"
   namespace           = local.loki-stack["namespace"]
   project_id          = var.project_id
   name                = local.loki-stack.service_account_name
@@ -177,7 +177,7 @@ module "loki-stack_bucket" {
   count = local.loki-stack["enabled"] && local.loki-stack["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 11.0"
+  version    = "~> 12.0"
   project_id = var.project_id
   location   = local.loki-stack["bucket_location"]
 

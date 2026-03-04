@@ -46,7 +46,7 @@ serviceAccount:
   server:
     name: ${local.velero["service_account_name"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? module.iam_assumable_role_velero.iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? module.iam_assumable_role_velero.arn : ""}"
 priorityClassName: ${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}
 credentials:
   useSecret: false
@@ -62,15 +62,15 @@ VALUES
 }
 
 module "iam_assumable_role_velero" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 5.0"
-  create_role                   = local.velero["enabled"] && local.velero["create_iam_resources_irsa"]
-  role_name                     = local.velero["name_prefix"]
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? [aws_iam_policy.velero[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.velero["namespace"]}:${local.velero["service_account_name"]}"]
-  tags                          = local.tags
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.velero["enabled"] && local.velero["create_iam_resources_irsa"]
+  name               = local.velero["name_prefix"]
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? { velero = aws_iam_policy.velero[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.velero["namespace"]}:${local.velero["service_account_name"]}"]
+  tags               = local.tags
 }
 
 resource "aws_iam_policy" "velero" {
@@ -160,7 +160,7 @@ module "velero_thanos_bucket" {
   create_bucket = local.velero.enabled && local.velero.create_bucket
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   control_object_ownership = true
   object_ownership         = "ObjectWriter"

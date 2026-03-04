@@ -22,12 +22,19 @@ locals {
   values_thanos-storegateway = { for k, v in local.thanos-storegateway : k => merge(
     {
       values = <<-VALUES
+        global:
+          security:
+            allowInsecureImages: true
+        image:
+          registry: quay.io
+          repository: thanos/thanos
+          tag: v0.37.2
         objstoreConfig:
           type: S3
           config:
             bucket: ${v["bucket"]}
-            region: ${v["region"] == null ? data.aws_region.current.name : v["region"]}
-            endpoint: s3.${v["region"] == null ? data.aws_region.current.name : v["region"]}.amazonaws.com
+            region: ${v["region"] == null ? data.aws_region.current.region : v["region"]}
+            endpoint: s3.${v["region"] == null ? data.aws_region.current.region : v["region"]}.amazonaws.com
             sse_config:
               type: "SSE-S3"
         metrics:
@@ -47,7 +54,7 @@ locals {
           enabled: true
           serviceAccount:
             annotations:
-              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].iam_role_arn : ""}"
+              eks.amazonaws.com/role-arn: "${v["enabled"] && v["create_iam_resources_irsa"] ? module.iam_assumable_role_thanos-storegateway[k].arn : ""}"
           pdb:
             create: true
             minAvailable: 1
@@ -58,16 +65,16 @@ locals {
 }
 
 module "iam_assumable_role_thanos-storegateway" {
-  for_each                     = local.thanos-storegateway
-  source                       = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                      = "~> 5.0"
-  create_role                  = each.value["enabled"] && each.value["create_iam_resources_irsa"]
-  role_name                    = "${each.value.name_prefix}-${each.key}"
-  provider_url                 = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns             = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? [aws_iam_policy.thanos-storegateway[each.key].arn] : []
-  number_of_role_policy_arns   = 1
-  oidc_subjects_with_wildcards = ["system:serviceaccount:${local.thanos["namespace"]}:${each.value["name"]}-storegateway"]
-  tags                         = local.tags
+  for_each               = local.thanos-storegateway
+  source                 = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version                = "~> 6.0"
+  create                 = each.value["enabled"] && each.value["create_iam_resources_irsa"]
+  name                   = "${each.value.name_prefix}-${each.key}"
+  enable_oidc            = true
+  oidc_provider_urls     = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies               = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? { thanos-storegateway = aws_iam_policy.thanos-storegateway[each.key].arn } : {}
+  oidc_wildcard_subjects = ["system:serviceaccount:${local.thanos["namespace"]}:${each.value["name"]}-storegateway"]
+  tags                   = local.tags
 }
 
 resource "aws_iam_policy" "thanos-storegateway" {

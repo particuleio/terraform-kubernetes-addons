@@ -21,7 +21,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_google"></a> [google](#requirement\_google) | >= 4.69 |
 | <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 4.69 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 3.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | >= 3 |
 | <a name="requirement_jinja"></a> [jinja](#requirement\_jinja) | ~> 2.0 |
 | <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 2.0 |
@@ -35,7 +35,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 1.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 | <a name="provider_google"></a> [google](#provider\_google) | >= 4.69 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 2.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 3.0 |
 | <a name="provider_http"></a> [http](#provider\_http) | >= 3 |
 | <a name="provider_jinja"></a> [jinja](#provider\_jinja) | ~> 2.0 |
 | <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 2.0 |
@@ -48,30 +48,30 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cert_manager_workload_identity"></a> [cert\_manager\_workload\_identity](#module\_cert\_manager\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.3.0 |
-| <a name="module_external_dns_workload_identity"></a> [external\_dns\_workload\_identity](#module\_external\_dns\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.3.0 |
-| <a name="module_iam_assumable_sa_kube-prometheus-stack_grafana"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_grafana) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_kube-prometheus-stack_thanos"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_loki-stack"></a> [iam\_assumable\_sa\_loki-stack](#module\_iam\_assumable\_sa\_loki-stack) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_thanos-compactor"></a> [iam\_assumable\_sa\_thanos-compactor](#module\_iam\_assumable\_sa\_thanos-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_thanos-receive"></a> [iam\_assumable\_sa\_thanos-receive](#module\_iam\_assumable\_sa\_thanos-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_thanos-receive-compactor"></a> [iam\_assumable\_sa\_thanos-receive-compactor](#module\_iam\_assumable\_sa\_thanos-receive-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_thanos-receive-receive"></a> [iam\_assumable\_sa\_thanos-receive-receive](#module\_iam\_assumable\_sa\_thanos-receive-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_thanos-receive-sg"></a> [iam\_assumable\_sa\_thanos-receive-sg](#module\_iam\_assumable\_sa\_thanos-receive-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_thanos-sg"></a> [iam\_assumable\_sa\_thanos-sg](#module\_iam\_assumable\_sa\_thanos-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
-| <a name="module_iam_assumable_sa_velero"></a> [iam\_assumable\_sa\_velero](#module\_iam\_assumable\_sa\_velero) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 36.0 |
+| <a name="module_cert_manager_workload_identity"></a> [cert\_manager\_workload\_identity](#module\_cert\_manager\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0.0 |
+| <a name="module_external_dns_workload_identity"></a> [external\_dns\_workload\_identity](#module\_external\_dns\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0.0 |
+| <a name="module_iam_assumable_sa_kube-prometheus-stack_grafana"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_grafana) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_kube-prometheus-stack_thanos"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_loki-stack"></a> [iam\_assumable\_sa\_loki-stack](#module\_iam\_assumable\_sa\_loki-stack) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_thanos-compactor"></a> [iam\_assumable\_sa\_thanos-compactor](#module\_iam\_assumable\_sa\_thanos-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_thanos-receive"></a> [iam\_assumable\_sa\_thanos-receive](#module\_iam\_assumable\_sa\_thanos-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_thanos-receive-compactor"></a> [iam\_assumable\_sa\_thanos-receive-compactor](#module\_iam\_assumable\_sa\_thanos-receive-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_thanos-receive-receive"></a> [iam\_assumable\_sa\_thanos-receive-receive](#module\_iam\_assumable\_sa\_thanos-receive-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_thanos-receive-sg"></a> [iam\_assumable\_sa\_thanos-receive-sg](#module\_iam\_assumable\_sa\_thanos-receive-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_thanos-sg"></a> [iam\_assumable\_sa\_thanos-sg](#module\_iam\_assumable\_sa\_thanos-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
+| <a name="module_iam_assumable_sa_velero"></a> [iam\_assumable\_sa\_velero](#module\_iam\_assumable\_sa\_velero) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 43.0 |
 | <a name="module_kube-prometheus-stack_grafana-iam-member"></a> [kube-prometheus-stack\_grafana-iam-member](#module\_kube-prometheus-stack\_grafana-iam-member) | terraform-google-modules/iam/google//modules/member_iam | ~> 8.0 |
-| <a name="module_kube-prometheus-stack_kube-prometheus-stack_bucket"></a> [kube-prometheus-stack\_kube-prometheus-stack\_bucket](#module\_kube-prometheus-stack\_kube-prometheus-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 11.0 |
+| <a name="module_kube-prometheus-stack_kube-prometheus-stack_bucket"></a> [kube-prometheus-stack\_kube-prometheus-stack\_bucket](#module\_kube-prometheus-stack\_kube-prometheus-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 12.0 |
 | <a name="module_kube-prometheus-stack_thanos_kms_bucket"></a> [kube-prometheus-stack\_thanos\_kms\_bucket](#module\_kube-prometheus-stack\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 4.0 |
-| <a name="module_loki-stack_bucket"></a> [loki-stack\_bucket](#module\_loki-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 11.0 |
+| <a name="module_loki-stack_bucket"></a> [loki-stack\_bucket](#module\_loki-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 12.0 |
 | <a name="module_loki-stack_kms_bucket"></a> [loki-stack\_kms\_bucket](#module\_loki-stack\_kms\_bucket) | terraform-google-modules/kms/google | ~> 4.0 |
-| <a name="module_thanos-receive_bucket"></a> [thanos-receive\_bucket](#module\_thanos-receive\_bucket) | terraform-google-modules/cloud-storage/google | ~> 11.0 |
+| <a name="module_thanos-receive_bucket"></a> [thanos-receive\_bucket](#module\_thanos-receive\_bucket) | terraform-google-modules/cloud-storage/google | ~> 12.0 |
 | <a name="module_thanos-receive_kms_bucket"></a> [thanos-receive\_kms\_bucket](#module\_thanos-receive\_kms\_bucket) | terraform-google-modules/kms/google | ~> 4.0 |
 | <a name="module_thanos-storegateway_bucket_iam"></a> [thanos-storegateway\_bucket\_iam](#module\_thanos-storegateway\_bucket\_iam) | terraform-google-modules/iam/google//modules/storage_buckets_iam | ~> 8.0 |
-| <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 11.0 |
+| <a name="module_thanos_bucket"></a> [thanos\_bucket](#module\_thanos\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 12.0 |
 | <a name="module_thanos_kms_bucket"></a> [thanos\_kms\_bucket](#module\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 4.0 |
-| <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket | v11.0.0 |
+| <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket | v12.3.0 |
 
 ## Resources
 
@@ -109,6 +109,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [helm_release.cert-manager](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cert-manager-csi-driver](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.external-dns](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.grafana-mcp](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.ingress-nginx](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.k8gb](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.karma](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
@@ -144,6 +145,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [kubernetes_namespace.cert-manager](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.external-dns](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.flux2](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
+| [kubernetes_namespace.grafana-mcp](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.ingress-nginx](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.k8gb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.karma](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
@@ -175,6 +177,8 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | [kubernetes_network_policy.external-dns_default_deny](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.flux2_allow_monitoring](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.flux2_allow_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
+| [kubernetes_network_policy.grafana-mcp_allow_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
+| [kubernetes_network_policy.grafana-mcp_default_deny](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.ingress-nginx_allow_control_plane](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.ingress-nginx_allow_ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.ingress-nginx_allow_monitoring](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
@@ -273,6 +277,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="input_flux2"></a> [flux2](#input\_flux2) | Customize Flux chart, see `flux2.tf` for supported values | `any` | `{}` | no |
 | <a name="input_gke"></a> [gke](#input\_gke) | GKE cluster inputs | `any` | `{}` | no |
 | <a name="input_google"></a> [google](#input\_google) | GCP provider customization | `any` | `{}` | no |
+| <a name="input_grafana-mcp"></a> [grafana-mcp](#input\_grafana-mcp) | Customize grafana-mcp chart, see `grafana-mcp.tf` for supported values | `any` | `{}` | no |
 | <a name="input_helm_defaults"></a> [helm\_defaults](#input\_helm\_defaults) | Customize default Helm behavior | `any` | `{}` | no |
 | <a name="input_ingress-nginx"></a> [ingress-nginx](#input\_ingress-nginx) | Customize ingress-nginx chart, see `nginx-ingress.tf` for supported values | `any` | `{}` | no |
 | <a name="input_ip-masq-agent"></a> [ip-masq-agent](#input\_ip-masq-agent) | Configure ip masq agent chart, see `ip-masq-agent.tf` for supported values. This addon works only on GCP. | `any` | `{}` | no |

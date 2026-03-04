@@ -23,6 +23,13 @@ locals {
   )
 
   values_thanos-receive = <<-VALUES
+    global:
+      security:
+        allowInsecureImages: true
+    image:
+      registry: quay.io
+      repository: thanos/thanos
+      tag: v0.37.2
     receive:
       extraFlags:
         - --receive.hashrings-algorithm=ketama
@@ -120,7 +127,7 @@ locals {
 module "iam_assumable_sa_thanos-receive-receive" {
   count               = local.thanos-receive["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 43.0"
   namespace           = local.thanos-receive["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos-receive["name"]}-receive"
@@ -131,7 +138,7 @@ module "iam_assumable_sa_thanos-receive-receive" {
 module "iam_assumable_sa_thanos-receive-compactor" {
   count               = local.thanos-receive["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 43.0"
   namespace           = local.thanos-receive["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos-receive["name"]}-compactor"
@@ -142,7 +149,7 @@ module "iam_assumable_sa_thanos-receive-compactor" {
 module "iam_assumable_sa_thanos-receive-sg" {
   count               = local.thanos-receive["enabled"] ? 1 : 0
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version             = "~> 36.0"
+  version             = "~> 43.0"
   namespace           = local.thanos-receive["namespace"]
   project_id          = var.project_id
   name                = "${local.thanos-receive["name"]}-storegateway"
@@ -154,7 +161,7 @@ module "thanos-receive_bucket" {
   count = local.thanos-receive["enabled"] && local.thanos-receive["create_bucket"] ? 1 : 0
 
   source     = "terraform-google-modules/cloud-storage/google"
-  version    = "~> 11.0"
+  version    = "~> 12.0"
   project_id = var.project_id
   location   = data.google_client_config.current.region
 
