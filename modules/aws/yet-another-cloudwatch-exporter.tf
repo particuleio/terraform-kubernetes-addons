@@ -24,20 +24,20 @@ locals {
     serviceAccount:
       name: ${local.yet-another-cloudwatch-exporter["service_account_name"]}
       annotations:
-        eks.amazonaws.com/role-arn: "${local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"] ? module.iam_assumable_role_yet-another-cloudwatch-exporter.iam_role_arn : ""}"
+        eks.amazonaws.com/role-arn: "${local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"] ? module.iam_assumable_role_yet-another-cloudwatch-exporter.arn : ""}"
     VALUES
 }
 
 module "iam_assumable_role_yet-another-cloudwatch-exporter" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 6.0"
-  create_role                   = local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"]
-  role_name                     = local.yet-another-cloudwatch-exporter["name_prefix"]
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"] ? [aws_iam_policy.yet-another-cloudwatch-exporter[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.yet-another-cloudwatch-exporter["namespace"]}:${local.yet-another-cloudwatch-exporter["service_account_name"]}"]
-  tags                          = local.tags
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"]
+  name               = local.yet-another-cloudwatch-exporter["name_prefix"]
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"] ? { yet-another-cloudwatch-exporter = aws_iam_policy.yet-another-cloudwatch-exporter[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.yet-another-cloudwatch-exporter["namespace"]}:${local.yet-another-cloudwatch-exporter["service_account_name"]}"]
+  tags               = local.tags
 }
 
 resource "aws_iam_policy" "yet-another-cloudwatch-exporter" {

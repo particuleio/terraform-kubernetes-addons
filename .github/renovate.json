@@ -4,7 +4,6 @@
     ":ignoreUnstable",
     ":prImmediately",
     ":updateNotScheduled",
-    ":automergeDisabled",
     ":disableRateLimiting",
     ":ignoreModulesAndTests",
     ":gitSignOff",
@@ -13,11 +12,10 @@
     "helpers:disableTypesNodeMajor",
     "workarounds:all",
     ":automergeDigest",
-    ":automergePatch",
     ":automergeMinor",
     ":dependencyDashboard"
   ],
-  "baseBranches": [
+  "baseBranchPatterns": [
     "main"
   ],
   "enabledManagers": [
@@ -27,17 +25,13 @@
     "terraform"
   ],
   "semanticCommits": "enabled",
-  "automergeType": "pr-comment",
-  "automergeComment": "renovate:merge",
+  "platformAutomerge": false,
   "helmv3": {
     "enabled": true,
-    "fileMatch": [
-      "(^|/)helm-dependencies.yaml$"
+    "managerFilePatterns": [
+      "/(^|/)helm-dependencies.yaml$/"
     ]
   },
-  "reviewers": [
-    "team:team"
-  ],
   "commitMessageExtra": "to {{newVersion}} (was {{currentVersion}})",
   "prHourlyLimit": 0,
   "packageRules": [
@@ -75,6 +69,21 @@
       "matchUpdateTypes": [
         "major",
         "minor"
+      ]
+    },
+    {
+      "matchManagers": [
+        "helmv3",
+        "github-actions",
+        "pre-commit"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "addLabels": [
+        "automerge"
       ]
     },
     {

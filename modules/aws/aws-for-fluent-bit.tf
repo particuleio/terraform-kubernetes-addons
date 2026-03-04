@@ -35,7 +35,7 @@ cloudWatch:
 serviceAccount:
   name: ${local.aws-for-fluent-bit["service_account_name"]}
   annotations:
-    eks.amazonaws.com/role-arn: "${local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-for-fluent-bit.iam_role_arn : ""}"
+    eks.amazonaws.com/role-arn: "${local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-for-fluent-bit.arn : ""}"
 tolerations:
 - operator: Exists
 priorityClassName: "${local.priority-class-ds["create"] ? kubernetes_priority_class.kubernetes_addons_ds[0].metadata[0].name : ""}"
@@ -43,15 +43,15 @@ VALUES
 }
 
 module "iam_assumable_role_aws-for-fluent-bit" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 6.0"
-  create_role                   = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"]
-  role_name                     = local.aws-for-fluent-bit["name_prefix"]
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? [aws_iam_policy.aws-for-fluent-bit[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.aws-for-fluent-bit["namespace"]}:${local.aws-for-fluent-bit["service_account_name"]}"]
-  tags                          = local.tags
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"]
+  name               = local.aws-for-fluent-bit["name_prefix"]
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? { aws-for-fluent-bit = aws_iam_policy.aws-for-fluent-bit[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.aws-for-fluent-bit["namespace"]}:${local.aws-for-fluent-bit["service_account_name"]}"]
+  tags               = local.tags
 }
 
 resource "aws_iam_policy" "aws-for-fluent-bit" {

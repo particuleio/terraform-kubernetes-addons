@@ -28,7 +28,7 @@ rbac:
   serviceAccount:
     name: ${local.cluster-autoscaler["service_account_name"]}
     annotations:
-      eks.amazonaws.com/role-arn: "${local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? module.iam_assumable_role_cluster-autoscaler.iam_role_arn : ""}"
+      eks.amazonaws.com/role-arn: "${local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? module.iam_assumable_role_cluster-autoscaler.arn : ""}"
 image:
   tag: ${local.cluster-autoscaler["version"]}
 extraArgs:
@@ -48,15 +48,15 @@ VALUES
 }
 
 module "iam_assumable_role_cluster-autoscaler" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> 6.0"
-  create_role                   = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"]
-  role_name                     = local.cluster-autoscaler["name_prefix"]
-  provider_url                  = replace(var.eks["cluster_oidc_issuer_url"], "https://", "")
-  role_policy_arns              = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? [aws_iam_policy.cluster-autoscaler[0].arn] : []
-  number_of_role_policy_arns    = 1
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.cluster-autoscaler["namespace"]}:${local.cluster-autoscaler["service_account_name"]}"]
-  tags                          = local.tags
+  source             = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version            = "~> 6.0"
+  create             = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"]
+  name               = local.cluster-autoscaler["name_prefix"]
+  enable_oidc        = true
+  oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
+  policies           = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? { cluster-autoscaler = aws_iam_policy.cluster-autoscaler[0].arn } : {}
+  oidc_subjects      = ["system:serviceaccount:${local.cluster-autoscaler["namespace"]}:${local.cluster-autoscaler["service_account_name"]}"]
+  tags               = local.tags
 }
 
 resource "aws_iam_policy" "cluster-autoscaler" {
