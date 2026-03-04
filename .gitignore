@@ -2,3 +2,4 @@
 .terraform
 .terraform.lock.hcl
 .idea
+.sisyphus
