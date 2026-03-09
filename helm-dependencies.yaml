@@ -27,7 +27,7 @@ dependencies:
     version: v1.19.4
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
-    version: v0.12.1
+    version: v0.13.0
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
     version: 9.56.0
