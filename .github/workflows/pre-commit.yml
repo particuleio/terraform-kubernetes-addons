@@ -38,7 +38,7 @@ jobs:
 
       - name: Terraform min/max versions
         id: minMax
-        uses: clowdhaus/terraform-min-max@v2.1.0
+        uses: clowdhaus/terraform-min-max@v3.0.1
         with:
           directory: ${{ matrix.directory }}
 
@@ -75,7 +75,7 @@ jobs:
 
       - name: Terraform min/max versions
         id: minMax
-        uses: clowdhaus/terraform-min-max@v2.1.0
+        uses: clowdhaus/terraform-min-max@v3.0.1
 
       - name: Pre-commit Terraform ${{ steps.minMax.outputs.maxVersion }}
         uses: clowdhaus/terraform-composite-actions/pre-commit@v1.14.0
