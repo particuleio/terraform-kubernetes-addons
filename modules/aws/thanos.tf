@@ -22,6 +22,7 @@ locals {
       generate_ca               = false
       trusted_ca_content        = null
       name_prefix               = "${var.cluster-name}-thanos"
+      iam_use_name_prefix       = false
     },
     var.thanos
   )
@@ -232,6 +233,7 @@ module "iam_assumable_role_thanos" {
   version                = "~> 6.0"
   create                 = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"]
   name                   = local.thanos["name_prefix"]
+  use_name_prefix        = local.thanos["iam_use_name_prefix"]
   enable_oidc            = true
   oidc_provider_urls     = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies               = local.thanos["enabled"] && local.thanos["create_iam_resources_irsa"] ? { thanos = aws_iam_policy.thanos[0].arn } : {}

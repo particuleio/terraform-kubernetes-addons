@@ -19,7 +19,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.28 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | ~> 1.0 |
@@ -33,7 +33,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.28 |
 | <a name="provider_flux"></a> [flux](#provider\_flux) | ~> 1.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
@@ -48,7 +48,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_iam_assumable_role_aws-ebs-csi-driver"></a> [iam\_assumable\_role\_aws-ebs-csi-driver](#module\_iam\_assumable\_role\_aws-ebs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
 | <a name="module_iam_assumable_role_aws-efs-csi-driver"></a> [iam\_assumable\_role\_aws-efs-csi-driver](#module\_iam\_assumable\_role\_aws-efs-csi-driver) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
 | <a name="module_iam_assumable_role_aws-for-fluent-bit"></a> [iam\_assumable\_role\_aws-for-fluent-bit](#module\_iam\_assumable\_role\_aws-for-fluent-bit) | terraform-aws-modules/iam/aws//modules/iam-role | ~> 6.0 |
@@ -76,7 +76,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudwatch_log_group.aws-for-fluent-bit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_efs_file_system.aws-efs-csi-driver](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_file_system) | resource |
 | [aws_efs_mount_target.aws-efs-csi-driver](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_mount_target) | resource |
@@ -359,7 +359,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admiralty"></a> [admiralty](#input\_admiralty) | Customize admiralty chart, see `admiralty.tf` for supported values | `any` | `{}` | no |
 | <a name="input_arn-partition"></a> [arn-partition](#input\_arn-partition) | ARN partition | `string` | `""` | no |
 | <a name="input_aws"></a> [aws](#input\_aws) | AWS provider customization | `any` | `{}` | no |
@@ -423,7 +423,7 @@ This module can uses [IRSA](https://aws.amazon.com/blogs/opensource/introducing-
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_karpenter_iam"></a> [karpenter\_iam](#output\_karpenter\_iam) | n/a |
 | <a name="output_kube-prometheus-stack"></a> [kube-prometheus-stack](#output\_kube-prometheus-stack) | n/a |
 | <a name="output_kube-prometheus-stack_sensitive"></a> [kube-prometheus-stack\_sensitive](#output\_kube-prometheus-stack\_sensitive) | n/a |

@@ -16,6 +16,7 @@ locals {
       containers_log_retention_in_days = 180
       kms_key_id                       = null
       name_prefix                      = "${var.cluster-name}-aws-for-fluent-bit"
+      iam_use_name_prefix              = false
     },
     var.aws-for-fluent-bit
   )
@@ -47,6 +48,7 @@ module "iam_assumable_role_aws-for-fluent-bit" {
   version            = "~> 6.0"
   create             = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"]
   name               = local.aws-for-fluent-bit["name_prefix"]
+  use_name_prefix    = local.aws-for-fluent-bit["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.aws-for-fluent-bit["enabled"] && local.aws-for-fluent-bit["create_iam_resources_irsa"] ? { aws-for-fluent-bit = aws_iam_policy.aws-for-fluent-bit[0].arn } : {}

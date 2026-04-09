@@ -19,6 +19,7 @@ locals {
       default_network_policy    = true
       kms_key_arn_access_list   = []
       name_prefix               = "${var.cluster-name}-velero"
+      iam_use_name_prefix       = false
     },
     var.velero
   )
@@ -66,6 +67,7 @@ module "iam_assumable_role_velero" {
   version            = "~> 6.0"
   create             = local.velero["enabled"] && local.velero["create_iam_resources_irsa"]
   name               = local.velero["name_prefix"]
+  use_name_prefix    = local.velero["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.velero["enabled"] && local.velero["create_iam_resources_irsa"] ? { velero = aws_iam_policy.velero[0].arn } : {}

@@ -14,6 +14,7 @@ locals {
       iam_policy_override       = null
       default_network_policy    = true
       name_prefix               = "${var.cluster-name}"
+      iam_use_name_prefix       = false
     },
     v,
   ) }
@@ -45,6 +46,7 @@ module "iam_assumable_role_external-dns" {
   version            = "~> 6.0"
   create             = each.value["enabled"] && each.value["create_iam_resources_irsa"]
   name               = "${each.value.name_prefix}-${each.key}"
+  use_name_prefix    = each.value["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? { external-dns = aws_iam_policy.external-dns[each.key].arn } : {}
