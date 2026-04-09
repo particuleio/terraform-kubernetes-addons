@@ -22,6 +22,7 @@ locals {
       create_promtail_cert      = true
       create_grafana_ds_cm      = true
       name_prefix               = "${var.cluster-name}-loki"
+      iam_use_name_prefix       = false
     },
     var.loki-stack
   )
@@ -71,6 +72,7 @@ module "iam_assumable_role_loki-stack" {
   version                = "~> 6.0"
   create                 = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"]
   name                   = local.loki-stack["name_prefix"]
+  use_name_prefix        = local.loki-stack["iam_use_name_prefix"]
   enable_oidc            = true
   oidc_provider_urls     = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies               = local.loki-stack["enabled"] && local.loki-stack["create_iam_resources_irsa"] ? { loki-stack = aws_iam_policy.loki-stack[0].arn } : {}

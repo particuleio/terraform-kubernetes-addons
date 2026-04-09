@@ -27,6 +27,7 @@ locals {
       sg_input_ingress_with_source_security_group_id = []
       subnets                                        = []
       name_prefix                                    = "${var.cluster-name}-aws-efs-csi-driver"
+      iam_use_name_prefix                            = false
     },
     var.aws-efs-csi-driver
   )
@@ -45,6 +46,7 @@ module "iam_assumable_role_aws-efs-csi-driver" {
   version            = "~> 6.0"
   create             = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"]
   name               = local.aws-efs-csi-driver["name_prefix"]
+  use_name_prefix    = local.aws-efs-csi-driver["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.aws-efs-csi-driver["enabled"] && local.aws-efs-csi-driver["create_iam_resources_irsa"] ? { aws-efs-csi-driver = aws_iam_policy.aws-efs-csi-driver[0].arn } : {}

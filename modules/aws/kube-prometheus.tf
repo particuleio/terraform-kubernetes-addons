@@ -28,6 +28,7 @@ locals {
       default_global_limits             = false
       manage_crds                       = true
       name_prefix                       = "${var.cluster-name}-kps"
+      iam_use_name_prefix               = false
     },
     var.kube-prometheus-stack
   )
@@ -276,6 +277,7 @@ module "iam_assumable_role_kube-prometheus-stack_grafana" {
   version            = "~> 6.0"
   create             = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"]
   name               = "${local.kube-prometheus-stack["name_prefix"]}-grafana"
+  use_name_prefix    = local.kube-prometheus-stack["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["grafana_create_iam_resources_irsa"] ? { "kube-prometheus-stack-grafana" = aws_iam_policy.kube-prometheus-stack_grafana[0].arn } : {}
@@ -288,6 +290,7 @@ module "iam_assumable_role_kube-prometheus-stack_thanos" {
   version            = "~> 6.0"
   create             = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] && local.kube-prometheus-stack["thanos_sidecar_enabled"]
   name               = "${local.kube-prometheus-stack["name_prefix"]}-thanos"
+  use_name_prefix    = local.kube-prometheus-stack["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.kube-prometheus-stack["enabled"] && local.kube-prometheus-stack["thanos_create_iam_resources_irsa"] ? { "kube-prometheus-stack-thanos" = aws_iam_policy.kube-prometheus-stack_thanos[0].arn } : {}

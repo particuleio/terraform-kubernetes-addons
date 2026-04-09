@@ -15,6 +15,7 @@ locals {
       default_network_policy    = true
       allowed_cidrs             = ["0.0.0.0/0"]
       name_prefix               = "${var.cluster-name}-awslbc"
+      iam_use_name_prefix       = false
     },
     var.aws-load-balancer-controller
   )
@@ -34,6 +35,7 @@ module "iam_assumable_role_aws-load-balancer-controller" {
   version            = "~> 6.0"
   create             = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"]
   name               = local.aws-load-balancer-controller["name_prefix"]
+  use_name_prefix    = local.aws-load-balancer-controller["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? { aws-load-balancer-controller = aws_iam_policy.aws-load-balancer-controller[0].arn } : {}

@@ -6,6 +6,7 @@ locals {
       version                   = "v1.9.0"
       iam_policy_override       = null
       name_prefix               = "${var.cluster-name}-cni-metrics-helper"
+      iam_use_name_prefix       = false
     },
     var.cni-metrics-helper
   )
@@ -16,6 +17,7 @@ module "iam_assumable_role_cni-metrics-helper" {
   version            = "~> 6.0"
   create             = local.cni-metrics-helper["enabled"] && local.cni-metrics-helper["create_iam_resources_irsa"]
   name               = local.cni-metrics-helper["name_prefix"]
+  use_name_prefix    = local.cni-metrics-helper["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.cni-metrics-helper["enabled"] && local.cni-metrics-helper["create_iam_resources_irsa"] ? { cni-metrics-helper = aws_iam_policy.cni-metrics-helper[0].arn } : {}

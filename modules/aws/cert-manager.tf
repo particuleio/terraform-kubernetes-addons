@@ -21,6 +21,7 @@ locals {
       allowed_cidrs                  = ["0.0.0.0/0"]
       csi_driver                     = false
       name_prefix                    = "${var.cluster-name}-cert-manager"
+      iam_use_name_prefix            = false
     },
     var.cert-manager
   )
@@ -48,6 +49,7 @@ module "iam_assumable_role_cert-manager" {
   version            = "~> 6.0"
   create             = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"]
   name               = local.cert-manager["name_prefix"]
+  use_name_prefix    = local.cert-manager["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.cert-manager["enabled"] && local.cert-manager["create_iam_resources_irsa"] ? { cert-manager = aws_iam_policy.cert-manager[0].arn } : {}

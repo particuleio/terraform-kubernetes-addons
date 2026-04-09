@@ -27,16 +27,17 @@ locals {
       extra_sc_parameters       = {}
       kms_enable_key_rotation   = true
       volume_snapshot_class     = <<-VOLUME_SNAPSHOT_CLASS
-          apiVersion: snapshot.storage.k8s.io/v1
-          kind: VolumeSnapshotClass
-          metadata:
-            name: csi-aws-vsc
-            labels:
-              velero.io/csi-volumesnapshot-class: "true"
-          driver: ebs.csi.aws.com
-          deletionPolicy: Retain
-        VOLUME_SNAPSHOT_CLASS
+           apiVersion: snapshot.storage.k8s.io/v1
+           kind: VolumeSnapshotClass
+           metadata:
+             name: csi-aws-vsc
+             labels:
+               velero.io/csi-volumesnapshot-class: "true"
+           driver: ebs.csi.aws.com
+           deletionPolicy: Retain
+         VOLUME_SNAPSHOT_CLASS
       name_prefix               = "${var.cluster-name}-aws-ebs-csi-driver"
+      iam_use_name_prefix       = false
     },
     var.aws-ebs-csi-driver
   )
@@ -61,6 +62,7 @@ module "iam_assumable_role_aws-ebs-csi-driver" {
   version            = "~> 6.0"
   create             = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"]
   name               = local.aws-ebs-csi-driver["name_prefix"]
+  use_name_prefix    = local.aws-ebs-csi-driver["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.aws-ebs-csi-driver["enabled"] && local.aws-ebs-csi-driver["create_iam_resources_irsa"] ? { aws-ebs-csi-driver = aws_iam_policy.aws-ebs-csi-driver[0].arn } : {}

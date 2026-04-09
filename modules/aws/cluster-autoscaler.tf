@@ -14,6 +14,7 @@ locals {
       iam_policy_override       = null
       default_network_policy    = true
       name_prefix               = "${var.cluster-name}-cluster-autoscaler"
+      iam_use_name_prefix       = false
     },
     var.cluster-autoscaler
   )
@@ -52,6 +53,7 @@ module "iam_assumable_role_cluster-autoscaler" {
   version            = "~> 6.0"
   create             = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"]
   name               = local.cluster-autoscaler["name_prefix"]
+  use_name_prefix    = local.cluster-autoscaler["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.cluster-autoscaler["enabled"] && local.cluster-autoscaler["create_iam_resources_irsa"] ? { cluster-autoscaler = aws_iam_policy.cluster-autoscaler[0].arn } : {}

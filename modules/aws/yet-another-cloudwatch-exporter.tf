@@ -14,6 +14,7 @@ locals {
       create_iam_resources_irsa = true
       iam_policy_override       = null
       name_prefix               = "${var.cluster-name}-yace"
+      iam_use_name_prefix       = false
     },
     var.yet-another-cloudwatch-exporter
   )
@@ -33,6 +34,7 @@ module "iam_assumable_role_yet-another-cloudwatch-exporter" {
   version            = "~> 6.0"
   create             = local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"]
   name               = local.yet-another-cloudwatch-exporter["name_prefix"]
+  use_name_prefix    = local.yet-another-cloudwatch-exporter["iam_use_name_prefix"]
   enable_oidc        = true
   oidc_provider_urls = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies           = local.yet-another-cloudwatch-exporter["enabled"] && local.yet-another-cloudwatch-exporter["create_iam_resources_irsa"] ? { yet-another-cloudwatch-exporter = aws_iam_policy.yet-another-cloudwatch-exporter[0].arn } : {}

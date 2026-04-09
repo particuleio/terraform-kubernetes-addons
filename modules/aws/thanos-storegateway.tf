@@ -15,6 +15,7 @@ locals {
       bucket                    = null
       region                    = null
       name_prefix               = "${var.cluster-name}-thanos-sg"
+      iam_use_name_prefix       = false
     },
     v,
   ) }
@@ -70,6 +71,7 @@ module "iam_assumable_role_thanos-storegateway" {
   version                = "~> 6.0"
   create                 = each.value["enabled"] && each.value["create_iam_resources_irsa"]
   name                   = "${each.value.name_prefix}-${each.key}"
+  use_name_prefix        = each.value["iam_use_name_prefix"]
   enable_oidc            = true
   oidc_provider_urls     = [replace(var.eks["cluster_oidc_issuer_url"], "https://", "")]
   policies               = each.value["enabled"] && each.value["create_iam_resources_irsa"] ? { thanos-storegateway = aws_iam_policy.thanos-storegateway[each.key].arn } : {}
