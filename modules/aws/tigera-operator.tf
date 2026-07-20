@@ -9,66 +9,17 @@ locals {
       namespace              = "tigera-operator"
       create_ns              = true
       manage_crds            = true
+      native_crds            = false
       enabled                = false
       default_network_policy = true
     },
     var.tigera-operator
   )
 
-  tigera-operator_crds = "https://raw.githubusercontent.com/projectcalico/calico/${local.tigera-operator.chart_version}/manifests/operator-crds.yaml"
-
-  calico_crds = "https://raw.githubusercontent.com/projectcalico/calico/${local.tigera-operator.chart_version}/manifests/crds.yaml"
-
-  tigera-operator_crds_apply = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? [for v in data.kubectl_file_documents.tigera-operator_crds.0.documents : {
-    data : yamldecode(v)
-    content : v
-    }
-  ] : null
-
-  calico_crds_apply = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? [for v in data.kubectl_file_documents.tigera-operator_crds.0.documents : {
-    data : yamldecode(v)
-    content : v
-    }
-  ] : null
-
   values_tigera-operator = <<-VALUES
     installation:
       kubernetesProvider: EKS
     VALUES
-}
-
-data "http" "tigera-operator_crds" {
-  count = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
-  url   = local.tigera-operator_crds
-}
-
-data "http" "calico_crds" {
-  count = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
-  url   = local.calico_crds
-}
-
-data "kubectl_file_documents" "tigera-operator_crds" {
-  count   = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
-  content = data.http.tigera-operator_crds[0].response_body
-}
-
-data "kubectl_file_documents" "calico_crds" {
-  count   = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? 1 : 0
-  content = data.http.calico_crds[0].response_body
-}
-
-resource "kubectl_manifest" "tigera-operator_crds" {
-  for_each          = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? { for v in local.tigera-operator_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-  yaml_body         = each.value
-  server_side_apply = true
-  force_conflicts   = true
-}
-
-resource "kubectl_manifest" "calico_crds" {
-  for_each          = local.tigera-operator.enabled && local.tigera-operator.manage_crds ? { for v in local.calico_crds_apply : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content } : {}
-  yaml_body         = each.value
-  server_side_apply = true
-  force_conflicts   = true
 }
 
 resource "kubernetes_namespace" "tigera-operator" {
@@ -82,6 +33,28 @@ resource "kubernetes_namespace" "tigera-operator" {
 
     name = local.tigera-operator["namespace"]
   }
+}
+
+resource "helm_release" "calico-crds" {
+  count                 = local.tigera-operator["enabled"] && local.tigera-operator["manage_crds"] ? 1 : 0
+  repository            = local.tigera-operator["repository"]
+  name                  = format("%s-crds", local.tigera-operator["name"])
+  chart                 = local.tigera-operator["native_crds"] ? "projectcalico.org.v3" : "crd.projectcalico.org.v1"
+  version               = local.tigera-operator["chart_version"]
+  timeout               = local.tigera-operator["timeout"]
+  force_update          = local.tigera-operator["force_update"]
+  wait                  = local.tigera-operator["wait"]
+  atomic                = local.tigera-operator["atomic"]
+  cleanup_on_fail       = local.tigera-operator["cleanup_on_fail"]
+  dependency_update     = local.tigera-operator["dependency_update"]
+  disable_webhooks      = local.tigera-operator["disable_webhooks"]
+  render_subchart_notes = local.tigera-operator["render_subchart_notes"]
+  replace               = local.tigera-operator["replace"]
+  reset_values          = local.tigera-operator["reset_values"]
+  reuse_values          = local.tigera-operator["reuse_values"]
+  skip_crds             = false
+  verify                = local.tigera-operator["verify"]
+  namespace             = local.tigera-operator["create_ns"] ? kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index] : local.tigera-operator["namespace"]
 }
 
 resource "helm_release" "tigera-operator" {
@@ -112,7 +85,8 @@ resource "helm_release" "tigera-operator" {
   namespace = local.tigera-operator["create_ns"] ? kubernetes_namespace.tigera-operator.*.metadata.0.name[count.index] : local.tigera-operator["namespace"]
 
   depends_on = [
-    kubectl_manifest.prometheus-operator_crds
+    helm_release.calico-crds,
+    kubectl_manifest.prometheus-operator_crds,
   ]
 }
 
