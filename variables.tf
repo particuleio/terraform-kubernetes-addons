@@ -1,9 +1,3 @@
-variable "admiralty" {
-  description = "Customize admiralty chart, see `admiralty.tf` for supported values"
-  type        = any
-  default     = {}
-}
-
 variable "cert-manager" {
   description = "Customize cert-manager chart, see `cert-manager.tf` for supported values"
   type        = any
