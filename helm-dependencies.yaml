@@ -103,7 +103,7 @@ dependencies:
     repository: ""
   - name: tigera-operator
     version: v3.32.1
-    repository: https://docs.projectcalico.org/charts
+    repository: https://docs.tigera.io/calico/charts
   - name: traefik
     version: 41.0.2
     repository: https://helm.traefik.io/traefik
