@@ -4,7 +4,7 @@ terraform {
     google      = ">= 4.69"
     google-beta = ">= 4.69"
     helm        = "~> 3.0"
-    kubernetes  = "~> 2.0, != 2.12"
+    kubernetes  = "~> 3.0"
     kubectl = {
       source  = "alekc/kubectl"
       version = "~> 2.0"
