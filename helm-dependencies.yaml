@@ -2,9 +2,6 @@ apiVersion: v2
 name: Handle terraform-kubernetes-addons helm chart dependencies update
 version: 1.0.0
 dependencies:
-  - name: admiralty
-    version: 0.13.2
-    repository: https://charts.admiralty.io
   - name: secrets-store-csi-driver
     version: 1.6.0
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
@@ -119,9 +116,6 @@ dependencies:
   - name: victoria-metrics-k8s-stack
     version: 0.87.0
     repository: https://victoriametrics.github.io/helm-charts/
-  - name: yet-another-cloudwatch-exporter
-    version: 0.14.0
-    repository: https://nerdswords.github.io/yet-another-cloudwatch-exporter
   - name: reloader
     version: 2.2.14
     repository: https://stakater.github.io/stakater-charts
