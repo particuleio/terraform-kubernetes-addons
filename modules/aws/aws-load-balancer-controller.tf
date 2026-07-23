@@ -16,6 +16,7 @@ locals {
       allowed_cidrs             = ["0.0.0.0/0"]
       name_prefix               = "${var.cluster-name}-awslbc"
       iam_use_name_prefix       = false
+      manage_crds               = true
     },
     var.aws-load-balancer-controller
   )
@@ -28,6 +29,15 @@ serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: "${local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["create_iam_resources_irsa"] ? module.iam_assumable_role_aws-load-balancer-controller.arn : ""}"
 VALUES
+
+  crds = [
+    "https://raw.githubusercontent.com/aws/eks-charts/master/stable/aws-load-balancer-controller/crds/crds.yaml",
+    "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/refs/heads/main/config/crd/gateway/gateway-crds.yaml",
+  ]
+
+  crds_manifests = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["manage_crds"] ? merge([
+    for doc in data.kubectl_file_documents.crds : doc.manifests
+  ]...) : {}
 }
 
 module "iam_assumable_role_aws-load-balancer-controller" {
@@ -56,6 +66,21 @@ data "aws_iam_policy_document" "aws-load-balancer-controller" {
     templatefile("${path.module}/iam/aws-load-balancer-controller.json", { arn-partition = local.arn-partition }),
     try(local.aws-load-balancer-controller.additional_iam_statements, "")
   ])
+}
+
+data "http" "crds" {
+  for_each = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["manage_crds"] ? toset(local.crds) : []
+  url      = each.value
+}
+
+data "kubectl_file_documents" "crds" {
+  for_each = local.aws-load-balancer-controller["enabled"] && local.aws-load-balancer-controller["manage_crds"] ? data.http.crds : {}
+  content  = each.value.response_body
+}
+
+resource "kubectl_manifest" "crds" {
+  for_each  = local.crds_manifests
+  yaml_body = each.value
 }
 
 resource "kubernetes_namespace" "aws-load-balancer-controller" {
