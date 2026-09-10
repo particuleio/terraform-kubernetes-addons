@@ -3,7 +3,7 @@ name: Handle terraform-kubernetes-addons helm chart dependencies update
 version: 1.0.0
 dependencies:
   - name: secrets-store-csi-driver
-    version: 1.6.0
+    version: 1.6.1
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
     version: 2.65.1
