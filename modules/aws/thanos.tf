@@ -302,7 +302,7 @@ module "thanos_bucket" {
   logging = local.s3-logging.enabled ? {
     target_bucket = local.s3-logging.create_bucket ? module.s3_logging_bucket.s3_bucket_id : local.s3-logging.custom_bucket_id
     target_prefix = "${var.cluster-name}/${local.thanos.name}/"
-  } : {}
+  } : null
 
   attach_deny_insecure_transport_policy = local.thanos["bucket_enforce_tls"]
 
