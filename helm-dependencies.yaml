@@ -27,7 +27,7 @@ dependencies:
     version: v0.16.1
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.59.0
+    version: 9.60.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
     version: 1.23.0
