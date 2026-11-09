@@ -1,5 +1,5 @@
 [tools]
 python = "3"
 pre-commit = "4.7.0"
-terraform = "1.17.0"
+terraform = "1.17.1"
 terraform-docs = "0.24.0"
