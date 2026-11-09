@@ -42,7 +42,7 @@ jobs:
         run: echo "MISE_TERRAFORM_VERSION=${{ steps.minMax.outputs.minVersion }}" >> "$GITHUB_ENV"
 
       - name: Install tools
-        uses: jdx/mise-action@v5.2.2
+        uses: jdx/mise-action@v5.2.7
         with:
           cache_key_prefix: mise-tf-min
 
@@ -68,7 +68,7 @@ jobs:
           repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: Install tools
-        uses: jdx/mise-action@v5.2.2
+        uses: jdx/mise-action@v5.2.7
 
       - name: Pre-commit Terraform
         run: pre-commit run --color=always --show-diff-on-failure --all-files
