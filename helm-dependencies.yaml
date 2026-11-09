@@ -3,31 +3,31 @@ name: Handle terraform-kubernetes-addons helm chart dependencies update
 version: 1.0.0
 dependencies:
   - name: secrets-store-csi-driver
-    version: 1.6.1
+    version: 1.6.2
     repository: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
   - name: aws-ebs-csi-driver
-    version: 2.66.1
+    version: 2.67.2
     repository: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
   - name: aws-efs-csi-driver
-    version: 4.5.1
+    version: 4.5.4
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
     version: 0.2.0
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
-    version: 3.6.0
+    version: 3.6.2
     repository: https://aws.github.io/eks-charts
   - name: aws-node-termination-handler
     version: 0.21.0
     repository: https://aws.github.io/eks-charts
   - name: cert-manager
-    version: v1.21.2
+    version: v1.21.3
     repository: https://charts.jetstack.io
   - name: cert-manager-csi-driver
-    version: v0.16.0
+    version: v0.16.1
     repository: https://charts.jetstack.io
   - name: cluster-autoscaler
-    version: 9.59.0
+    version: 9.60.0
     repository: https://kubernetes.github.io/autoscaler
   - name: external-dns
     version: 1.23.0
@@ -42,13 +42,13 @@ dependencies:
     version: 4.15.1
     repository: https://kubernetes.github.io/ingress-nginx
   - name: k8gb
-    version: v1.0.0
+    version: v1.0.1
     repository: https://www.k8gb.io
   - name: karma
     version: 1.7.2
     repository: https://charts.helm.sh/stable
   - name: karpenter
-    version: 1.15.0
+    version: 1.15.1
     repository: oci://public.ecr.aws/karpenter
   - name: keda
     version: 2.21.0
@@ -57,7 +57,7 @@ dependencies:
     version: 3.4.1
     repository: https://charts.konghq.com
   - name: kube-prometheus-stack
-    version: 92.3.0
+    version: 93.1.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: linkerd2-cni
     version: 30.12.2
@@ -72,7 +72,7 @@ dependencies:
     version: 30.12.11
     repository: https://helm.linkerd.io/stable
   - name: loki
-    version: 7.3.0
+    version: 7.5.0
     repository: https://grafana.github.io/helm-charts
   - name: promtail
     version: 6.17.1
@@ -81,16 +81,16 @@ dependencies:
     version: 3.14.0
     repository: https://kubernetes-sigs.github.io/metrics-server/
   - name: node-problem-detector
-    version: 2.4.1
+    version: 2.4.2
     repository: oci://ghcr.io/deliveryhero/helm-charts
   - name: prometheus-adapter
-    version: 5.3.0
+    version: 5.4.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-cloudwatch-exporter
-    version: 0.28.2
+    version: 0.29.0
     repository: https://prometheus-community.github.io/helm-charts
   - name: prometheus-blackbox-exporter
-    version: 11.20.0
+    version: 11.21.1
     repository: https://prometheus-community.github.io/helm-charts
   - name: scaleway-webhook
     version: v0.0.1
@@ -105,17 +105,17 @@ dependencies:
     version: v3.33.0
     repository: https://docs.tigera.io/calico/charts
   - name: traefik
-    version: 41.7.1
+    version: 42.3.1
     repository: https://helm.traefik.io/traefik
   - name: oci://registry-1.docker.io/bitnamicharts/memcached
     version: 7.5.3
     repository: ""
   - name: velero
-    version: 12.2.1
+    version: 12.2.4
     repository: https://vmware-tanzu.github.io/helm-charts
   - name: victoria-metrics-k8s-stack
-    version: 0.95.2
+    version: 0.97.1
     repository: https://victoriametrics.github.io/helm-charts/
   - name: reloader
-    version: 2.2.18
+    version: 2.2.19
     repository: https://stakater.github.io/stakater-charts

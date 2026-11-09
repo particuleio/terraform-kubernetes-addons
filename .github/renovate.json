@@ -21,6 +21,7 @@
   "enabledManagers": [
     "helmv3",
     "github-actions",
+    "mise",
     "pre-commit",
     "terraform"
   ],
@@ -44,6 +45,7 @@
     },
     {
       "matchManagers": [
+        "mise",
         "pre-commit"
       ],
       "semanticCommitScope": "ci",

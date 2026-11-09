@@ -24,7 +24,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 3.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | >= 3 |
 | <a name="requirement_jinja"></a> [jinja](#requirement\_jinja) | ~> 2.0 |
-| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 2.0 |
+| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | ~> 3.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 3.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
 
@@ -38,7 +38,7 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 | <a name="provider_helm"></a> [helm](#provider\_helm) | ~> 3.0 |
 | <a name="provider_http"></a> [http](#provider\_http) | >= 3 |
 | <a name="provider_jinja"></a> [jinja](#provider\_jinja) | ~> 2.0 |
-| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 2.0 |
+| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | ~> 3.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 3.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 | <a name="provider_time"></a> [time](#provider\_time) | n/a |
@@ -48,19 +48,19 @@ Provides various Kubernetes addons that are often used on Kubernetes with GCP
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_cert_manager_workload_identity"></a> [cert\_manager\_workload\_identity](#module\_cert\_manager\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0.0 |
-| <a name="module_external_dns_workload_identity"></a> [external\_dns\_workload\_identity](#module\_external\_dns\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0.0 |
-| <a name="module_iam_assumable_sa_kube-prometheus-stack_grafana"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_grafana) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_kube-prometheus-stack_thanos"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_loki-stack"></a> [iam\_assumable\_sa\_loki-stack](#module\_iam\_assumable\_sa\_loki-stack) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_thanos-compactor"></a> [iam\_assumable\_sa\_thanos-compactor](#module\_iam\_assumable\_sa\_thanos-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_thanos-receive"></a> [iam\_assumable\_sa\_thanos-receive](#module\_iam\_assumable\_sa\_thanos-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_thanos-receive-compactor"></a> [iam\_assumable\_sa\_thanos-receive-compactor](#module\_iam\_assumable\_sa\_thanos-receive-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_thanos-receive-receive"></a> [iam\_assumable\_sa\_thanos-receive-receive](#module\_iam\_assumable\_sa\_thanos-receive-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_thanos-receive-sg"></a> [iam\_assumable\_sa\_thanos-receive-sg](#module\_iam\_assumable\_sa\_thanos-receive-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_thanos-sg"></a> [iam\_assumable\_sa\_thanos-sg](#module\_iam\_assumable\_sa\_thanos-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
-| <a name="module_iam_assumable_sa_velero"></a> [iam\_assumable\_sa\_velero](#module\_iam\_assumable\_sa\_velero) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 45.0 |
+| <a name="module_cert_manager_workload_identity"></a> [cert\_manager\_workload\_identity](#module\_cert\_manager\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0.0 |
+| <a name="module_external_dns_workload_identity"></a> [external\_dns\_workload\_identity](#module\_external\_dns\_workload\_identity) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0.0 |
+| <a name="module_iam_assumable_sa_kube-prometheus-stack_grafana"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_grafana](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_grafana) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_kube-prometheus-stack_thanos"></a> [iam\_assumable\_sa\_kube-prometheus-stack\_thanos](#module\_iam\_assumable\_sa\_kube-prometheus-stack\_thanos) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_loki-stack"></a> [iam\_assumable\_sa\_loki-stack](#module\_iam\_assumable\_sa\_loki-stack) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_thanos-compactor"></a> [iam\_assumable\_sa\_thanos-compactor](#module\_iam\_assumable\_sa\_thanos-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_thanos-receive"></a> [iam\_assumable\_sa\_thanos-receive](#module\_iam\_assumable\_sa\_thanos-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_thanos-receive-compactor"></a> [iam\_assumable\_sa\_thanos-receive-compactor](#module\_iam\_assumable\_sa\_thanos-receive-compactor) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_thanos-receive-receive"></a> [iam\_assumable\_sa\_thanos-receive-receive](#module\_iam\_assumable\_sa\_thanos-receive-receive) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_thanos-receive-sg"></a> [iam\_assumable\_sa\_thanos-receive-sg](#module\_iam\_assumable\_sa\_thanos-receive-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_thanos-sg"></a> [iam\_assumable\_sa\_thanos-sg](#module\_iam\_assumable\_sa\_thanos-sg) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_thanos-storegateway"></a> [iam\_assumable\_sa\_thanos-storegateway](#module\_iam\_assumable\_sa\_thanos-storegateway) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
+| <a name="module_iam_assumable_sa_velero"></a> [iam\_assumable\_sa\_velero](#module\_iam\_assumable\_sa\_velero) | terraform-google-modules/kubernetes-engine/google//modules/workload-identity | ~> 47.0 |
 | <a name="module_kube-prometheus-stack_grafana-iam-member"></a> [kube-prometheus-stack\_grafana-iam-member](#module\_kube-prometheus-stack\_grafana-iam-member) | terraform-google-modules/iam/google//modules/member_iam | ~> 8.0 |
 | <a name="module_kube-prometheus-stack_kube-prometheus-stack_bucket"></a> [kube-prometheus-stack\_kube-prometheus-stack\_bucket](#module\_kube-prometheus-stack\_kube-prometheus-stack\_bucket) | terraform-google-modules/cloud-storage/google//modules/simple_bucket | ~> 12.0 |
 | <a name="module_kube-prometheus-stack_thanos_kms_bucket"></a> [kube-prometheus-stack\_thanos\_kms\_bucket](#module\_kube-prometheus-stack\_thanos\_kms\_bucket) | terraform-google-modules/kms/google | ~> 4.0 |

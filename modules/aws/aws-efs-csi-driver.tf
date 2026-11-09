@@ -110,21 +110,51 @@ resource "aws_efs_mount_target" "aws-efs-csi-driver" {
   count           = local.aws-efs-csi-driver["enabled"] ? length(local.aws-efs-csi-driver["subnets"]) : 0
   file_system_id  = lookup(local.aws-efs-csi-driver, "file_system_id", null) == null ? aws_efs_file_system.aws-efs-csi-driver.0.id : local.aws-efs-csi-driver["file_system_id"]
   subnet_id       = element(local.aws-efs-csi-driver["subnets"], count.index)
-  security_groups = [module.security-group-efs-csi-driver.0.security_group_id]
+  security_groups = [module.security-group-efs-csi-driver.0.id]
 }
 
 module "security-group-efs-csi-driver" {
-  count                                 = local.aws-efs-csi-driver["enabled"] ? 1 : 0
-  source                                = "terraform-aws-modules/security-group/aws//modules/nfs"
-  version                               = "~> 5.0"
-  name                                  = local.aws-efs-csi-driver["name_prefix"]
-  description                           = "NFS access to ${local.aws-efs-csi-driver["name_prefix"]}"
-  vpc_id                                = local.aws-efs-csi-driver["sg_vpc_id"]
-  ingress_cidr_blocks                   = local.aws-efs-csi-driver["sg_vpc_ingress_cidrs"]
-  egress_ipv6_cidr_blocks               = local.aws-efs-csi-driver["sg_egress_ipv6_cidr_blocks"]
-  auto_ingress_with_self                = local.aws-efs-csi-driver["sg_auto_ingress_with_self"]
-  ingress_with_source_security_group_id = local.aws-efs-csi-driver["sg_input_ingress_with_source_security_group_id"]
-  tags                                  = local.tags
+  count       = local.aws-efs-csi-driver["enabled"] ? 1 : 0
+  source      = "terraform-aws-modules/security-group/aws//modules/nfs"
+  version     = "~> 6.0"
+  name        = local.aws-efs-csi-driver["name_prefix"]
+  description = "NFS access to ${local.aws-efs-csi-driver["name_prefix"]}"
+  vpc_id      = local.aws-efs-csi-driver["sg_vpc_id"]
+
+  ingress_cidr_ipv4 = { for cidr in coalesce(local.aws-efs-csi-driver["sg_vpc_ingress_cidrs"], []) : cidr => cidr }
+
+  ingress_referenced_security_group_id = {
+    for idx, rule in coalesce(local.aws-efs-csi-driver["sg_input_ingress_with_source_security_group_id"], []) :
+    "sg-${idx}" => rule["source_security_group_id"]
+  }
+
+  # v6 removed the implicit self rule, keep the previous opt-in behavior
+  ingress_rules = length(coalesce(local.aws-efs-csi-driver["sg_auto_ingress_with_self"], [])) > 0 ? {
+    self-all = {
+      ip_protocol                  = "-1"
+      referenced_security_group_id = "self"
+    }
+  } : {}
+
+  # v6 removed the implicit all-all egress rule
+  egress_rules = merge(
+    {
+      all-ipv4 = {
+        ip_protocol = "-1"
+        cidr_ipv4   = "0.0.0.0/0"
+      }
+    },
+    {
+      for cidr in coalesce(local.aws-efs-csi-driver["sg_egress_ipv6_cidr_blocks"], []) :
+      "all-ipv6-${cidr}" => {
+        ip_protocol = "-1"
+        cidr_ipv6   = cidr
+      }
+    }
+  )
+
+  # v6 no longer sets the Name tag implicitly
+  tags = merge(local.tags, { Name = local.aws-efs-csi-driver["name_prefix"] })
 }
 
 resource "helm_release" "aws-efs-csi-driver" {
