@@ -7,10 +7,6 @@ on:
       - master
   workflow_dispatch:
 
-env:
-  TERRAFORM_DOCS_VERSION: v0.24.0
-  TFLINT_VERSION: v0.61.0
-
 jobs:
   collectInputs:
     name: Collect workflow inputs
@@ -42,25 +38,23 @@ jobs:
         with:
           directory: ${{ matrix.directory }}
 
+      - name: Override Terraform version with the minimum supported one
+        run: echo "MISE_TERRAFORM_VERSION=${{ steps.minMax.outputs.minVersion }}" >> "$GITHUB_ENV"
+
+      - name: Install tools
+        uses: jdx/mise-action@v5.2.2
+        with:
+          cache_key_prefix: mise-tf-min
+
       - name: Pre-commit Terraform ${{ steps.minMax.outputs.minVersion }}
         # Run only validate pre-commit check on min version supported
         if: ${{ matrix.directory !=  '.' }}
-        uses: clowdhaus/terraform-composite-actions/pre-commit@v1.14.0
-        with:
-          terraform-version: ${{ steps.minMax.outputs.minVersion }}
-          terraform-docs-version: ${{ env.TERRAFORM_DOCS_VERSION }}
-          tflint-version: ${{ env.TFLINT_VERSION }}
-          args: "terraform_validate --color=always --show-diff-on-failure --files ${{ matrix.directory }}/*"
+        run: pre-commit run terraform_validate --color=always --show-diff-on-failure --files ${{ matrix.directory }}/*
 
       - name: Pre-commit Terraform ${{ steps.minMax.outputs.minVersion }}
         # Run only validate pre-commit check on min version supported
         if: ${{ matrix.directory ==  '.' }}
-        uses: clowdhaus/terraform-composite-actions/pre-commit@v1.14.0
-        with:
-          terraform-version: ${{ steps.minMax.outputs.minVersion }}
-          terraform-docs-version: ${{ env.TERRAFORM_DOCS_VERSION }}
-          tflint-version: ${{ env.TFLINT_VERSION }}
-          args: "terraform_validate --color=always --show-diff-on-failure --files $(ls *.tf)"
+        run: pre-commit run terraform_validate --color=always --show-diff-on-failure --files ./*.tf
 
   preCommitMaxVersion:
     name: Max TF pre-commit
@@ -73,13 +67,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
 
-      - name: Terraform min/max versions
-        id: minMax
-        uses: clowdhaus/terraform-min-max@v3.0.1
+      - name: Install tools
+        uses: jdx/mise-action@v5.2.2
 
-      - name: Pre-commit Terraform ${{ steps.minMax.outputs.maxVersion }}
-        uses: clowdhaus/terraform-composite-actions/pre-commit@v1.14.0
-        with:
-          terraform-version: ${{ steps.minMax.outputs.maxVersion }}
-          terraform-docs-version: ${{ env.TERRAFORM_DOCS_VERSION }}
-          tflint-version: ${{ env.TFLINT_VERSION }}
+      - name: Pre-commit Terraform
+        run: pre-commit run --color=always --show-diff-on-failure --all-files
