@@ -12,7 +12,7 @@ dependencies:
     version: 4.5.4
     repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver
   - name: aws-for-fluent-bit
-    version: 0.2.0
+    version: 0.2.1
     repository: https://aws.github.io/eks-charts
   - name: aws-load-balancer-controller
     version: 3.6.2
